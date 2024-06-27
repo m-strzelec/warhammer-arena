@@ -1,0 +1,22 @@
+services:
+  backend:
+    container_name: 'wharena'
+    build:
+      context: .
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    environment:
+      - NODE_ENV=production
+      - PORT=${APP_PORT}
+      - MONGODB_URI=mongodb://${DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    container_name: ${MONGO_DB}
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    env_file:
+      - .env
