@@ -23,7 +23,7 @@ const secondaryStatsSchema = new mongoose.Schema({
 });
 
 const characterSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     race: { type: String, required: true },
     primaryStats: primaryStatsSchema,
     secondaryStats: secondaryStatsSchema,

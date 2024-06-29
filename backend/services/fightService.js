@@ -1,0 +1,63 @@
+const { rollDice } = require('../utils/diceRoll');
+const Character = require('../models/Character');
+
+const calculateDamage = async (attacker, defender) => {
+  let damage = rollDice(10) + attacker.primaryStats.SB - defender.secondaryStats.TB;
+  if (attacker.weapons.length > 0) {
+    const weapon = await Weapon.findById(attacker.weapons[0]);
+    damage += weapon.damageFactor;
+  } else {
+    damage -= 4;
+  }
+  return Math.max(0, damage);
+};
+
+const simulateFight = async (character1Id, character2Id) => {
+  const character1 = await Character.findById(character1Id).populate('armor weapons skills abilities');
+  const character2 = await Character.findById(character2Id).populate('armor weapons skills abilities');
+
+  const log = [];
+  let character1Health = character1.secondaryStats.W;
+  let character2Health = character2.secondaryStats.W;
+  let winner = null;
+
+  while (character1Health > 0 && character2Health > 0) {
+    
+    const attack1 = rollDice(100) <= (character1.primaryStats.WS);
+    if (attack1) {
+      log.push(`${character1.name} hits ${character2.name}`);
+      const damage = await calculateDamage(character1, character2);
+      character2Health -= damage;
+      log.push(`${character2.name} takes ${damage} damage, remaining hp: ${character2Health}`);
+      if (character2Health <= 0) {
+        log.push(`${character2.name} is defeated!`);
+        winner = character1;
+      }
+    } else {
+        log.push(`${character1.name} misses ${character2.name}`);
+    }
+
+    if (character2Health <= 0) break;
+
+    const attack2 = rollDice(100) <= (character2.primaryStats.WS);
+    if (attack2) {
+      log.push(`${character2.name} hits ${character1.name}`);
+      const damage = await calculateDamage(character2, character1);
+      character1Health -= damage;
+      log.push(`${character1.name} takes ${damage} damage, remaining hp: ${character1Health}`);
+      if (character1Health <= 0) {
+        log.push(`${character1.name} is defeated!`);
+        winner = character2;
+      }
+    } else {
+        log.push(`${character2.name} misses ${character1.name}`);
+    }
+  }
+
+  log.push(`${winner.name} wins the fight!`);
+  return { log, winner };
+};
+
+module.exports = {
+    simulateFight
+};
