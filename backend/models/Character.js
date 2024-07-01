@@ -46,7 +46,7 @@ const characterSchema = new mongoose.Schema({
     armor: armorSchema,
     weapons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Weapon' }],
     skills: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Skill' }],
-    abilities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ability' }]
+    talents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Talent' }]
 }, {timestamps: true});
 
 module.exports = mongoose.model('Character', characterSchema);

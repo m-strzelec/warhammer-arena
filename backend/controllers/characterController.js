@@ -3,7 +3,7 @@ const Character = require('../models/Character');
 
 const createCharacter = async (req, res) => {
     try {
-        const { name, race, primaryStats, secondaryStats, armor, weapons, skills, abilities } = req.body;
+        const { name, race, primaryStats, secondaryStats, armor, weapons, skills, talents } = req.body;
         const character = new Character({
             name: name,
             race: race,
@@ -12,7 +12,7 @@ const createCharacter = async (req, res) => {
             armor: armor,
             weapons: weapons,
             skills: skills,
-            abilities: abilities,
+            talents: talents,
         });
         await character.save();
         res.status(HttpStatus.StatusCodes.CREATED).json(character);
@@ -23,7 +23,7 @@ const createCharacter = async (req, res) => {
 
 const getCharacters = async (req, res) => {
     try {
-        const characters = await Character.find().populate('armor weapons skills abilities');
+        const characters = await Character.find().populate('armor weapons skills talents');
         res.status(HttpStatus.StatusCodes.OK).json(characters);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
@@ -32,7 +32,7 @@ const getCharacters = async (req, res) => {
 
 const getCharacterById = async (req, res) => {
     try {
-        const character = await Character.findById(req.params.id).populate('armor weapons skills abilities');
+        const character = await Character.findById(req.params.id).populate('armor weapons skills talents');
         if (!character) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ error: 'Character not found' });
         }

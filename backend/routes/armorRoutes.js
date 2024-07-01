@@ -1,9 +1,9 @@
 const express = require('express');
-const { createArmor, getArmor, getArmorById } = require('../controllers/armorController');
+const { createArmor, getArmors, getArmorById } = require('../controllers/armorController');
 const router = express.Router();
 
 router.post('/', createArmor);
-router.get('/', getArmor);
+router.get('/', getArmors);
 router.get('/:id', getArmorById);
 
 module.exports = router;

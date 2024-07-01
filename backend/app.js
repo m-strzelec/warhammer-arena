@@ -4,7 +4,7 @@ const characterRoutes = require('./routes/characterRoutes');
 const fightRoutes = require('./routes/fightRoutes');
 const traitRoutes = require('./routes/traitRoutes');
 const skillRoutes = require('./routes/skillRoutes');
-const abilityRoutes = require('./routes/abilityRoutes');
+const abilityRoutes = require('./routes/talentRoutes');
 const weaponRoutes = require('./routes/weaponRoutes');
 const armorRoutes = require('./routes/armorRoutes');
 
