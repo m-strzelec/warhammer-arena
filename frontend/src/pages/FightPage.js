@@ -1,17 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FightSimulator from '../components/FightSimulator';
+import { Button } from 'react-bootstrap';
 
 const FightPage = () => {
+  const navigate = useNavigate();
+
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
+
   return (
     <div>
-      <nav>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/creator">Create Character</Link></li>
-        </ul>
-      </nav>
       <h1>Fight Simulator</h1>
+        <Button variant="primary" onClick={() => handleNavigate('/')}>
+          Home
+        </Button>
+        <Button variant="primary" onClick={() => handleNavigate('/creator')}>
+          Create Character
+        </Button>
       <FightSimulator />
     </div>
   );
