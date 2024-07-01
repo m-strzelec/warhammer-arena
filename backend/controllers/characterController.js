@@ -24,7 +24,7 @@ const createCharacter = async (req, res) => {
 const getCharacters = async (req, res) => {
     try {
         const characters = await Character.find().populate('armor weapons skills abilities');
-        res.status(HttpStatus.StatusCodes.CREATED).json(characters);
+        res.status(HttpStatus.StatusCodes.OK).json(characters);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
@@ -34,9 +34,9 @@ const getCharacterById = async (req, res) => {
     try {
         const character = await Character.findById(req.params.id).populate('armor weapons skills abilities');
         if (!character) {
-        return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ error: 'Character not found' });
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ error: 'Character not found' });
         }
-        res.status(HttpStatus.StatusCodes.CREATED).json(character);
+        res.status(HttpStatus.StatusCodes.OK).json(character);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
