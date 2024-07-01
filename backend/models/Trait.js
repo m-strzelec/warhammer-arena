@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const traitSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    description: { type: String, required: true },
-    effect: { type: String, required: true }
+    description: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Trait', traitSchema);

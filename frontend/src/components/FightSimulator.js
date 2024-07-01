@@ -7,6 +7,7 @@ const FightSimulator = () => {
   const [character1, setCharacter1] = useState('');
   const [character2, setCharacter2] = useState('');
   const [fightLog, setFightLog] = useState([]);
+  const [winner, setWinner] = useState('');
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -24,6 +25,7 @@ const FightSimulator = () => {
     try {
       const response = await createFight(character1, character2);
       setFightLog(response.data.log);
+      setWinner(response.data.winnerId);
     } catch (error) {
       console.error(error);
       alert('Failed to start fight');
@@ -57,6 +59,12 @@ const FightSimulator = () => {
           <p key={index}>{log}</p>
         ))}
       </div>
+
+      {winner && (
+        <div>
+          <h2>Winner: {characters.find(char => char._id === winner)?.name}</h2>
+        </div>
+      )}
     </div>
   );
 };

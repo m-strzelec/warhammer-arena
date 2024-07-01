@@ -12,7 +12,7 @@ const createFight = async (req, res) => {
             winner: fightResult.winner._id
         });
         await fight.save();
-        res.status(HttpStatus.StatusCodes.CREATED).json(fightResult.log);
+        res.status(HttpStatus.StatusCodes.CREATED).json({ winnerId: fightResult.winner._id, log: fightResult.log });
     } catch (error) {
         res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
     }

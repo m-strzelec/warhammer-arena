@@ -28,7 +28,7 @@ const CharacterCreator = () => {
         armor: [],
         weapons: [],
         skills: [],
-        abilities: []
+        talents: []
       });
 
   const handleChange = (e) => {
@@ -44,6 +44,11 @@ const CharacterCreator = () => {
   const handleSecondaryStatChange = (e) => {
     const { name, value } = e.target;
     setCharacter({ ...character, secondaryStats: { ...character.secondaryStats, [name]: value } });
+  };
+
+  const handleArrayChange = (e, type) => {
+    const { name, value } = e.target;
+    setCharacter({ ...character, [type]: [...character[type], { [name]: value }] });
   };
 
   const handleSubmit = async (e) => {
@@ -69,6 +74,17 @@ const CharacterCreator = () => {
       {Object.keys(character.secondaryStats).map(stat => (
         <input key={stat} type="number" name={stat} placeholder={stat} onChange={handleSecondaryStatChange} required />
       ))}
+      <h3>Armor</h3>
+      {Object.keys(character.armor).map(part => (
+        <input key={part} type="text" name={part} placeholder={part} onChange={handleChange} />
+      ))}
+      <h3>Weapons</h3>
+      <input type="text" name="weapons" placeholder="Weapon Name" onChange={(e) => handleArrayChange(e, 'weapons')} />
+      <h3>Skills</h3>
+      <input type="text" name="skills" placeholder="Skill Name" onChange={(e) => handleArrayChange(e, 'skills')} />
+      <h3>Talents</h3>
+      <input type="text" name="talents" placeholder="Talent Name" onChange={(e) => handleArrayChange(e, 'talents')} />
+
       <button type="submit">Create Character</button>
     </form>
   );
