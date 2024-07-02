@@ -45,26 +45,62 @@ const FightSimulator = () => {
     }
   };
 
-  const getLogStyle = (log) => {
-    const style = {};
+  const getLogStyle = (log, index, currentCharacter) => {
+    const style = { fontWeight: 'bold' };
+
     if (log.includes('hits')) style.color = 'green';
-    if (log.includes('misses')) style.color = '#555555'; // dark grey
-    if (log.includes('takes')) style.color = 'red';
+    if (log.includes('misses')) style.color = '#9b30ff'; // purple
     if (log.includes('dodges')) style.color = 'blue';
-    
-    const char1Name = characters.find((char) => char._id === character1)?.name;
-    const char2Name = characters.find((char) => char._id === character2)?.name;
-    
-    if (log.startsWith(char1Name)) {
+
+    const char1Name = characters.find((char) => char._id === character1)?.name.split(' ')[0];
+    const char2Name = characters.find((char) => char._id === character2)?.name.split(' ')[0];
+
+    if (log.includes('misses')) {
+      if (log.startsWith(char1Name)) {
+        style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
+      } else if (log.startsWith(char2Name)) {
+        style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
+      }
+    } else if (log.includes('dodges')) {
+      if (log.startsWith(char1Name)) {
+        style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
+      } else if (log.startsWith(char2Name)) {
+        style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
+      }
+    } else if (log.startsWith(char1Name)) {
       style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
-      style.fontWeight = 'bold';
+      currentCharacter = char1Name;
     } else if (log.startsWith(char2Name)) {
       style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
-      style.fontWeight = 'bold';
+      currentCharacter = char2Name;
+    } else if (currentCharacter === char1Name) {
+      style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
+    } else if (currentCharacter === char2Name) {
+      style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
     }
 
-    return style;
+    return { style, currentCharacter };
   };
+
+  const highlightNumbers = (text) => {
+    return text.split(/(-?\d+)/).map((part, index) =>
+      /-?\d/.test(part) ? (
+        <span key={index} style={{ color: 'red', fontWeight: 'bold' }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  let currentCharacter = null;
+  let skipNext = false;
+
+  const char1Name = characters.find((char) => char._id === character1)?.name.split(' ')[0];
+  const char2Name = characters.find((char) => char._id === character2)?.name.split(' ')[0];
+  const winnerCharacter = winner === character1 ? char1Name : char2Name;
+  const winnerColor = winner === character1 ? 'rgba(0, 128, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)';
 
   return (
     <Container className="my-5">
@@ -115,9 +151,29 @@ const FightSimulator = () => {
           <Col md={8}>
             <Card className="mb-4">
               <Card.Body>
-                {fightLog.map((log, index) => (
-                  <p key={index} style={getLogStyle(log)}>
-                    {log}
+                {fightLog.slice(0, -2).map((log, index) => {
+                  if (skipNext) {
+                    skipNext = false;
+                    return (
+                      <p key={index} style={{ fontWeight: 'bold', backgroundColor: currentCharacter === characters.find((char) => char._id === character1)?.name.split(' ')[0] ? 'rgba(0, 128, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)' }}>
+                        {highlightNumbers(log)}
+                      </p>
+                    );
+                  }
+                  const { style, currentCharacter: newCharacter } = getLogStyle(log, index, currentCharacter);
+                  currentCharacter = newCharacter;
+                  if (style.backgroundColor !== 'transparent' && !log.includes('misses') && !log.includes('dodges')) {
+                    skipNext = true;
+                  }
+                  return (
+                    <p key={index} style={style}>
+                      {highlightNumbers(log)}
+                    </p>
+                  );
+                })}
+                {fightLog.slice(-2).map((log, index) => (
+                  <p key={index} style={{ fontWeight: 'bold', backgroundColor: 'transparent' }}>
+                    {highlightNumbers(log)}
                   </p>
                 ))}
               </Card.Body>
@@ -128,7 +184,7 @@ const FightSimulator = () => {
       {winner && (
         <Row className="justify-content-center">
           <Col md={8}>
-            <Alert variant="success">
+            <Alert variant="success" style={{ backgroundColor: winnerColor, color: 'darkgreen' }}>
               <h2>Winner: {characters.find((char) => char._id === winner)?.name}</h2>
             </Alert>
           </Col>
