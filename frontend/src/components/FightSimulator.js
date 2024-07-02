@@ -45,6 +45,27 @@ const FightSimulator = () => {
     }
   };
 
+  const getLogStyle = (log) => {
+    const style = {};
+    if (log.includes('hits')) style.color = 'green';
+    if (log.includes('misses')) style.color = '#555555'; // dark grey
+    if (log.includes('takes')) style.color = 'red';
+    if (log.includes('dodges')) style.color = 'blue';
+    
+    const char1Name = characters.find((char) => char._id === character1)?.name;
+    const char2Name = characters.find((char) => char._id === character2)?.name;
+    
+    if (log.startsWith(char1Name)) {
+      style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
+      style.fontWeight = 'bold';
+    } else if (log.startsWith(char2Name)) {
+      style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
+      style.fontWeight = 'bold';
+    }
+
+    return style;
+  };
+
   return (
     <Container className="my-5">
       <Row className="text-center mb-4">
@@ -95,7 +116,9 @@ const FightSimulator = () => {
             <Card className="mb-4">
               <Card.Body>
                 {fightLog.map((log, index) => (
-                  <p key={index}>{log}</p>
+                  <p key={index} style={getLogStyle(log)}>
+                    {log}
+                  </p>
                 ))}
               </Card.Body>
             </Card>
