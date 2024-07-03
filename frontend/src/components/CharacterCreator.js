@@ -142,7 +142,7 @@ const CharacterCreator = () => {
             <Row>
               {Object.keys(character.secondaryStats).map((stat) => (
                 <Col md={3} key={stat} className="mb-3">
-                  <Form.Group>
+                  <Form.Group id={stat}>
                     <Form.Label>{stat}</Form.Label>
                     <Form.Control
                       type="number"
@@ -158,7 +158,7 @@ const CharacterCreator = () => {
             <h3>Armor</h3>
             <Row>
               {Object.keys(character.armor).map((location) => (
-                <Form.Group as={Col} md="12" controlId="formGridArmor" className="d-flex align-items-center my-3">
+                <Form.Group as={Col} md="12" key={location} controlId={location} className="d-flex align-items-center my-3">
                   <Col md={2}>
                     <Form.Label className="me-2 mb-0">{location}:</Form.Label>
                   </Col>
