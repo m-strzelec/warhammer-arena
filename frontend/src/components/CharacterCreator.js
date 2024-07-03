@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { createCharacter } from '../services/characterService';
 
@@ -26,7 +26,14 @@ const CharacterCreator = () => {
       IP: 0,
       FP: 0,
     },
-    armor: [],
+    armor: {
+      head: '',
+      body: '',
+      leftArm: '',
+      rightArm: '',
+      leftLeg: '',
+      rightLeg: ''
+    },
     weapons: [],
     skills: [],
     talents: [],
@@ -34,16 +41,19 @@ const CharacterCreator = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = (e, type) => {
     const { name, value } = e.target;
-    setCharacter({ ...character, [name]: value });
+    setCharacter({
+      ...character,
+      [type]: [...character[type], { [name]: value }]
+    });
   };
 
   const handlePrimaryStatChange = (e) => {
     const { name, value } = e.target;
     setCharacter({
       ...character,
-      primaryStats: { ...character.primaryStats, [name]: parseInt(value) },
+      primaryStats: { ...character.primaryStats, [name]: parseInt(value) }
     });
   };
 
@@ -51,13 +61,24 @@ const CharacterCreator = () => {
     const { name, value } = e.target;
     setCharacter({
       ...character,
-      secondaryStats: { ...character.secondaryStats, [name]: parseInt(value) },
+      secondaryStats: { ...character.secondaryStats, [name]: parseInt(value) }
+    });
+  };
+
+  const handleArmorLocationChange = (e) => {
+    const { name, value } = e.target;
+    setCharacter({
+      ...character,
+      armor: { ...character.armor, [name]: value }
     });
   };
 
   const handleArrayChange = (e, type) => {
     const { name, value } = e.target;
-    setCharacter({ ...character, [type]: [...character[type], { [name]: value }] });
+    setCharacter({
+      ...character,
+      [type]: [...character[type], { [name]: value }]
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -74,28 +95,36 @@ const CharacterCreator = () => {
   };
 
   return (
-    <Container className="my-5">
-      <Row className="text-center mb-4">
+    <Container>
+      <Row className="text-center mb-2">
         <Col>
-          <h1 className="display-4">Create Character</h1>
-          <p className="lead">Fill in the details to create your character</p>
+          <p className="lead">Fill in the details to create your character.</p>
         </Col>
       </Row>
       <Row className="justify-content-center">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
-              <Form.Control type="text" name="name" placeholder="Name" onChange={handleChange} required />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Race</Form.Label>
-              <Form.Control type="text" name="race" placeholder="Race" onChange={handleChange} required />
-            </Form.Group>
+            <Row className="mb-3">
+              <Form.Group as={Col} md="6" controlId="formGridName" className="d-flex align-items-center">
+                <Form.Label className="me-2 mb-0">Name:</Form.Label>
+                <Form.Control type="text" name="name" placeholder="Name" onChange={(e) => handleChange(e, 'name')} required />
+              </Form.Group>
+              <Form.Group as={Col} md="6" controlId="formGridRace" className="d-flex align-items-center">
+                <Form.Label className="me-2 mb-0">Race:</Form.Label>
+                <Form.Select aria-label="Character race select" onChange={(e) => handleChange(e, 'race')} required>
+                  <option>Select race of your character</option>
+                  <option value="human">Human</option>
+                  <option value="elf">Elf</option>
+                  <option value="dwarf">Dwarf</option>
+                  <option value="halfling">Halfling</option>
+                  <option value="other">Other</option>
+                </Form.Select>
+              </Form.Group>
+            </Row>
             <h3>Primary Stats</h3>
             <Row>
               {Object.keys(character.primaryStats).map((stat) => (
-                <Col md={6} key={stat} className="mb-3">
+                <Col md={3} key={stat} className="mb-3">
                   <Form.Group>
                     <Form.Label>{stat}</Form.Label>
                     <Form.Control
@@ -112,7 +141,7 @@ const CharacterCreator = () => {
             <h3>Secondary Stats</h3>
             <Row>
               {Object.keys(character.secondaryStats).map((stat) => (
-                <Col md={6} key={stat} className="mb-3">
+                <Col md={3} key={stat} className="mb-3">
                   <Form.Group>
                     <Form.Label>{stat}</Form.Label>
                     <Form.Control
@@ -127,9 +156,23 @@ const CharacterCreator = () => {
               ))}
             </Row>
             <h3>Armor</h3>
-            <Form.Group className="mb-3">
-              <Form.Control type="text" name="armor" placeholder="Armor" onChange={(e) => handleArrayChange(e, 'armor')} />
-            </Form.Group>
+            <Row>
+              {Object.keys(character.armor).map((location) => (
+                <Form.Group as={Col} md="12" controlId="formGridArmor" className="d-flex align-items-center my-3">
+                  <Col md={2}>
+                    <Form.Label className="me-2 mb-0">{location}:</Form.Label>
+                  </Col>
+                  <Col md={10}>
+                  <Form.Control
+                    type="text"
+                    name={location}
+                    placeholder={location}
+                    onChange={handleArmorLocationChange}
+                    required
+                  /></Col>
+                </Form.Group>
+              ))}
+            </Row>
             <h3>Weapons</h3>
             <Form.Group className="mb-3">
               <Form.Control type="text" name="weapons" placeholder="Weapon Name" onChange={(e) => handleArrayChange(e, 'weapons')} />

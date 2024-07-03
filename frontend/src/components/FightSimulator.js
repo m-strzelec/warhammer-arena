@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Alert, Spinner, Card } from 'react-bootstrap';
 import { getCharacters } from '../services/characterService';
 import { createFight } from '../services/fightService';
@@ -45,7 +45,7 @@ const FightSimulator = () => {
     }
   };
 
-  const getLogStyle = (log, index, currentCharacter) => {
+  const getLogStyle = (log, currentCharacter) => {
     const style = { fontWeight: 'bold' };
 
     if (log.includes('hits')) style.color = 'green';
@@ -97,17 +97,13 @@ const FightSimulator = () => {
   let currentCharacter = null;
   let skipNext = false;
 
-  const char1Name = characters.find((char) => char._id === character1)?.name.split(' ')[0];
-  const char2Name = characters.find((char) => char._id === character2)?.name.split(' ')[0];
-  const winnerCharacter = winner === character1 ? char1Name : char2Name;
   const winnerColor = winner === character1 ? 'rgba(0, 128, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)';
 
   return (
-    <Container className="my-5">
-      <Row className="text-center mb-4">
+    <Container>
+      <Row className="text-center mb-2">
         <Col>
-          <h1 className="display-4">Fight Simulator</h1>
-          <p className="lead">Select characters and start the fight simulation</p>
+          <p className="lead">Select characters and start the fight simulation.</p>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -132,7 +128,7 @@ const FightSimulator = () => {
           </Form.Select>
         </Col>
       </Row>
-      <Row className="text-center mb-4">
+      <Row className="text-center my-3">
         <Col>
           <Button variant="primary" size="lg" onClick={handleFight} disabled={loading}>
             {loading ? <Spinner animation="border" size="sm" /> : 'Start Fight'}
@@ -160,7 +156,7 @@ const FightSimulator = () => {
                       </p>
                     );
                   }
-                  const { style, currentCharacter: newCharacter } = getLogStyle(log, index, currentCharacter);
+                  const { style, currentCharacter: newCharacter } = getLogStyle(log, currentCharacter);
                   currentCharacter = newCharacter;
                   if (style.backgroundColor !== 'transparent' && !log.includes('misses') && !log.includes('dodges')) {
                     skipNext = true;
