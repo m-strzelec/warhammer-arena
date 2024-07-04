@@ -1,13 +1,13 @@
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { GiAxeSword, GiCharacter, GiWarhammer } from "react-icons/gi";
-import wharena from '../assets/wharena.webp';
-import '../styles/AppNavbar.css';
+import { GiAxeSword, GiBattleGear, GiDwarfFace, GiWarhammer } from "react-icons/gi";
+import wharena from '../../assets/wharena.webp';
+import '../../styles/AppNavbar.css';
 
 const AppNavbar = () => {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="navbar" sticky='top'>
-      <Container fluid="md">
+    <Navbar bg="dark" variant="dark" expand="md" className="navbar" sticky='top'>
+      <Container fluid="true">
         <Navbar.Brand to="/" as={NavLink} className="ms-4 d-flex align-items-center">
           <img 
             src={wharena}
@@ -27,9 +27,9 @@ const AppNavbar = () => {
                 <span>Home</span>
               </div>
             </Nav.Link>
-            <Nav.Link to="/creator" as={NavLink}>
+            <Nav.Link to="/create-character" as={NavLink}>
               <div className="d-flex align-items-center">
-                <GiCharacter className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
+                <GiDwarfFace className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
                 <span>Character Creator</span>
               </div>
             </Nav.Link>
@@ -37,6 +37,12 @@ const AppNavbar = () => {
               <div className="d-flex align-items-center">
                 <GiAxeSword className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
                 <span>Fight Simulator</span>
+              </div>
+            </Nav.Link>
+            <Nav.Link to="/create-items" as={NavLink}>
+              <div className="d-flex align-items-center">
+                <GiBattleGear className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
+                <span>Items Creator</span>
               </div>
             </Nav.Link>
           </Nav>

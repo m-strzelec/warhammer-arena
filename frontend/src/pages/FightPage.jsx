@@ -1,10 +1,10 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import FightSimulator from '../components/FightSimulator';
+import FightSimulator from '../components/simulator/FightSimulator';
 
 const FightPage = () => {
   return (
     <>
-      <Container className="my-2">
+      <Container className="my-5">
         <Row className="text-center">
           <Col>
             <h1 className="display-4">Fight Simulator</h1>

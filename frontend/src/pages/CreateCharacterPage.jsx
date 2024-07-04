@@ -1,10 +1,10 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import CharacterCreator from '../components/CharacterCreator';
+import CharacterCreator from '../components/creators/CharacterCreator';
 
 const CreateCharacterPage = () => {
   return (
     <>
-      <Container className="my-2">
+      <Container className="my-5">
         <Row className="text-center">
           <Col>
             <h1 className="display-4">Create Character</h1>

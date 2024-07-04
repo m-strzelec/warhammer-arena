@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import '../styles/AppFooter.css';
+import '../../styles/AppFooter.css';
 
 const AppFooter = () => {
     return (

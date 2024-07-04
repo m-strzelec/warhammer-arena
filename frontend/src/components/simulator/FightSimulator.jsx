@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Alert, Spinner, Card } from 'react-bootstrap';
-import { getCharacters } from '../services/characterService';
-import { createFight } from '../services/fightService';
+import { getCharacters } from '../../services/characterService';
+import { createFight } from '../../services/fightService';
 
 const FightSimulator = () => {
   const [characters, setCharacters] = useState([]);

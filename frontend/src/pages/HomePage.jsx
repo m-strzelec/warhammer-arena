@@ -13,7 +13,7 @@ const HomePage = () => {
       <Container className="text-center my-5">
         <Row>
           <Col>
-            <h1 className="display-4">Welcome to the Warhammer Arena</h1>
+            <h1>Welcome to the Warhammer Arena</h1>
             <p className="lead">Create your character and test them in our fight simulator.</p>
           </Col>
         </Row>
@@ -22,7 +22,7 @@ const HomePage = () => {
             <Button
               variant="primary"
               size="lg"
-              onClick={() => handleNavigate('/creator')}
+              onClick={() => handleNavigate('/create-character')}
               className="mx-2"
               aria-label="Create Character"
             >
@@ -36,6 +36,15 @@ const HomePage = () => {
               aria-label="Fight Simulator"
             >
               Simulate a fight
+            </Button>
+            <Button
+              variant="warning"
+              size="lg"
+              onClick={() => handleNavigate('/create-items')}
+              className="mx-2"
+              aria-label="Fight Simulator"
+            >
+              Add new items
             </Button>
           </Col>
         </Row>
