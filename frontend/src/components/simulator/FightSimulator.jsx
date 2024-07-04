@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button, Alert, Spinner, Card } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert, Spinner, Card } from 'react-bootstrap';
+import { Dropdown } from 'primereact/dropdown';
 import { getCharacters } from '../../services/characterService';
 import { createFight } from '../../services/fightService';
 
@@ -11,6 +12,11 @@ const FightSimulator = () => {
   const [winner, setWinner] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const characterOptions = characters.map(char => ({
+    label: char.name,
+    value: char._id
+  }));
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -108,24 +114,26 @@ const FightSimulator = () => {
       </Row>
       <Row className="justify-content-center">
         <Col md={4} className="mb-3">
-          <Form.Select onChange={(e) => setCharacter1(e.target.value)} value={character1} aria-label="Select Character 1">
-            <option value="">Select Character 1</option>
-            {characters.map((char) => (
-              <option key={char._id} value={char._id}>
-                {char.name}
-              </option>
-            ))}
-          </Form.Select>
+          <Dropdown
+            aria-label="Select first character" 
+            value={character1}
+            options={characterOptions}
+            onChange={(e) => setCharacter1(e.value)}
+            placeholder="Select first character"
+            className="w-100 text-start"
+            required
+          />
         </Col>
         <Col md={4} className="mb-3">
-          <Form.Select onChange={(e) => setCharacter2(e.target.value)} value={character2} aria-label="Select Character 2">
-            <option value="">Select Character 2</option>
-            {characters.map((char) => (
-              <option key={char._id} value={char._id}>
-                {char.name}
-              </option>
-            ))}
-          </Form.Select>
+          <Dropdown
+            aria-label="Select second character" 
+            value={character2}
+            options={characterOptions}
+            onChange={(e) => setCharacter2(e.value)}
+            placeholder="Select second character"
+            className="w-100 text-start"
+            required
+          />
         </Col>
       </Row>
       <Row className="text-center my-3">

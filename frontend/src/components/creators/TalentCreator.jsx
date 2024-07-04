@@ -30,11 +30,25 @@ const TalentCreator = () => {
       <h3>Create Talent</h3>
       <Form.Group controlId="formTalentName">
         <Form.Label>Name</Form.Label>
-        <Form.Control type="text" name="name" placeholder="Enter talent name" value={talent.name} onChange={handleChange} required />
+        <Form.Control 
+          type="text" 
+          name="name" 
+          placeholder="Enter talent name" 
+          value={talent.name} 
+          onChange={handleChange} 
+          required 
+        />
       </Form.Group>
       <Form.Group controlId="formTalentDescription">
         <Form.Label>Description</Form.Label>
-        <Form.Control type="text" name="description" placeholder="Enter talent description" value={talent.conditions} onChange={handleChange} required />
+        <Form.Control 
+          type="text" 
+          name="description" 
+          placeholder="Enter description" 
+          value={talent.conditions} 
+          onChange={handleChange} 
+          required 
+        />
       </Form.Group>
       <Button variant="primary" type="submit">Create Talent</Button>
     </Form>

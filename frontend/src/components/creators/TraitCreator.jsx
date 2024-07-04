@@ -30,11 +30,25 @@ const TraitCreator = () => {
       <h3>Create Trait</h3>
       <Form.Group controlId="formTraitName">
         <Form.Label>Name</Form.Label>
-        <Form.Control type="text" name="name" placeholder="Enter trait name" value={trait.name} onChange={handleChange} required />
+        <Form.Control 
+          type="text" 
+          name="name" 
+          placeholder="Enter trait name" 
+          value={trait.name} 
+          onChange={handleChange} 
+          required 
+        />
       </Form.Group>
       <Form.Group controlId="formTraitEffect">
         <Form.Label>Description</Form.Label>
-        <Form.Control type="text" name="description" placeholder="Enter trait description" value={trait.description} onChange={handleChange} required />
+        <Form.Control 
+          type="text" 
+          name="description" 
+          placeholder="Enter description" 
+          value={trait.description} 
+          onChange={handleChange} 
+          required 
+        />
       </Form.Group>
       <Button variant="primary" type="submit">Create Trait</Button>
     </Form>

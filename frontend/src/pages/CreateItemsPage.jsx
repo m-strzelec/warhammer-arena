@@ -13,7 +13,7 @@ const CreateItemsPage = () => {
 
   return (
     <>
-      <Container className="my-5">
+      <Container className="my-5 create-items">
         <Row className="text-center mb-4">
           <Col className='items-header'>
             <h1 className="display-4" onClick={() => setKey('')}>Create Items</h1>

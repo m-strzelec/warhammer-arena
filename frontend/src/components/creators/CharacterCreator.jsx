@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
+import { Dropdown } from 'primereact/dropdown';
 import { createCharacter } from '../../services/characterService';
 
 const CharacterCreator = () => {
@@ -41,9 +42,21 @@ const CharacterCreator = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const races = [
+    { label: 'Human', value: 'human' },
+    { label: 'Elf', value: 'elf' },
+    { label: 'Dwarf', value: 'dwarf' },
+    { label: 'Halfling', value: 'halfling' },
+    { label: 'Other', value: 'other' },
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCharacter({ ...character, [name]: value });
+  };
+
+  const handleDropdownChange = (e, name) => {
+    setCharacter({ ...character, [name]: e.value });
   };
 
   const handlePrimaryStatChange = (e) => {
@@ -104,18 +117,25 @@ const CharacterCreator = () => {
             <Row className="mb-3">
               <Form.Group as={Col} md="6" controlId="formGridName" className="d-flex align-items-center">
                 <Form.Label className="me-2 mb-0">Name:</Form.Label>
-                <Form.Control type="text" name="name" placeholder="Name" onChange={handleChange} required />
+                <Form.Control 
+                  type="text" 
+                  name="name" 
+                  placeholder="Name" 
+                  onChange={handleChange} 
+                  required 
+                />
               </Form.Group>
               <Form.Group as={Col} md="6" controlId="formGridRace" className="d-flex align-items-center">
                 <Form.Label className="me-2 mb-0">Race:</Form.Label>
-                <Form.Select aria-label="Character race select" onChange={handleChange} required>
-                  <option>Select race of your character</option>
-                  <option value="human">Human</option>
-                  <option value="elf">Elf</option>
-                  <option value="dwarf">Dwarf</option>
-                  <option value="halfling">Halfling</option>
-                  <option value="other">Other</option>
-                </Form.Select>
+                <Dropdown
+                  aria-label="Character race select" 
+                  value={character.race}
+                  options={races}
+                  onChange={(e) => handleDropdownChange(e, 'race')}
+                  placeholder="Select character race"
+                  className="w-100 text-start"
+                  required
+                />
               </Form.Group>
             </Row>
             <h3>Primary Stats</h3>
@@ -172,15 +192,30 @@ const CharacterCreator = () => {
             </Row>
             <h3>Weapons</h3>
             <Form.Group className="mb-3">
-              <Form.Control type="text" name="weapons" placeholder="Weapon Name" onChange={(e) => handleArrayChange(e, 'weapons')} />
+              <Form.Control 
+                type="text" 
+                name="weapons" 
+                placeholder="Weapon Name" 
+                onChange={(e) => handleArrayChange(e, 'weapons')} 
+              />
             </Form.Group>
             <h3>Skills</h3>
             <Form.Group className="mb-3">
-              <Form.Control type="text" name="skills" placeholder="Skill Name" onChange={(e) => handleArrayChange(e, 'skills')} />
+              <Form.Control 
+                type="text" 
+                name="skills" 
+                placeholder="Skill Name" 
+                onChange={(e) => handleArrayChange(e, 'skills')} 
+              />
             </Form.Group>
             <h3>Talents</h3>
             <Form.Group className="mb-3">
-              <Form.Control type="text" name="talents" placeholder="Talent Name" onChange={(e) => handleArrayChange(e, 'talents')} />
+              <Form.Control 
+                type="text" 
+                name="talents" 
+                placeholder="Talent Name" 
+                onChange={(e) => handleArrayChange(e, 'talents')} 
+              />
             </Form.Group>
             <Button variant="primary" type="submit">Create Character</Button>
           </Form>
