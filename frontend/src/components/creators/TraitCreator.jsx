@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import { createTrait } from '../../services/traitService';
 
 const TraitCreator = () => {
@@ -25,12 +26,18 @@ const TraitCreator = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h3>Create Trait</h3>
-      <input type="text" name="name" placeholder="Name" value={trait.name} onChange={handleChange} required />
-      <input type="text" name="description" placeholder="Description" value={trait.description} onChange={handleChange} required />
-      <button type="submit">Create Trait</button>
-    </form>
+      <Form.Group controlId="formTraitName">
+        <Form.Label>Name</Form.Label>
+        <Form.Control type="text" name="name" placeholder="Enter trait name" value={trait.name} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formTraitEffect">
+        <Form.Label>Description</Form.Label>
+        <Form.Control type="text" name="description" placeholder="Enter trait description" value={trait.description} onChange={handleChange} required />
+      </Form.Group>
+      <Button variant="primary" type="submit">Create Trait</Button>
+    </Form>
   );
 };
 

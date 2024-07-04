@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import { createTalent } from '../../services/talentService';
 
 const TalentCreator = () => {
@@ -25,12 +26,18 @@ const TalentCreator = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h3>Create Talent</h3>
-      <input type="text" name="name" placeholder="Name" value={talent.name} onChange={handleChange} required />
-      <input type="text" name="description" placeholder="Description" value={talent.description} onChange={handleChange} required />
-      <button type="submit">Create Talent</button>
-    </form>
+      <Form.Group controlId="formTalentName">
+        <Form.Label>Name</Form.Label>
+        <Form.Control type="text" name="name" placeholder="Enter talent name" value={talent.name} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formTalentDescription">
+        <Form.Label>Description</Form.Label>
+        <Form.Control type="text" name="description" placeholder="Enter talent description" value={talent.conditions} onChange={handleChange} required />
+      </Form.Group>
+      <Button variant="primary" type="submit">Create Talent</Button>
+    </Form>
   );
 };
 

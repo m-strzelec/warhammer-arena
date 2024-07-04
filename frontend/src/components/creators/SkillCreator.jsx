@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import { createSkill } from '../../services/skillService';
 
 const SkillCreator = () => {
@@ -26,13 +27,22 @@ const SkillCreator = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h3>Create Skill</h3>
-      <input type="text" name="name" placeholder="Name" value={skill.name} onChange={handleChange} required />
-      <input type="text" name="baseStat" placeholder="Base Stat" value={skill.baseStat} onChange={handleChange} required />
-      <input type="text" name="description" placeholder="Description" value={skill.description} onChange={handleChange} required />
-      <button type="submit">Create Skill</button>
-    </form>
+      <Form.Group controlId="formSkillName">
+        <Form.Label>Name</Form.Label>
+        <Form.Control type="text" name="name" placeholder="Enter skill name" value={skill.name} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formSkillBaseStat">
+        <Form.Label>Base Stat</Form.Label>
+        <Form.Control type="text" name="baseStat" placeholder="Enter skill base stat" value={skill.baseStat} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formSkillDescription">
+        <Form.Label>Description</Form.Label>
+        <Form.Control type="text" name="description" placeholder="Enter skill description" value={skill.description} onChange={handleChange} required />
+      </Form.Group>
+      <Button variant="primary" type="submit">Create Skill</Button>
+    </Form>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import { createWeapon } from '../../services/weaponService';
 
 const WeaponCreator = () => {
@@ -28,15 +29,30 @@ const WeaponCreator = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h3>Create Weapon</h3>
-      <input type="text" name="name" placeholder="Name" value={weapon.name} onChange={handleChange} required />
-      <input type="number" name="damageFactor" placeholder="Damage Factor" value={weapon.damageFactor} onChange={handleChange} required />
-      <input type="text" name="traits" placeholder="Traits" value={weapon.traits} onChange={handleChange} required />
-      <input type="text" name="type" placeholder="Type" value={weapon.type} onChange={handleChange} required />
-      <input type="text" name="handedness" placeholder="Handedness" value={weapon.handedness} onChange={handleChange} required />
-      <button type="submit">Create Weapon</button>
-    </form>
+      <Form.Group controlId="formWeaponName">
+        <Form.Label>Name</Form.Label>
+        <Form.Control type="text" name="name" placeholder="Enter weapon name" value={weapon.name} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formWeaponDamageFactor">
+        <Form.Label>Damage Factor</Form.Label>
+        <Form.Control type="number" name="damageFactor" placeholder="Enter damage factor" value={weapon.damageFactor} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formWeaponTraits">
+        <Form.Label>Traits</Form.Label>
+        <Form.Control type="text" name="traits" placeholder="Enter weapon traits" value={weapon.traits} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formWeaponType">
+        <Form.Label>Type</Form.Label>
+        <Form.Control type="text" name="type" placeholder="Enter weapon type" value={weapon.type} onChange={handleChange} required />
+      </Form.Group>
+      <Form.Group controlId="formWeaponHandedness">
+        <Form.Label>Handedness</Form.Label>
+        <Form.Control type="text" name="handedness" placeholder="Enter weapon handedness" value={weapon.handedness} onChange={handleChange} required />
+      </Form.Group>
+      <Button variant="primary" type="submit">Create Weapon</Button>
+    </Form>
   );
 };
 

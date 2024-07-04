@@ -27,16 +27,16 @@ const AppNavbar = () => {
                 <span>Home</span>
               </div>
             </Nav.Link>
-            <Nav.Link to="/create-character" as={NavLink}>
-              <div className="d-flex align-items-center">
-                <GiDwarfFace className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
-                <span>Character Creator</span>
-              </div>
-            </Nav.Link>
             <Nav.Link to="/fight" as={NavLink}>
               <div className="d-flex align-items-center">
                 <GiAxeSword className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
                 <span>Fight Simulator</span>
+              </div>
+            </Nav.Link>
+            <Nav.Link to="/create-character" as={NavLink}>
+              <div className="d-flex align-items-center">
+                <GiDwarfFace className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
+                <span>Character Creator</span>
               </div>
             </Nav.Link>
             <Nav.Link to="/create-items" as={NavLink}>

@@ -1,5 +1,7 @@
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import '../styles/HomePage.css';
+import home from '../assets/home.webp';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -10,14 +12,14 @@ const HomePage = () => {
 
   return (
     <>
-      <Container className="text-center my-5">
+      <Container className="my-5">
         <Row>
           <Col>
             <h1>Welcome to the Warhammer Arena</h1>
             <p className="lead">Create your character and test them in our fight simulator.</p>
           </Col>
         </Row>
-        <Row className="mt-4">
+        <Row className="my-4">
           <Col>
             <Button
               variant="primary"
@@ -46,6 +48,15 @@ const HomePage = () => {
             >
               Add new items
             </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Image 
+              src={home}
+              alt="grand arena where fantasy characters are engaged in epic battles"
+              fluid
+            />
           </Col>
         </Row>
       </Container>
