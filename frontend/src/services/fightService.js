@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api/api';
 
 export const createFight = (character1Id, character2Id) => {
     return api.post('/fights', { character1Id, character2Id });

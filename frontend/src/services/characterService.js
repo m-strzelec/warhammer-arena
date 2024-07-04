@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api/api';
 
 export const createCharacter = (character) => {
     return api.post('/characters', character);
@@ -9,5 +9,5 @@ export const getCharacters = () => {
 };
 
 export const getCharacterById = (characterId) => {
-    return api.get(`/fights/${characterId}`);
+    return api.get(`/characters/${characterId}`);
 };
