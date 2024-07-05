@@ -1,13 +1,13 @@
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { GiAxeSword, GiBattleGear, GiDwarfFace, GiWarhammer } from "react-icons/gi";
+import { GiAxeSword, GiBattleGear, GiCharacter, GiDwarfFace, GiWarhammer } from "react-icons/gi";
 import { SiCurseforge } from "react-icons/si";
 import wharena from '../../assets/wharena.webp';
 import '../../styles/components/common/AppNavbar.css';
 
 const AppNavbar = () => {
   return (
-    <Navbar bg="dark" variant="dark" expand="md" className="navbar" sticky='top'>
+    <Navbar bg="dark" variant="dark" expand="lg" className="navbar" sticky='top'>
       <Container fluid="true">
         <Navbar.Brand to="/" as={NavLink} className="ms-4 d-flex align-items-center">
           <img 
@@ -50,6 +50,12 @@ const AppNavbar = () => {
               <div className="d-flex align-items-center">
                 <GiBattleGear className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
                 <span>Armory</span>
+              </div>
+            </Nav.Link>
+            <Nav.Link to="/characters" as={NavLink}>
+              <div className="d-flex align-items-center">
+                <GiCharacter className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
+                <span>Characters</span>
               </div>
             </Nav.Link>
           </Nav>

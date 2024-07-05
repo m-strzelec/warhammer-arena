@@ -53,9 +53,18 @@ const HomePage = () => {
               size="lg"
               onClick={() => handleNavigate('/browse-items')}
               className="mx-2"
-              aria-label="Ttems Browser"
+              aria-label="Items Browser"
             >
               Browse available items
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => handleNavigate('/characters')}
+              className="mx-2"
+              aria-label="Characters Browser"
+            >
+              Browse characters
             </Button>
           </Col>
         </Row>

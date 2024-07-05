@@ -1,0 +1,152 @@
+import { useState, useEffect } from 'react';
+import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Dropdown } from 'primereact/dropdown';
+import { getCharacters, getCharacterById } from '../services/characterService';
+import '../styles/pages/BrowseCharactersPage.css';
+
+const BrowseCharactersPage = () => {
+  const [characters, setCharacters] = useState([]);
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [characterData, setCharacterData] = useState(null);
+
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      try {
+        const response = await getCharacters();
+        setCharacters(response.data);
+      } catch (error) {
+        console.error('Failed to fetch characters', error);
+      }
+    };
+
+    fetchCharacters();
+  }, []);
+
+  const handleCharacterChange = async (e) => {
+    const characterId = e.value;
+    setSelectedCharacter(characterId);
+    try {
+      const response = await getCharacterById(characterId);
+      setCharacterData(response.data);
+    } catch (error) {
+      console.error('Failed to fetch character data', error);
+    }
+  };
+
+  const characterOptions = characters.map((char) => ({
+    label: char.name,
+    value: char._id,
+  }));
+
+  return (
+    <Container className="my-5 browse-characters">
+      <Row className="text-center mb-4">
+        <Col>
+          <h1 className="display-4">Browse Characters</h1>
+          <p className="lead">Browse and view detailed information about characters</p>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Dropdown
+            value={selectedCharacter}
+            options={characterOptions}
+            onChange={handleCharacterChange}
+            placeholder="Select a character"
+            filter
+            className="w-100"
+          />
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        <Col>
+          {characterData && (
+            <Card className="character-card">
+              <Card.Body>
+                <Card.Title>{characterData.name}</Card.Title>
+                <div>
+                  <strong>Primary Stats:</strong>
+                  <Row>
+                    {Object.keys(characterData.primaryStats).map((stat) => (
+                      <Col key={stat} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{stat}: </span>
+                          <span className="stat-value">{characterData.primaryStats[stat]}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <div>
+                  <strong>Secondary Stats:</strong>
+                  <Row>
+                    {Object.keys(characterData.secondaryStats).map((stat) => (
+                      <Col key={stat} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{stat}: </span>
+                          <span className="stat-value">{characterData.secondaryStats[stat]}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <div>
+                  <strong>Armor:</strong>
+                  <Row>
+                    {Object.keys(characterData.armor).map((part) => (
+                      <Col key={part} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{part}: </span>
+                          <span className="stat-value">{characterData.armor[part]}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <div>
+                  <strong>Weapons:</strong>
+                  <Row>
+                    {characterData.weapons.map((weapon) => (
+                      <Col key={weapon._id} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{weapon.name}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <div>
+                  <strong>Skills:</strong>
+                  <Row>
+                    {characterData.skills.map((skill) => (
+                      <Col key={skill._id} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{skill.skill.name} </span>
+                          <span>+{skill.factor}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <div>
+                  <strong>Talents:</strong>
+                  <Row>
+                    {characterData.talents.map((talent) => (
+                      <Col key={talent._id} sm={6} md={4}>
+                        <div className="stat-item">
+                          <span className="stat-name">{talent.name}</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              </Card.Body>
+            </Card>
+          )}
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default BrowseCharactersPage;

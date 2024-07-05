@@ -64,6 +64,7 @@ const ArmorCreator = () => {
           onChange={handleMultiSelectChange}
           placeholder="Select armor locations"
           display="chip"
+          showClear
           className="w-100 text-start"
           required
         />
