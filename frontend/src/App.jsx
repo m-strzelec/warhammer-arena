@@ -5,8 +5,8 @@ import HomePage from './pages/HomePage';
 import CreateCharacterPage from './pages/CreateCharacterPage';
 import FightPage from './pages/FightPage';
 import CreateItemsPage from './pages/CreateItemsPage';
+import BrowseItemsPage from './pages/BrowseItemsPage';
 import './styles/App.css';
-
 
 function App() {
   return (
@@ -18,6 +18,7 @@ function App() {
           <Route path="/create-character" element={<CreateCharacterPage />} />
           <Route path="/fight" element={<FightPage />} />
           <Route path="/create-items" element={<CreateItemsPage />} />
+          <Route path="/browse-items" element={<BrowseItemsPage />} />
         </Routes>
         <AppFooter />
       </BrowserRouter>

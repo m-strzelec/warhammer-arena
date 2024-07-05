@@ -1,6 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import FightSimulator from '../components/simulator/FightSimulator';
-import '../styles/FightPage.css';
+import '../styles/pages/FightPage.css';
 
 const FightPage = () => {
   return (

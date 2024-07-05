@@ -11,11 +11,11 @@ db.createCollection('fights');
 // Traits
 db.traits.insertMany([
     {
-        name: 'fast',
+        name: 'Fast',
         description: 'Gives enemy -10 to parry/dodge.'
     },
     {
-        name: 'slow',
+        name: 'Slow',
         description: 'Gives enemy +10 to parry/dodge.'
     }
 ]);
@@ -23,7 +23,7 @@ db.traits.insertMany([
 // Skills
 db.skills.insertMany([
     {
-        name: 'dodge blow',
+        name: 'Dodge Blow',
         baseStat: 'Ag',
         description: 'Allows character to dodge attacks.'
     }
@@ -32,7 +32,7 @@ db.skills.insertMany([
 // Talents
 db.talents.insertMany([
     {
-        name: 'strike mighty blow',
+        name: 'Strike Mighty Blow',
         description: 'Increases damage dealt by 1.'
     }
 ]);
@@ -49,7 +49,7 @@ db.weapons.insertMany([
     {
         name: 'Elven Sword',
         damageFactor: 0,
-        traits: [db.traits.findOne({ name: 'fast' })._id],
+        traits: [db.traits.findOne({ name: 'Fast' })._id],
         type: 'melee',
         handedness: 'one-handed'
     }
@@ -115,7 +115,7 @@ db.characters.insertMany([
         ],
         skills: [],
         talents: [
-            db.talents.findOne({ name: 'strike mighty blow' })._id
+            db.talents.findOne({ name: 'Strike Mighty Blow' })._id
         ],
     },
     {
@@ -154,7 +154,7 @@ db.characters.insertMany([
         ],
         skills: [
             {
-                skill: db.skills.findOne({ name: 'dodge blow' })._id,
+                skill: db.skills.findOne({ name: 'Dodge Blow' })._id,
                 factor: 10
             },
         ],

@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import '../styles/HomePage.css';
+import '../styles/pages/HomePage.css';
 import home from '../assets/home.webp';
 
 const HomePage = () => {
@@ -22,15 +22,6 @@ const HomePage = () => {
         <Row className="my-4">
           <Col>
             <Button
-              variant="primary"
-              size="lg"
-              onClick={() => handleNavigate('/create-character')}
-              className="mx-2"
-              aria-label="Create Character"
-            >
-              Create new character
-            </Button>
-            <Button
               variant="success"
               size="lg"
               onClick={() => handleNavigate('/fight')}
@@ -40,13 +31,31 @@ const HomePage = () => {
               Simulate a fight
             </Button>
             <Button
+              variant="primary"
+              size="lg"
+              onClick={() => handleNavigate('/create-character')}
+              className="mx-2"
+              aria-label="Create Character"
+            >
+              Create new character
+            </Button>
+            <Button
               variant="warning"
               size="lg"
               onClick={() => handleNavigate('/create-items')}
               className="mx-2"
-              aria-label="Fight Simulator"
+              aria-label="Items Creator"
             >
               Add new items
+            </Button>
+            <Button
+              variant="info"
+              size="lg"
+              onClick={() => handleNavigate('/browse-items')}
+              className="mx-2"
+              aria-label="Ttems Browser"
+            >
+              Browse available items
             </Button>
           </Col>
         </Row>

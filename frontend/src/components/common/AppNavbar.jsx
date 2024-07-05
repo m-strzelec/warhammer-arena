@@ -1,8 +1,9 @@
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { GiAxeSword, GiBattleGear, GiDwarfFace, GiWarhammer } from "react-icons/gi";
+import { SiCurseforge } from "react-icons/si";
 import wharena from '../../assets/wharena.webp';
-import '../../styles/AppNavbar.css';
+import '../../styles/components/common/AppNavbar.css';
 
 const AppNavbar = () => {
   return (
@@ -41,8 +42,14 @@ const AppNavbar = () => {
             </Nav.Link>
             <Nav.Link to="/create-items" as={NavLink}>
               <div className="d-flex align-items-center">
+                <SiCurseforge className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
+                <span>Forge</span>
+              </div>
+            </Nav.Link>
+            <Nav.Link to="/browse-items" as={NavLink}>
+              <div className="d-flex align-items-center">
                 <GiBattleGear className="d-inline-block me-2" style={{ width: '40px', height: '40px' }} />
-                <span>Items Creator</span>
+                <span>Armory</span>
               </div>
             </Nav.Link>
           </Nav>

@@ -1,6 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import CharacterCreator from '../components/creators/CharacterCreator';
-import '../styles/CreateCharacterPage.css';
+import '../styles/pages/CreateCharacterPage.css';
 
 const CreateCharacterPage = () => {
   return (
