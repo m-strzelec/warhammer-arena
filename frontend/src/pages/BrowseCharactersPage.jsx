@@ -93,11 +93,15 @@ const BrowseCharactersPage = () => {
                 <div>
                   <strong>Armor:</strong>
                   <Row>
-                    {Object.keys(characterData.armor).map((part) => (
-                      <Col key={part} sm={6} md={4}>
+                    {Object.entries(characterData.armor).map(([bodyPart, armorPart]) => (
+                      <Col key={bodyPart} sm={6} md={4}>
                         <div className="stat-item">
-                          <span className="stat-name">{part}: </span>
-                          <span className="stat-value">{characterData.armor[part]}</span>
+                          <span className="stat-name">{bodyPart}: </span>
+                          {armorPart ? (
+                            <span className="stat-value">{armorPart.name}</span>
+                          ) : (
+                            <span>No Armor</span>
+                          )}
                         </div>
                       </Col>
                     ))}
@@ -106,38 +110,50 @@ const BrowseCharactersPage = () => {
                 <div>
                   <strong>Weapons:</strong>
                   <Row>
-                    {characterData.weapons.map((weapon) => (
-                      <Col key={weapon._id} sm={6} md={4}>
-                        <div className="stat-item">
-                          <span className="stat-name">{weapon.name}</span>
-                        </div>
-                      </Col>
-                    ))}
+                    {characterData.weapons.length > 0 ? (
+                      characterData.weapons.map((weapon) => (
+                        <Col key={weapon._id} sm={6} md={4}>
+                          <div className="stat-item">
+                            <span className="stat-name">{weapon.name}</span>
+                          </div>
+                        </Col>
+                      ))
+                    ) : (
+                      <span>No Weapons</span>
+                    )}
                   </Row>
                 </div>
                 <div>
                   <strong>Skills:</strong>
                   <Row>
-                    {characterData.skills.map((skill) => (
-                      <Col key={skill._id} sm={6} md={4}>
-                        <div className="stat-item">
-                          <span className="stat-name">{skill.skill.name} </span>
-                          <span>+{skill.factor}</span>
-                        </div>
-                      </Col>
-                    ))}
+                    {characterData.skills.length > 0 ? (
+                      characterData.skills.map((skill) => (
+                        <Col key={skill._id} sm={6} md={4}>
+                          <div className="stat-item">
+                            <span className="stat-name">{skill.skill.name} </span>
+                            <span>+{skill.factor}</span>
+                          </div>
+                        </Col>
+                      ))
+                    ) : (
+                      <span>No Skills</span>
+                    )}
                   </Row>
                 </div>
                 <div>
                   <strong>Talents:</strong>
                   <Row>
-                    {characterData.talents.map((talent) => (
-                      <Col key={talent._id} sm={6} md={4}>
-                        <div className="stat-item">
-                          <span className="stat-name">{talent.name}</span>
-                        </div>
-                      </Col>
-                    ))}
+                    {characterData.talents.length > 0 ? (
+                      characterData.talents.map((talent) => (
+                        <Col key={talent._id} sm={6} md={4}>
+                          <div className="stat-item">
+                            <span className="stat-name">{talent.name}</span>
+                          </div>
+                        </Col>
+                      ))
+                    ) : (
+                      <span>No Talents</span>
+                    )}
                   </Row>
                 </div>
               </Card.Body>
