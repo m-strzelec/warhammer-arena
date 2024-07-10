@@ -98,8 +98,8 @@ const CharacterCreator = () => {
       setSuccess('Character created successfully');
       setError('');
     } catch (error) {
-      console.error(error);
-      setError('Failed to create character');
+      console.error(error.response.data.message);
+      setError(error.response.data.message);
       setSuccess('');
     }
   };

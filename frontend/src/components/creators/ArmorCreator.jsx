@@ -3,7 +3,8 @@ import { Form, Button } from 'react-bootstrap';
 import { MultiSelect } from 'primereact/multiselect';
 import { createArmor } from '../../services/armorService';
 
-const ArmorCreator = () => {
+const ArmorCreator = ({ traitOptions }) => {
+  const [error, setError] = useState('');
   const [armor, setArmor] = useState({
     name: '', 
     location: [],
@@ -25,19 +26,24 @@ const ArmorCreator = () => {
     setArmor({ ...armor, [name]: value });
   };
 
-  const handleMultiSelectChange = (e) => {
-    setArmor({ ...armor, location: e.value });
+  const handleMultiSelectChange = (e, name) => {
+    setArmor({ ...armor, [name]: e.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await createArmor(armor);
-      alert('Armor created successfully');
-      setArmor({ name: '', location: [''], protectionFactor: '', traits: [] });
-    } catch (error) {
-      console.error(error);
-      alert('Failed to create armor');
+    if (armor.location.length === 0) {
+      setError('Please select at least one armor location.')
+    } else {
+      setError('');
+      try {
+        await createArmor(armor);
+        alert('Armor created successfully');
+        setArmor({ name: '', location: [], protectionFactor: '', traits: [] });
+      } catch (error) {
+        console.error(error.response.data.message);
+        alert(error.response.data.message);
+      }
     }
   };
 
@@ -61,7 +67,7 @@ const ArmorCreator = () => {
           aria-label="Armor locations select"
           value={armor.location}
           options={armorLocations}
-          onChange={handleMultiSelectChange}
+          onChange={(e) => handleMultiSelectChange(e, 'location')}
           placeholder="Select armor locations"
           display="chip"
           showClear
@@ -82,15 +88,21 @@ const ArmorCreator = () => {
       </Form.Group>
       <Form.Group controlId="formArmorTraits">
         <Form.Label>Traits</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="traits" 
-          placeholder="Enter traits" 
-          value={armor.traits} 
-          onChange={handleChange} 
-          required 
+        <MultiSelect
+          aria-label="Armor traits select"
+          value={armor.traits}
+          options={traitOptions}
+          onChange={(e) => handleMultiSelectChange(e, 'traits')}
+          placeholder="Select traits"
+          display="chip"
+          showClear
+          filter
+          className="w-100 text-start"
+          required
         />
       </Form.Group>
+      {error && <small style={{ color: 'red' }}>{error}</small>}
+      <br />
       <Button variant="primary" type="submit">Create Armor</Button>
     </Form>
   );

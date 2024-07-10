@@ -3,11 +3,23 @@ const Skill = require('../models/Skill');
 
 const createSkill = async (req, res) => {
     try {
-        const skill = new Skill(req.body);
-        await skill.save();
-        res.status(HttpStatus.StatusCodes.CREATED).json(skill);
+        const { name, baseStat, description } = req.body;
+        if (!name || !baseStat || !description) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
+                message: !name ? 'No skill name was given' : 
+                    !location ? 'No base stat was given' :
+                        'No description was given'
+            });
+        }
+        const existingSkill = await Skill.findOne({ name });
+        if (existingSkill) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Skill with given name already exists' });
+        }
+        const newSkill = new Skill({ name, baseStat, description });
+        await newSkill.save();
+        res.status(HttpStatus.StatusCodes.CREATED).json(newSkill);
     } catch (error) {
-        res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error creating skill', error: error.message });
     }
 };
 
@@ -16,7 +28,7 @@ const getSkills = async (req, res) => {
         const skills = await Skill.find();
         res.status(HttpStatus.StatusCodes.OK).json(skills);
     } catch (error) {
-        res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching skills', error: error.message });
     }
 };
 
@@ -24,11 +36,11 @@ const getSkillById = async (req, res) => {
     try {
         const skill = await Skill.findById(req.params.id);
         if (!skill) {
-            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ error: 'Skill not found' });
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Skill not found' });
         }
         res.status(HttpStatus.StatusCodes.OK).json(skill);
     } catch (error) {
-        res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ error: error.message });
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching skill data', error: error.message });
     }
 };
 

@@ -20,8 +20,8 @@ const TalentCreator = () => {
       alert('Talent created successfully');
       setTalent({ name: '', description: '' });
     } catch (error) {
-      console.error(error);
-      alert('Failed to create talent');
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
     }
   };
 
@@ -45,7 +45,7 @@ const TalentCreator = () => {
           type="text" 
           name="description" 
           placeholder="Enter description" 
-          value={talent.conditions} 
+          value={talent.description} 
           onChange={handleChange} 
           required 
         />

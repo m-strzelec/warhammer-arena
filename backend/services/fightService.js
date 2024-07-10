@@ -1,5 +1,4 @@
 const { rollDice } = require('../utils/diceRoll');
-const Character = require('../models/Character');
 const Weapon = require('../models/Weapon');
 const Skill = require('../models/Skill');
 const SkillEffects = require('../utils/skills');
@@ -28,10 +27,7 @@ const calculateDamage = async (attacker, defender) => {
   return Math.max(0, damage);
 };
 
-const simulateFight = async (character1Id, character2Id) => {
-    const character1 = await Character.findById(character1Id).populate('armor weapons skills.skill talents');
-    const character2 = await Character.findById(character2Id).populate('armor weapons skills.skill talents');
-
+const simulateFight = async (character1, character2) => {
     const log = [];
     let character1Health = character1.secondaryStats.W;
     let character2Health = character2.secondaryStats.W;

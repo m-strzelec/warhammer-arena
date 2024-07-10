@@ -37,8 +37,8 @@ const SkillCreator = () => {
       alert('Skill created successfully');
       setSkill({ name: '', baseStat: '', description: '' });
     } catch (error) {
-      console.error(error);
-      alert('Failed to create skill');
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
     }
   };
 

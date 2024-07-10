@@ -31,7 +31,7 @@ const BrowseItemsPage = () => {
         setTalents(talentResponse.data);
         setTraits(traitResponse.data);
       } catch (error) {
-        console.error('Failed to fetch items', error);
+        console.error(error.response.data.message);
       }
     };
 

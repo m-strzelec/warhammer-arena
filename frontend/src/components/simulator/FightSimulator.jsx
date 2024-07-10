@@ -24,8 +24,8 @@ const FightSimulator = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        setError('Failed to fetch characters');
-        console.error(error);
+        setError(error.response.data.message);
+        console.error(error.response.data.message);
       }
     };
     fetchCharacters();
@@ -44,8 +44,8 @@ const FightSimulator = () => {
       setFightLog(response.data.log);
       setWinner(response.data.winnerId);
     } catch (error) {
-      setError('Failed to start fight');
-      console.error(error);
+      setError(error.response.data.message);
+      console.error(error.response.data.message);
     } finally {
       setLoading(false);
     }

@@ -53,8 +53,8 @@ characterSchema.pre('save', async function(next) {
         await Promise.all([
             Armor.find({ _id: { $in: Object.values(this.armor).filter(id => id) } }).exec(),
             Weapon.find({ _id: { $in: this.weapons } }).exec(),
-            Skill.find({ _id: { $in: this.skills } }).exec(),
-            Talent.find({ _id: { $in: this.abilities } }).exec()
+            Skill.find({ _id: { $in: this.skills.map(s => s.skill) } }).exec(),
+            Talent.find({ _id: { $in: this.talents } }).exec()
         ]);
         next();
     } catch (err) {

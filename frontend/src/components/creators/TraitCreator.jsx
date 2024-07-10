@@ -20,8 +20,8 @@ const TraitCreator = () => {
       alert('Trait created successfully');
       setTrait({ name: '', description: '' });
     } catch (error) {
-      console.error(error);
-      alert('Failed to create trait');
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
     }
   };
 

@@ -1,15 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Row, Col, Tab, Nav, Image } from 'react-bootstrap';
 import ArmorCreator from '../components/creators/ArmorCreator';
 import WeaponCreator from '../components/creators/WeaponCreator';
 import SkillCreator from '../components/creators/SkillCreator';
 import TalentCreator from '../components/creators/TalentCreator';
 import TraitCreator from '../components/creators/TraitCreator';
+import { getTraits } from '../services/traitService';
 import '../styles/pages/CreateItemsPage.css';
 import create_items from '../assets/create_items.webp';
 
 const CreateItemsPage = () => {
   const [key, setKey] = useState('');
+  const [traits, setTraits] = useState([]);
+
+  useEffect(() => {
+    const fetchTraits = async () => {
+      try {
+        const response = await getTraits();
+        setTraits(response.data);
+      } catch (error) {
+        console.error(error.response.data.message);
+      }
+    };
+
+    fetchTraits();
+  }, []);
+
+  const traitOptions = traits.map((trait) => ({
+    label: trait.name,
+    value: trait._id,
+  }));
 
   return (
     <>
@@ -50,10 +70,10 @@ const CreateItemsPage = () => {
               />
               </Tab.Pane>
               <Tab.Pane eventKey="armor" active={key === 'armor'}>
-                <ArmorCreator />
+                <ArmorCreator traitOptions={traitOptions} />
               </Tab.Pane>
               <Tab.Pane eventKey="weapon" active={key === 'weapon'}>
-                <WeaponCreator />
+                <WeaponCreator traitOptions={traitOptions} />
               </Tab.Pane>
               <Tab.Pane eventKey="skill" active={key === 'skill'}>
                 <SkillCreator />

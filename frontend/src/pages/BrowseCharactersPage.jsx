@@ -15,7 +15,7 @@ const BrowseCharactersPage = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        console.error('Failed to fetch characters', error);
+        console.error(error.response.data.message);
       }
     };
 
@@ -29,7 +29,7 @@ const BrowseCharactersPage = () => {
       const response = await getCharacterById(characterId);
       setCharacterData(response.data);
     } catch (error) {
-      console.error('Failed to fetch character data', error);
+      console.error(error.response.data.message);
     }
   };
 

@@ -1,26 +1,17 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import { createWeapon } from '../../services/weaponService';
 
-const WeaponCreator = () => {
+const WeaponCreator = ({ traitOptions }) => {
   const [weapon, setWeapon] = useState({ 
     name: '', 
     damageFactor: '', 
-    traits: '',
+    traits: [],
     type: '',
     handedness: '' 
   });
-
-  const weaponTypes = [
-    { label: 'Melee', value: 'melee' },
-    { label: 'Range', value: 'range' }
-  ];
-
-  const weaponHandedness = [
-    { label: 'One-handed', value: 'one-handed' },
-    { label: 'Two-handed', value: 'two-handed' }
-  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,12 +27,22 @@ const WeaponCreator = () => {
     try {
       await createWeapon(weapon);
       alert('Weapon created successfully');
-      setWeapon({ name: '', damageFactor: '', traits: '', type: '', handedness: '' });
+      setWeapon({ name: '', damageFactor: '', traits: [], type: '', handedness: '' });
     } catch (error) {
-      console.error(error);
-      alert('Failed to create weapon');
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
     }
   };
+
+  const weaponTypes = [
+    { label: 'Melee', value: 'melee' },
+    { label: 'Range', value: 'range' }
+  ];
+
+  const weaponHandedness = [
+    { label: 'One-handed', value: 'one-handed' },
+    { label: 'Two-handed', value: 'two-handed' }
+  ];
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -70,13 +71,16 @@ const WeaponCreator = () => {
       </Form.Group>
       <Form.Group controlId="formWeaponTraits">
         <Form.Label>Traits</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="traits" 
-          placeholder="Enter traits" 
-          value={weapon.traits} 
-          onChange={handleChange} 
-          required 
+        <MultiSelect
+          aria-label="Weapon traits select"
+          value={weapon.traits}
+          options={traitOptions}
+          onChange={(e) => handleDropdownChange(e, 'traits')}
+          placeholder="Select traits"
+          display="chip"
+          showClear
+          filter
+          className="w-100 text-start"
         />
       </Form.Group>
       <Form.Group controlId="formWeaponType">
