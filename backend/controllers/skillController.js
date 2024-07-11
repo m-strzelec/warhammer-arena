@@ -7,7 +7,7 @@ const createSkill = async (req, res) => {
         if (!name || !baseStat || !description) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
                 message: !name ? 'No skill name was given' : 
-                    !location ? 'No base stat was given' :
+                    !baseStat ? 'No base stat was given' :
                         'No description was given'
             });
         }

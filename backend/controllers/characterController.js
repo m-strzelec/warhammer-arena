@@ -4,10 +4,10 @@ const Character = require('../models/Character');
 const createCharacter = async (req, res) => {
     try {
         const { name, race, primaryStats, secondaryStats, armor, weapons, skills, talents } = req.body;
-        if (!name || !location || !protectionFactor) {
+        if (!name || !race || !primaryStats) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
                 message: !name ? 'No character name was given' : 
-                    !location ? 'No character race was given' :
+                    !race ? 'No character race was given' :
                         !primaryStats ? 'No primary stats were given' :
                             'No secondary stats were given'
             });

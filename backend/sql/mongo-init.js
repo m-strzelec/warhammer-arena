@@ -59,19 +59,19 @@ db.weapons.insertMany([
 db.armors.insertMany([
     {
         name: 'Leather Cap',
-        location: ['head'],
+        locations: ['head'],
         protectionFactor: 1,
         traits: []
     },
     {
         name: 'Leather Armor',
-        location: ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'],
+        locations: ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'],
         protectionFactor: 1,
         traits: []
     },
     {
         name: 'Chainmail',
-        location: ['body', 'leftArm', 'rightArm'],
+        locations: ['body', 'leftArm', 'rightArm'],
         protectionFactor: 3,
         traits: []
     }

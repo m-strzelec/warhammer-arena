@@ -4,7 +4,7 @@ const Trait = require('./Trait');
 
 const armorSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
-    location: { type: [String], required: true },
+    locations: { type: [String], required: true },
     protectionFactor: { type: Int32, required: true, min: 0, max: 10 },
     traits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Trait' }]
 });

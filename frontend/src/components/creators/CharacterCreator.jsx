@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import { createCharacter } from '../../services/characterService';
+import { getWeapons } from '../../services/weaponService';
+import { getSkills } from '../../services/skillService';
+import { getTalents } from '../../services/talentService';
+import { getArmors } from '../../services/armorService';
 
 const CharacterCreator = () => {
+  const [armors, setArmors] = useState([]);
+  const [weapons, setWeapons] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [talents, setTalents] = useState([]);
   const [character, setCharacter] = useState({
     name: '',
     race: '',
@@ -39,58 +48,65 @@ const CharacterCreator = () => {
     skills: [],
     talents: [],
   });
+  const [armorSelection, setArmorSelection] = useState({
+    selectedArmorIds: [],
+    selectedArmors: [],
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const races = [
-    { label: 'Human', value: 'human' },
-    { label: 'Elf', value: 'elf' },
-    { label: 'Dwarf', value: 'dwarf' },
-    { label: 'Halfling', value: 'halfling' },
-    { label: 'Other', value: 'other' },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [armorsData, weaponsData, skillsData, talentsData] = await Promise.all([
+          getArmors(), getWeapons(), getSkills(), getTalents()
+        ]);
+        setArmors(armorsData.data);
+        setWeapons(weaponsData.data);
+        setSkills(skillsData.data);
+        setTalents(talentsData.data);
+      } catch (error) {
+        console.error(error.response.data.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCharacter({ ...character, [name]: value });
+    setCharacter((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDropdownChange = (e, name) => {
-    setCharacter({ ...character, [name]: e.value });
+    setCharacter((prev) => ({ ...prev, [name]: e.value }));
   };
 
-  const handlePrimaryStatChange = (e) => {
+  const handleStatChange = (e, statType) => {
     const { name, value } = e.target;
-    setCharacter({
-      ...character,
-      primaryStats: { ...character.primaryStats, [name]: parseInt(value) }
-    });
+    setCharacter((prev) => ({
+      ...prev,
+      [statType]: { ...prev[statType], [name]: parseInt(value, 10) }
+    }));
   };
 
-  const handleSecondaryStatChange = (e) => {
-    const { name, value } = e.target;
-    setCharacter({
-      ...character,
-      secondaryStats: { ...character.secondaryStats, [name]: parseInt(value) }
+  const handleArmorChange = (e) => {
+    const selectedIds = e.value.filter((armor) => armor !== '');
+    const selectedArmors = armors.filter((armor) => selectedIds.includes(armor._id));
+    setArmorSelection({
+      selectedArmorIds: selectedIds,
+      selectedArmors: selectedArmors,
     });
+  
+    const newArmor = selectedArmors.reduce((acc, armor) => {
+      armor.locations.forEach((location) => {
+        acc[location] = armor._id;
+      });
+      return acc;
+    }, { head: '', body: '', leftArm: '', rightArm: '', leftLeg: '', rightLeg: '' });
+  
+    setCharacter((prev) => ({ ...prev, armor: newArmor }));
   };
-
-  const handleArmorLocationChange = (e) => {
-    const { name, value } = e.target;
-    setCharacter({
-      ...character,
-      armor: { ...character.armor, [name]: value }
-    });
-  };
-
-  const handleArrayChange = (e, type) => {
-    const { name, value } = e.target;
-    setCharacter({
-      ...character,
-      [type]: [...character[type], { [name]: value }]
-    });
-  };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -103,6 +119,67 @@ const CharacterCreator = () => {
       setSuccess('');
     }
   };
+
+  const getArmorNameById = (id) => {
+    const armor = armors.find(a => a._id === id);
+    return armor ? armor.name : 'No armor';
+  };
+
+  const coveredLocations = armorSelection.selectedArmors.flatMap(armor => armor.locations);
+  const availableArmors = armors.filter((armor) => 
+    armor.locations.every((location) => !coveredLocations.includes(location))
+  );
+  
+
+  const raceOptions = useMemo(() => [
+    { label: 'Human', value: 'human' },
+    { label: 'Elf', value: 'elf' },
+    { label: 'Dwarf', value: 'dwarf' },
+    { label: 'Halfling', value: 'halfling' },
+    { label: 'Other', value: 'other' },
+  ], []);
+
+  const armorOptions = useMemo(() => {
+    const displayedArmors = [...armorSelection.selectedArmors, ...availableArmors];
+    return displayedArmors.map((armor) => ({
+      label: armor.name,
+      value: armor._id,
+    }));
+ }, [armorSelection.selectedArmors, availableArmors]);
+  
+  const weaponOptions = useMemo(() => weapons.map((weapon) => ({
+    label: weapon.name,
+    value: weapon._id,
+  })), [weapons]);
+  
+  const skillOptions = useMemo(() => skills.map((skill) => ({
+    label: skill.name,
+    value: skill._id,
+  })), [skills]);
+  
+  const talentOptions = useMemo(() => talents.map((talent) => ({
+    label: talent.name,
+    value: talent._id,
+  })), [talents]);
+
+  const StatFormGroup = ({ statsType }) => (
+    <>
+      {Object.entries(character[statsType]).map(([stat, value]) => (
+        <Col md={3} key={stat} className="mb-3">
+          <Form.Group>
+            <Form.Label>{stat}</Form.Label>
+            <Form.Control
+              type="number"
+              name={stat}
+              value={value}
+              onChange={(e) => handleStatChange(e, statsType)}
+              required
+            />
+          </Form.Group>
+        </Col>
+      ))}
+    </>
+  );
 
   return (
     <Container>
@@ -130,7 +207,7 @@ const CharacterCreator = () => {
                 <Dropdown
                   aria-label="Character race select" 
                   value={character.race}
-                  options={races}
+                  options={raceOptions}
                   onChange={(e) => handleDropdownChange(e, 'race')}
                   placeholder="Select character race"
                   className="w-100 text-start"
@@ -140,39 +217,29 @@ const CharacterCreator = () => {
             </Row>
             <h3>Primary Stats</h3>
             <Row>
-              {Object.keys(character.primaryStats).map((stat) => (
-                <Col md={3} key={stat} className="mb-3">
-                  <Form.Group>
-                    <Form.Label>{stat}</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name={stat}
-                      placeholder={stat}
-                      onChange={handlePrimaryStatChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              ))}
+              <StatFormGroup statsType="primaryStats" />
             </Row>
             <h3>Secondary Stats</h3>
             <Row>
-              {Object.keys(character.secondaryStats).map((stat) => (
-                <Col md={3} key={stat} className="mb-3">
-                  <Form.Group id={stat}>
-                    <Form.Label>{stat}</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name={stat}
-                      placeholder={stat}
-                      onChange={handleSecondaryStatChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              ))}
+              <StatFormGroup statsType="secondaryStats" />
             </Row>
             <h3>Armor</h3>
+            <Row>
+              <Col>
+                <MultiSelect
+                  aria-label="Armor select"
+                  value={armorSelection.selectedArmorIds}
+                  options={armorOptions}
+                  onChange={handleArmorChange}
+                  placeholder="Select armors"
+                  display="chip"
+                  showClear
+                  filter
+                  className="w-100 text-start"
+                  showSelectAll={false}
+                />
+              </Col>
+            </Row>
             <Row>
               {Object.keys(character.armor).map((location) => (
                 <Form.Group as={Col} md="12" key={location} controlId={location} className="d-flex align-items-center my-3">
@@ -180,41 +247,56 @@ const CharacterCreator = () => {
                     <Form.Label className="me-2 mb-0">{location}:</Form.Label>
                   </Col>
                   <Col md={10}>
-                  <Form.Control
-                    type="text"
-                    name={location}
-                    placeholder={location}
-                    onChange={handleArmorLocationChange}
-                    required
-                  /></Col>
+                    <Form.Control
+                      type="text"
+                      name={location}
+                      value={getArmorNameById(character.armor[location])}
+                      readOnly
+                    />
+                  </Col>
                 </Form.Group>
               ))}
             </Row>
-            <h3>Weapons</h3>
             <Form.Group className="mb-3">
-              <Form.Control 
-                type="text" 
-                name="weapons" 
-                placeholder="Weapon Name" 
-                onChange={(e) => handleArrayChange(e, 'weapons')} 
+              <Form.Label>Weapons</Form.Label>
+              <MultiSelect
+                aria-label="Weapons select"
+                value={character.weapons}
+                options={weaponOptions}
+                onChange={(e) => handleDropdownChange(e, 'weapons')}
+                placeholder="Select weapons"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
               />
             </Form.Group>
-            <h3>Skills</h3>
             <Form.Group className="mb-3">
-              <Form.Control 
-                type="text" 
-                name="skills" 
-                placeholder="Skill Name" 
-                onChange={(e) => handleArrayChange(e, 'skills')} 
+              <Form.Label>Skills</Form.Label>
+              <MultiSelect
+                aria-label="Skills select"
+                value={character.skills}
+                options={skillOptions}
+                onChange={(e) => handleDropdownChange(e, 'skills')}
+                placeholder="Select skills"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
               />
             </Form.Group>
-            <h3>Talents</h3>
             <Form.Group className="mb-3">
-              <Form.Control 
-                type="text" 
-                name="talents" 
-                placeholder="Talent Name" 
-                onChange={(e) => handleArrayChange(e, 'talents')} 
+              <Form.Label>Talents</Form.Label>
+              <MultiSelect
+                aria-label="Talents select"
+                value={character.talents}
+                options={talentOptions}
+                onChange={(e) => handleDropdownChange(e, 'talents')}
+                placeholder="Select talents"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
               />
             </Form.Group>
             <Button variant="primary" type="submit">Create Character</Button>

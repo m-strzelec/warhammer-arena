@@ -7,7 +7,7 @@ const ArmorCreator = ({ traitOptions }) => {
   const [error, setError] = useState('');
   const [armor, setArmor] = useState({
     name: '', 
-    location: [],
+    locations: [],
     protectionFactor: '',
     traits: []
   });
@@ -32,14 +32,14 @@ const ArmorCreator = ({ traitOptions }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (armor.location.length === 0) {
+    if (armor.locations.length === 0) {
       setError('Please select at least one armor location.')
     } else {
       setError('');
       try {
         await createArmor(armor);
         alert('Armor created successfully');
-        setArmor({ name: '', location: [], protectionFactor: '', traits: [] });
+        setArmor({ name: '', locations: [], protectionFactor: '', traits: [] });
       } catch (error) {
         console.error(error.response.data.message);
         alert(error.response.data.message);
@@ -65,9 +65,9 @@ const ArmorCreator = ({ traitOptions }) => {
         <Form.Label>Locations</Form.Label>
         <MultiSelect
           aria-label="Armor locations select"
-          value={armor.location}
+          value={armor.locations}
           options={armorLocations}
-          onChange={(e) => handleMultiSelectChange(e, 'location')}
+          onChange={(e) => handleMultiSelectChange(e, 'locations')}
           placeholder="Select armor locations"
           display="chip"
           showClear

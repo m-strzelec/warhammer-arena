@@ -3,11 +3,11 @@ const Armor = require('../models/Armor');
 
 const createArmor = async (req, res) => {
     try {
-        const { name, location, protectionFactor, traits } = req.body;
-        if (!name || !location || !protectionFactor) {
+        const { name, locations, protectionFactor, traits } = req.body;
+        if (!name || !locations || !protectionFactor) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
                 message: !name ? 'No armor name was given' : 
-                    !location ? 'No armor location was given' :
+                    !locations ? 'No armor locations were given' :
                         'No protection factor was given'
             });
         }
@@ -15,7 +15,7 @@ const createArmor = async (req, res) => {
         if (existingArmor) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Armor with given name already exists' });
         }
-        const newArmor = new Armor({ name, location, protectionFactor, traits });
+        const newArmor = new Armor({ name, locations, protectionFactor, traits });
         await newArmor.save();
         res.status(HttpStatus.StatusCodes.CREATED).json(newArmor);
     } catch (error) {
