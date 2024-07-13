@@ -9,7 +9,7 @@ const CreateCharacterPage = () => {
         <Row className="text-center">
           <Col>
             <h1 className="display-4">Create Character</h1>
-            <p className="lead">Design your character for the ultimate fight simulation.</p>
+            <p className="lead">Design a character according to your needs.</p>
           </Col>
         </Row>
         <Row>

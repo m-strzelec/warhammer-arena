@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
+import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { createSkill } from '../../services/skillService';
+import { primaryStatFullNames } from '../utils/constants';
 
 const SkillCreator = () => {
   const [skill, setSkill] = useState({ 
@@ -10,24 +12,14 @@ const SkillCreator = () => {
     description: '' 
   });
 
-  const baseStats = [
-    { label: 'Weapon Skill', value: 'WS' },
-    { label: 'Ballistic Skill', value: 'BS' },
-    { label: 'Strength', value: 'S' },
-    { label: 'Toughness', value: 'T' },
-    { label: 'Agility', value: 'Ag' },
-    { label: 'Intelligence', value: 'Int' },
-    { label: 'Will Power', value: 'WP' },
-    { label: 'Fellowship', value: 'Fel' }
-  ];
+  const baseStats = Object.entries(primaryStatFullNames).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSkill({ ...skill, [name]: value });
-  };
-
-  const handleDropdownChange = (e, name) => {
-    setSkill({ ...skill, [name]: e.value });
+    setSkill((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -43,44 +35,64 @@ const SkillCreator = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <h3>Create Skill</h3>
-      <Form.Group controlId="formSkillName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="name" 
-          placeholder="Enter skill name" 
-          value={skill.name} 
-          onChange={handleChange} 
-          required 
-        />
-      </Form.Group>
-      <Form.Group controlId="formSkillBaseStat">
-        <Form.Label>Base Stat</Form.Label>
-        <Dropdown
-          aria-label="Base stat select" 
-          value={skill.baseStat}
-          options={baseStats}
-          onChange={(e) => handleDropdownChange(e, 'baseStat')}
-          placeholder="Select base stat"
-          className="w-100 text-start"
-          required
-        />
-      </Form.Group>
-      <Form.Group controlId="formSkillDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="description" 
-          placeholder="Enter description" 
-          value={skill.description} 
-          onChange={handleChange} 
-          required 
-        />
-      </Form.Group>
+      <Row className="justify-content-center mt-4">
+        <Col md={10}>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="name" className="me-2 mb-0 create-label">Name:</label>
+                <InputText
+                  id="name" 
+                  name="name" 
+                  placeholder="Enter skill name" 
+                  value={skill.name} 
+                  onChange={handleChange}
+                  className="w-100"
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="baseStat" className="me-2 mb-0 create-label">Base Stat:</label>
+                <Dropdown
+                  id="baseStat" 
+                  name="baseStat" 
+                  aria-label="Base stat select" 
+                  value={skill.baseStat}
+                  options={baseStats}
+                  onChange={handleChange}
+                  placeholder="Select base stat"
+                  className="w-100 text-start"
+                  required
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="description" className="me-2 mb-0 create-label">Description:</label>
+                <InputText 
+                  id="description"
+                  name="description" 
+                  placeholder="Enter description" 
+                  value={skill.description} 
+                  onChange={handleChange}
+                  className="w-100"
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
       <Button variant="primary" type="submit">Create Skill</Button>
-    </Form>
+    </form>
   );
 };
 

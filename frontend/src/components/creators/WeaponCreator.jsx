@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
+import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { createWeapon } from '../../services/weaponService';
+import { weaponHandedness, weaponTypes } from '../utils/constants';
 
 const WeaponCreator = ({ traitOptions }) => {
   const [weapon, setWeapon] = useState({ 
@@ -15,11 +17,7 @@ const WeaponCreator = ({ traitOptions }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setWeapon({ ...weapon, [name]: value });
-  }
-
-  const handleDropdownChange = (e, name) => {
-    setWeapon({ ...weapon, [name]: e.value });
+    setWeapon((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -34,81 +32,104 @@ const WeaponCreator = ({ traitOptions }) => {
     }
   };
 
-  const weaponTypes = [
-    { label: 'Melee', value: 'melee' },
-    { label: 'Range', value: 'range' }
-  ];
-
-  const weaponHandedness = [
-    { label: 'One-handed', value: 'one-handed' },
-    { label: 'Two-handed', value: 'two-handed' }
-  ];
-
   return (
-    <Form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <h3>Create Weapon</h3>
-      <Form.Group controlId="formWeaponName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="name" 
-          placeholder="Enter weapon name" 
-          value={weapon.name} 
-          onChange={handleChange}
-          required 
-        />
-      </Form.Group>
-      <Form.Group controlId="formWeaponDamageFactor">
-        <Form.Label>Damage Factor</Form.Label>
-        <Form.Control 
-          type="number" 
-          name="damageFactor" 
-          placeholder="Enter damage factor" 
-          value={weapon.damageFactor} 
-          onChange={handleChange}  
-          required 
-        />
-      </Form.Group>
-      <Form.Group controlId="formWeaponTraits">
-        <Form.Label>Traits</Form.Label>
-        <MultiSelect
-          aria-label="Weapon traits select"
-          value={weapon.traits}
-          options={traitOptions}
-          onChange={(e) => handleDropdownChange(e, 'traits')}
-          placeholder="Select traits"
-          display="chip"
-          showClear
-          filter
-          className="w-100 text-start"
-        />
-      </Form.Group>
-      <Form.Group controlId="formWeaponType">
-        <Form.Label>Type</Form.Label>
-        <Dropdown
-          aria-label="Weapon type select" 
-          value={weapon.type}
-          options={weaponTypes}
-          onChange={(e) => handleDropdownChange(e, 'type')}
-          placeholder="Select weapon type"
-          className="w-100 text-start"
-          required
-        />
-      </Form.Group>
-      <Form.Group controlId="formWeaponHandedness">
-        <Form.Label>Handedness</Form.Label>
-        <Dropdown
-          aria-label="Weapon handedness select" 
-          value={weapon.handedness}
-          options={weaponHandedness}
-          onChange={(e) => handleDropdownChange(e, 'handedness')}
-          placeholder="Select weapon handedness"
-          className="w-100 text-start"
-          required
-        />
-      </Form.Group>
+      <Row className="justify-content-center mt-4">
+        <Col md={10}>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="name" className="me-2 mb-0 create-label">Name:</label>
+                <InputText 
+                  id="name" 
+                  name="name" 
+                  placeholder="Enter weapon name" 
+                  value={weapon.name} 
+                  onChange={handleChange}
+                  className="w-100"
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="damageFactor" className="me-2 mb-0 create-label">Damage Factor:</label>
+                <InputText
+                  id="damageFactor"
+                  name="damageFactor" 
+                  placeholder="Enter damage factor" 
+                  value={weapon.damageFactor} 
+                  onChange={handleChange}
+                  keyfilter="int"
+                  className="w-100" 
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="traits" className="me-2 mb-0 create-label">Traits:</label>
+                <MultiSelect
+                  id="traits"
+                  name="traits"
+                  aria-label="Weapon traits select"
+                  value={weapon.traits}
+                  options={traitOptions}
+                  onChange={handleChange}
+                  placeholder="Select traits"
+                  display="chip"
+                  showClear
+                  filter
+                  className="w-100 text-start"
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="type" className="me-2 mb-0 create-label">Type:</label>
+                <Dropdown
+                  id="type"
+                  name="type"
+                  aria-label="Weapon type select" 
+                  value={weapon.type}
+                  options={weaponTypes}
+                  onChange={handleChange}
+                  placeholder="Select weapon type"
+                  className="w-100 text-start"
+                  required
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="handedness" className="me-2 mb-0 create-label">Handedness:</label>
+                <Dropdown
+                  id="handedness"
+                  name="handedness"
+                  aria-label="Weapon handedness select" 
+                  value={weapon.handedness}
+                  options={weaponHandedness}
+                  onChange={handleChange}
+                  placeholder="Select weapon handedness"
+                  className="w-100 text-start"
+                  required
+                />
+              </div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
       <Button variant="primary" type="submit">Create Weapon</Button>
-    </Form>
+    </form>
   );
 };
 

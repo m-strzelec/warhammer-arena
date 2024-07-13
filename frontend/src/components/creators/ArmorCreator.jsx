@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
+import { InputText } from 'primereact/inputtext';
 import { MultiSelect } from 'primereact/multiselect';
 import { createArmor } from '../../services/armorService';
+import { locationFullNames } from '../utils/constants';
 
 const ArmorCreator = ({ traitOptions }) => {
-  const [error, setError] = useState('');
   const [armor, setArmor] = useState({
     name: '', 
     locations: [],
@@ -12,30 +13,21 @@ const ArmorCreator = ({ traitOptions }) => {
     traits: []
   });
 
-  const armorLocations = [
-    { label: 'Head', value: 'head' },
-    { label: 'Body', value: 'body' },
-    { label: 'Left Arm', value: 'leftArm' },
-    { label: 'Right Arm', value: 'rightArm' },
-    { label: 'Left Leg', value: 'leftLeg' },
-    { label: 'Right Leg', value: 'rightLeg' }
-  ];
+  const armorLocations = Object.entries(locationFullNames).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setArmor({ ...armor, [name]: value });
-  };
-
-  const handleMultiSelectChange = (e, name) => {
-    setArmor({ ...armor, [name]: e.value });
+    setArmor((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (armor.locations.length === 0) {
-      setError('Please select at least one armor location.')
+      alert('Please select at least one armor location.')
     } else {
-      setError('');
       try {
         await createArmor(armor);
         alert('Armor created successfully');
@@ -48,63 +40,88 @@ const ArmorCreator = ({ traitOptions }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <h3>Create Armor</h3>
-      <Form.Group controlId="formArmorName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="name" 
-          placeholder="Enter armor name" 
-          value={armor.name} 
-          onChange={handleChange} 
-          required 
-        />
-      </Form.Group>
-      <Form.Group controlId="formArmorLocation">
-        <Form.Label>Locations</Form.Label>
-        <MultiSelect
-          aria-label="Armor locations select"
-          value={armor.locations}
-          options={armorLocations}
-          onChange={(e) => handleMultiSelectChange(e, 'locations')}
-          placeholder="Select armor locations"
-          display="chip"
-          showClear
-          className="w-100 text-start"
-          required
-        />
-      </Form.Group>
-      <Form.Group controlId="formArmorProtectionFactor">
-        <Form.Label>Protection Factor</Form.Label>
-        <Form.Control 
-          type="number" 
-          name="protectionFactor" 
-          placeholder="Enter protection factor" 
-          value={armor.protectionFactor} 
-          onChange={handleChange} 
-          required 
-        />
-      </Form.Group>
-      <Form.Group controlId="formArmorTraits">
-        <Form.Label>Traits</Form.Label>
-        <MultiSelect
-          aria-label="Armor traits select"
-          value={armor.traits}
-          options={traitOptions}
-          onChange={(e) => handleMultiSelectChange(e, 'traits')}
-          placeholder="Select traits"
-          display="chip"
-          showClear
-          filter
-          className="w-100 text-start"
-          required
-        />
-      </Form.Group>
-      {error && <small style={{ color: 'red' }}>{error}</small>}
-      <br />
+      <Row className="justify-content-center mt-4">
+        <Col md={10}>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="name" className="me-2 mb-0 create-label">Name:</label>
+                <InputText 
+                  id="name"
+                  name="name" 
+                  placeholder="Enter armor name" 
+                  value={armor.name} 
+                  onChange={handleChange}
+                  className="w-100" 
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="locations" className="me-2 mb-0 create-label">Locations:</label>
+                <MultiSelect
+                  id="locations"
+                  name="locations"
+                  aria-label="Armor locations select"
+                  value={armor.locations}
+                  options={armorLocations}
+                  onChange={handleChange}
+                  placeholder="Select armor locations"
+                  display="chip"
+                  showClear
+                  className="w-100 text-start"
+                  required
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="protectionFactor" className="me-2 mb-0 create-label">Protection Factor:</label>
+                <InputText 
+                  id="protectionFactor" 
+                  name="protectionFactor" 
+                  placeholder="Enter protection factor" 
+                  value={armor.protectionFactor} 
+                  onChange={handleChange}
+                  keyfilter="int"
+                  className="w-100"
+                  required 
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3">
+            <Col>
+              <div className="p-field d-flex align-items-center">
+                <label htmlFor="traits" className="me-2 mb-0 create-label">Traits:</label>
+                <MultiSelect
+                  id="traits"
+                  name="traits"
+                  aria-label="Armor traits select"
+                  value={armor.traits}
+                  options={traitOptions}
+                  onChange={handleChange}
+                  placeholder="Select traits"
+                  display="chip"
+                  showClear
+                  filter
+                  className="w-100 text-start"
+                  required
+                />
+              </div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
       <Button variant="primary" type="submit">Create Armor</Button>
-    </Form>
+    </form>
   );
 };
 

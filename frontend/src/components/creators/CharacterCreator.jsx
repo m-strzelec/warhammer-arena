@@ -10,6 +10,7 @@ import { getWeapons } from '../../services/weaponService';
 import { getSkills } from '../../services/skillService';
 import { getTalents } from '../../services/talentService';
 import { getArmors } from '../../services/armorService';
+import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
 
 const CharacterCreator = () => {
   const [armors, setArmors] = useState([]);
@@ -150,14 +151,6 @@ const CharacterCreator = () => {
     armor.locations.every((location) => !coveredLocations.includes(location))
   );
   
-  const raceOptions = useMemo(() => [
-    { label: 'Human', value: 'human' },
-    { label: 'Elf', value: 'elf' },
-    { label: 'Dwarf', value: 'dwarf' },
-    { label: 'Halfling', value: 'halfling' },
-    { label: 'Other', value: 'other' },
-  ], []);
-
   const armorOptions = useMemo(() => {
     const displayedArmors = [...armorSelection.selectedArmors, ...availableArmors];
     return displayedArmors.map((armor) => ({
@@ -181,34 +174,6 @@ const CharacterCreator = () => {
     value: talent._id,
   })), [talents]);
 
-  const statFullNames = {
-    WS: 'Weapon Skill',
-    BS: 'Ballistic Skill',
-    S: 'Strength',
-    T: 'Toughness',
-    Ag: 'Agility',
-    Int: 'Intelligence',
-    WP: 'Will Power',
-    Fel: 'Fellowship',
-    A: 'Attacks',
-    W: 'Wounds',
-    SB: 'Strength Bonus',
-    TB: 'Toughness Bonus',
-    M: 'Movement',
-    Mag: 'Magic',
-    IP: 'Insanity Points',
-    FP: 'Fate Points',
-  };
-
-  const locationFullNames = {
-    head: 'Head',
-    body: 'Body',
-    leftArm: 'Left Arm',
-    rightArm: 'Right Arm',
-    leftLeg: 'Left Leg',
-    rightLeg: 'Right Leg',
-  };
-
   return (
     <Container>
       <Toast ref={toast} />
@@ -222,8 +187,8 @@ const CharacterCreator = () => {
           <form onSubmit={handleSubmit}>
             <Row className="mb-3">
               <Col md={6} className="mb-3">
-                <div className="p-field d-flex align-items-center">
-                  <label htmlFor="name" className="me-2 mb-0">Name:</label>
+                <div className="p-field">
+                  <label htmlFor="name" className="me-2 mb-0">Name</label>
                   <InputText
                     id="name" 
                     name="name" 
@@ -236,8 +201,8 @@ const CharacterCreator = () => {
                 </div>
               </Col>
               <Col md={6} className="mb-3">
-                <div className="p-field d-flex align-items-center">
-                  <label htmlFor="race" className="me-2 mb-0">Race:</label>
+                <div className="p-field">
+                  <label htmlFor="race" className="me-2 mb-0">Race</label>
                   <Dropdown
                     id="race"
                     name="race"
@@ -257,13 +222,13 @@ const CharacterCreator = () => {
               {Object.entries(character.primaryStats).map(([stat, value]) => (
                 <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
                   <div className="p-field">
-                    <label htmlFor={stat}>{statFullNames[stat]}</label>
+                    <label htmlFor={stat}>{primaryStatFullNames[stat]}</label>
                     <InputText
                       id={stat}
                       name={stat}
                       value={character.primaryStats[stat]}
                       onChange={(e) => handleStatChange(e, 'primaryStats')}
-                      keyfilter="int"
+                      keyfilter="pint"
                       className="w-100"
                       required
                     />
@@ -276,13 +241,13 @@ const CharacterCreator = () => {
               {Object.entries(character.secondaryStats).map(([stat, value]) => (
                 <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
                   <div className="p-field">
-                    <label htmlFor={stat}>{statFullNames[stat]}</label>
+                    <label htmlFor={stat}>{secondaryStatFullNames[stat]}</label>
                     <InputText
                       id={stat}
                       name={stat}
                       value={character.secondaryStats[stat]}
                       onChange={(e) => handleStatChange(e, 'secondaryStats')}
-                      keyfilter="int"
+                      keyfilter="pint"
                       className="w-100"
                       required
                     />

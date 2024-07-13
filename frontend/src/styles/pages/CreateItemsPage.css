@@ -16,4 +16,8 @@
 .create-items {
     min-height: 768px;
 }
+
+.create-label {
+    width: 100px;
+}
   

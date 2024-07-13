@@ -37,7 +37,7 @@ const CreateItemsPage = () => {
         <Row className="text-center mb-4">
           <Col className='items-header'>
             <h1 className="display-4" onClick={() => setKey('')}>Forge</h1>
-            <p className="lead">Design armors, weapons, skills, talents, and traits for your characters</p>
+            <p className="lead">Design armors, weapons, skills, talents, and traits for your characters.</p>
           </Col>
         </Row>
         <Row>

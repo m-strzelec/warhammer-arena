@@ -43,7 +43,7 @@ const BrowseCharactersPage = () => {
       <Row className="text-center mb-4">
         <Col>
           <h1 className="display-4">Browse Characters</h1>
-          <p className="lead">Browse and view detailed information about characters</p>
+          <p className="lead">Browse and view detailed information about characters.</p>
         </Col>
       </Row>
       <Row>

@@ -1,4 +1,4 @@
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Image } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { GiAxeSword, GiBattleGear, GiCharacter, GiDwarfFace, GiWarhammer } from "react-icons/gi";
 import { SiCurseforge } from "react-icons/si";
@@ -10,7 +10,7 @@ const AppNavbar = () => {
     <Navbar bg="dark" variant="dark" expand="lg" className="navbar" sticky='top'>
       <Container fluid="true">
         <Navbar.Brand to="/" as={NavLink} className="ms-4 d-flex align-items-center">
-          <img 
+          <Image 
             src={wharena}
             width="80"
             height="80"

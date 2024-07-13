@@ -43,7 +43,7 @@ const BrowseItemsPage = () => {
       <Row className="text-center mb-4">
         <Col className='items-header'>
           <h1 className="display-4" onClick={() => setKey('')}>Armory</h1>
-          <p className="lead">Browse all available armors, weapons, skills, talents, and traits</p>
+          <p className="lead">Browse all available armors, weapons, skills, talents, and traits.</p>
         </Col>
       </Row>
       <Row>
