@@ -8,10 +8,12 @@ import TraitCreator from '../components/creators/TraitCreator';
 import { getTraits } from '../services/traitService';
 import '../styles/pages/CreateItemsPage.css';
 import create_items from '../assets/create_items.webp';
+import { useToast } from '../contexts/ToastContext';
 
 const CreateItemsPage = () => {
   const [key, setKey] = useState('');
   const [traits, setTraits] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchTraits = async () => {
@@ -19,12 +21,12 @@ const CreateItemsPage = () => {
         const response = await getTraits();
         setTraits(response.data);
       } catch (error) {
-        console.error(error.response.data.message);
+        showToast('danger', 'Error', error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
       }
     };
-
     fetchTraits();
-  }, []);
+  }, [showToast]);
 
   const traitOptions = traits.map((trait) => ({
     label: trait.name,

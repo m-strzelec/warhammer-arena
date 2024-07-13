@@ -4,8 +4,10 @@ import { InputText } from 'primereact/inputtext';
 import { MultiSelect } from 'primereact/multiselect';
 import { createArmor } from '../../services/armorService';
 import { locationFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const ArmorCreator = ({ traitOptions }) => {
+  const { showToast } = useToast();
   const [armor, setArmor] = useState({
     name: '', 
     locations: [],
@@ -26,15 +28,15 @@ const ArmorCreator = ({ traitOptions }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (armor.locations.length === 0) {
-      alert('Please select at least one armor location.')
+      showToast('info', 'Info', 'Please select at least one armor location');
     } else {
       try {
         await createArmor(armor);
-        alert('Armor created successfully');
+        showToast('success', 'Success', 'Armor created successfully');
         setArmor({ name: '', locations: [], protectionFactor: '', traits: [] });
       } catch (error) {
-        console.error(error.response.data.message);
-        alert(error.response.data.message);
+        showToast('danger', 'Error', error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
       }
     }
   };

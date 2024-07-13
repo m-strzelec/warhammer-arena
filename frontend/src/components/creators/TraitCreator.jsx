@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Button, Row, Col } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 import { createTrait } from '../../services/traitService';
+import { useToast } from '../../contexts/ToastContext';
 
 const TraitCreator = () => {
+  const { showToast } = useToast();
   const [trait, setTrait] = useState({ 
     name: '', 
     description: '' 
@@ -18,11 +20,11 @@ const TraitCreator = () => {
     e.preventDefault();
     try {
       await createTrait(trait);
-      alert('Trait created successfully');
+      showToast('success', 'Success', 'Trait created successfully');
       setTrait({ name: '', description: '' });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 

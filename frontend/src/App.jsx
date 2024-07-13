@@ -7,22 +7,25 @@ import FightPage from './pages/FightPage';
 import CreateItemsPage from './pages/CreateItemsPage';
 import BrowseItemsPage from './pages/BrowseItemsPage';
 import BrowseCharactersPage from './pages/BrowseCharactersPage';
+import { ToastProvider } from './contexts/ToastContext';
 import './styles/App.css';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <AppNavbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/create-character" element={<CreateCharacterPage />} />
-          <Route path="/fight" element={<FightPage />} />
-          <Route path="/create-items" element={<CreateItemsPage />} />
-          <Route path="/browse-items" element={<BrowseItemsPage />} />
-          <Route path="/characters" element={<BrowseCharactersPage />} />
-        </Routes>
-        <AppFooter />
+        <ToastProvider>
+          <AppNavbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/create-character" element={<CreateCharacterPage />} />
+            <Route path="/fight" element={<FightPage />} />
+            <Route path="/create-items" element={<CreateItemsPage />} />
+            <Route path="/browse-items" element={<BrowseItemsPage />} />
+            <Route path="/characters" element={<BrowseCharactersPage />} />
+          </Routes>
+          <AppFooter />
+        </ToastProvider>
       </BrowserRouter>
     </div>
   );

@@ -5,8 +5,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { createWeapon } from '../../services/weaponService';
 import { weaponHandedness, weaponTypes } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const WeaponCreator = ({ traitOptions }) => {
+  const { showToast } = useToast();
   const [weapon, setWeapon] = useState({ 
     name: '', 
     damageFactor: '', 
@@ -24,11 +26,11 @@ const WeaponCreator = ({ traitOptions }) => {
     e.preventDefault();
     try {
       await createWeapon(weapon);
-      alert('Weapon created successfully');
+      showToast('success', 'Success', 'Weapon created successfully');
       setWeapon({ name: '', damageFactor: '', traits: [], type: '', handedness: '' });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 

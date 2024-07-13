@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Alert, Spinner, Card } from 'react-bootstr
 import { Dropdown } from 'primereact/dropdown';
 import { getCharacters } from '../../services/characterService';
 import { createFight } from '../../services/fightService';
+import { useToast } from '../../contexts/ToastContext';
 
 const FightSimulator = () => {
   const [characters, setCharacters] = useState([]);
@@ -11,7 +12,7 @@ const FightSimulator = () => {
   const [fightLog, setFightLog] = useState([]);
   const [winner, setWinner] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const characterOptions = characters.map(char => ({
     label: char.name,
@@ -24,28 +25,27 @@ const FightSimulator = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        setError(error.response.data.message);
-        console.error(error.response.data.message);
+        showToast('danger', 'Error', error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
       }
     };
     fetchCharacters();
-  }, []);
+  }, [showToast]);
 
   const handleFight = async () => {
     if (!character1 || !character2) {
-      alert('Please select both characters');
+      showToast('info', 'Info', 'Please select both characters');
       return;
     }
 
     setLoading(true);
-    setError('');
     try {
       const response = await createFight(character1, character2);
       setFightLog(response.data.log);
       setWinner(response.data.winnerId);
     } catch (error) {
-      setError(error.response.data.message);
-      console.error(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -143,13 +143,6 @@ const FightSimulator = () => {
           </Button>
         </Col>
       </Row>
-      {error && (
-        <Row className="justify-content-center">
-          <Col md={8}>
-            <Alert variant="danger">{error}</Alert>
-          </Col>
-        </Row>
-      )}
       {fightLog.length > 0 && (
         <Row className="justify-content-center">
           <Col md={8}>

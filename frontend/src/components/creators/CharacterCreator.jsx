@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { SelectButton } from 'primereact/selectbutton';
-import { Toast } from 'primereact/toast';
 import { createCharacter } from '../../services/characterService';
 import { getWeapons } from '../../services/weaponService';
 import { getSkills } from '../../services/skillService';
 import { getTalents } from '../../services/talentService';
 import { getArmors } from '../../services/armorService';
 import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const CharacterCreator = () => {
   const [armors, setArmors] = useState([]);
@@ -56,7 +56,7 @@ const CharacterCreator = () => {
     selectedArmorIds: [],
     selectedArmors: [],
   });
-  const toast = useRef(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,12 +69,12 @@ const CharacterCreator = () => {
         setSkills(skillsData.data);
         setTalents(talentsData.data);
       } catch (error) {
+        showToast('danger', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
-        toast.current.show({ severity: 'error', summary: 'Error', detail: error.response.data.message });
       }
     };
     fetchData();
-  }, []);
+  }, [showToast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,10 +134,10 @@ const CharacterCreator = () => {
     e.preventDefault();
     try {
       await createCharacter(character);
-      toast.current.show({ severity: 'success', summary: 'Success', detail: 'Character created successfully' });
+      showToast('success', 'Success', 'Character created successfully');
     } catch (error) {
+      showToast('danger', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
-      toast.current.show({ severity: 'error', summary: 'Error', detail: error.response.data.message });
     }
   };
 
@@ -176,7 +176,6 @@ const CharacterCreator = () => {
 
   return (
     <Container>
-      <Toast ref={toast} />
       <Row className="text-center mb-2">
         <Col>
           <p className="lead">Fill in the details to create your character.</p>

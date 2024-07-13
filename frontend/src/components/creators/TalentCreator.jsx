@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Button, Row, Col } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 import { createTalent } from '../../services/talentService';
+import { useToast } from '../../contexts/ToastContext';
 
 const TalentCreator = () => {
+  const { showToast } = useToast();
   const [talent, setTalent] = useState({
     name: '', 
     description: '' 
@@ -18,11 +20,11 @@ const TalentCreator = () => {
     e.preventDefault();
     try {
       await createTalent(talent);
-      alert('Talent created successfully');
+      showToast('success', 'Success', 'Talent created successfully');
       setTalent({ name: '', description: '' });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 

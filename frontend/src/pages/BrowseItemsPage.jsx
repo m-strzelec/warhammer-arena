@@ -7,6 +7,7 @@ import { getTalents } from '../services/talentService';
 import { getTraits } from '../services/traitService';
 import '../styles/pages/BrowseItemsPage.css';
 import browse_items from '../assets/browse_items.webp';
+import { useToast } from '../contexts/ToastContext';
 
 const BrowseItemsPage = () => {
   const [key, setKey] = useState('');
@@ -15,6 +16,7 @@ const BrowseItemsPage = () => {
   const [skills, setSkills] = useState([]);
   const [talents, setTalents] = useState([]);
   const [traits, setTraits] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,12 +33,12 @@ const BrowseItemsPage = () => {
         setTalents(talentResponse.data);
         setTraits(traitResponse.data);
       } catch (error) {
-        console.error(error.response.data.message);
+        showToast('danger', 'Error', error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
       }
     };
-
     fetchData();
-  }, []);
+  }, [showToast]);
 
   return (
     <Container className="my-5 browse-items">

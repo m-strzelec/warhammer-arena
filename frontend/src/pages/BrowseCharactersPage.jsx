@@ -3,11 +3,13 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
 import { getCharacters, getCharacterById } from '../services/characterService';
 import '../styles/pages/BrowseCharactersPage.css';
+import { useToast } from '../contexts/ToastContext';
 
 const BrowseCharactersPage = () => {
   const [characters, setCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [characterData, setCharacterData] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -15,12 +17,12 @@ const BrowseCharactersPage = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        console.error(error.response.data.message);
+        showToast('danger', 'Error', error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
       }
     };
-
     fetchCharacters();
-  }, []);
+  }, [showToast]);
 
   const handleCharacterChange = async (e) => {
     const characterId = e.value;
@@ -29,7 +31,8 @@ const BrowseCharactersPage = () => {
       const response = await getCharacterById(characterId);
       setCharacterData(response.data);
     } catch (error) {
-      console.error(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 

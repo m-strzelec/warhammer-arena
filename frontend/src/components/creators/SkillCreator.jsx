@@ -4,8 +4,10 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { createSkill } from '../../services/skillService';
 import { primaryStatFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const SkillCreator = () => {
+  const { showToast } = useToast();
   const [skill, setSkill] = useState({ 
     name: '', 
     baseStat: '', 
@@ -26,11 +28,11 @@ const SkillCreator = () => {
     e.preventDefault();
     try {
       await createSkill(skill);
-      alert('Skill created successfully');
+      showToast('success', 'Success', 'Skill created successfully');
       setSkill({ name: '', baseStat: '', description: '' });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      showToast('danger', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 
