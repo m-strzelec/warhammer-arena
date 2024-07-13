@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
+import { SelectButton } from 'primereact/selectbutton';
+import { Toast } from 'primereact/toast';
 import { createCharacter } from '../../services/characterService';
 import { getWeapons } from '../../services/weaponService';
 import { getSkills } from '../../services/skillService';
@@ -17,32 +20,32 @@ const CharacterCreator = () => {
     name: '',
     race: '',
     primaryStats: {
-      WS: 0,
-      BS: 0,
-      S: 0,
-      T: 0,
-      Ag: 0,
-      Int: 0,
-      WP: 0,
-      Fel: 0,
+      WS: 30,
+      BS: 30,
+      S: 30,
+      T: 30,
+      Ag: 30,
+      Int: 30,
+      WP: 30,
+      Fel: 30,
     },
     secondaryStats: {
-      A: 0,
-      W: 0,
-      SB: 0,
-      TB: 0,
-      M: 0,
+      A: 1,
+      W: 10,
+      SB: 3,
+      TB: 3,
+      M: 4,
       Mag: 0,
       IP: 0,
       FP: 0,
     },
     armor: {
-      head: '',
-      body: '',
-      leftArm: '',
-      rightArm: '',
-      leftLeg: '',
-      rightLeg: ''
+      head: null,
+      body: null,
+      leftArm: null,
+      rightArm: null,
+      leftLeg: null,
+      rightLeg: null
     },
     weapons: [],
     skills: [],
@@ -52,8 +55,7 @@ const CharacterCreator = () => {
     selectedArmorIds: [],
     selectedArmors: [],
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const toast = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +68,8 @@ const CharacterCreator = () => {
         setSkills(skillsData.data);
         setTalents(talentsData.data);
       } catch (error) {
-        console.error(error.response.data.message);
+        console.error(error.response.data?.error || error.response.data.message);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: error.response.data.message });
       }
     };
     fetchData();
@@ -77,15 +80,11 @@ const CharacterCreator = () => {
     setCharacter((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDropdownChange = (e, name) => {
-    setCharacter((prev) => ({ ...prev, [name]: e.value }));
-  };
-
   const handleStatChange = (e, statType) => {
     const { name, value } = e.target;
     setCharacter((prev) => ({
       ...prev,
-      [statType]: { ...prev[statType], [name]: parseInt(value, 10) }
+      [statType]: { ...prev[statType], [name]: value}
     }));
   };
 
@@ -102,21 +101,42 @@ const CharacterCreator = () => {
         acc[location] = armor._id;
       });
       return acc;
-    }, { head: '', body: '', leftArm: '', rightArm: '', leftLeg: '', rightLeg: '' });
+    }, { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null });
   
     setCharacter((prev) => ({ ...prev, armor: newArmor }));
+  };
+
+  const handleSkillChange = (e) => {
+    const selectedSkills = e.value;
+    const updatedSkills = selectedSkills.map(skillId => {
+      const existingSkill = character.skills.find(s => s.skill === skillId);
+      return existingSkill ? existingSkill : { skill: skillId, factor: 0 };
+    });
+    setCharacter((prev) => ({ ...prev, skills: updatedSkills  }));
+  };
+
+  const handleFactorChange = (e, skillId) => {
+    const { value } = e.target;
+    const numericValue = parseInt(value, 10) || 0;
+    setCharacter((prev) => {
+      const updatedSkills = prev.skills.map(skill => {
+        if (skill.skill === skillId) {
+          return { ...skill, factor: numericValue };
+        }
+        return skill;
+      });
+      return { ...prev, skills: updatedSkills };
+    });
   };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await createCharacter(character);
-      setSuccess('Character created successfully');
-      setError('');
+      toast.current.show({ severity: 'success', summary: 'Success', detail: 'Character created successfully' });
     } catch (error) {
-      console.error(error.response.data.message);
-      setError(error.response.data.message);
-      setSuccess('');
+      console.error(error.response.data?.error || error.response.data.message);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: error.response.data.message });
     }
   };
 
@@ -130,7 +150,6 @@ const CharacterCreator = () => {
     armor.locations.every((location) => !coveredLocations.includes(location))
   );
   
-
   const raceOptions = useMemo(() => [
     { label: 'Human', value: 'human' },
     { label: 'Elf', value: 'elf' },
@@ -162,27 +181,37 @@ const CharacterCreator = () => {
     value: talent._id,
   })), [talents]);
 
-  const StatFormGroup = ({ statsType }) => (
-    <>
-      {Object.entries(character[statsType]).map(([stat, value]) => (
-        <Col md={3} key={stat} className="mb-3">
-          <Form.Group>
-            <Form.Label>{stat}</Form.Label>
-            <Form.Control
-              type="number"
-              name={stat}
-              value={value}
-              onChange={(e) => handleStatChange(e, statsType)}
-              required
-            />
-          </Form.Group>
-        </Col>
-      ))}
-    </>
-  );
+  const statFullNames = {
+    WS: 'Weapon Skill',
+    BS: 'Ballistic Skill',
+    S: 'Strength',
+    T: 'Toughness',
+    Ag: 'Agility',
+    Int: 'Intelligence',
+    WP: 'Will Power',
+    Fel: 'Fellowship',
+    A: 'Attacks',
+    W: 'Wounds',
+    SB: 'Strength Bonus',
+    TB: 'Toughness Bonus',
+    M: 'Movement',
+    Mag: 'Magic',
+    IP: 'Insanity Points',
+    FP: 'Fate Points',
+  };
+
+  const locationFullNames = {
+    head: 'Head',
+    body: 'Body',
+    leftArm: 'Left Arm',
+    rightArm: 'Right Arm',
+    leftLeg: 'Left Leg',
+    rightLeg: 'Right Leg',
+  };
 
   return (
     <Container>
+      <Toast ref={toast} />
       <Row className="text-center mb-2">
         <Col>
           <p className="lead">Fill in the details to create your character.</p>
@@ -190,43 +219,83 @@ const CharacterCreator = () => {
       </Row>
       <Row className="justify-content-center">
         <Col md={8}>
-          <Form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <Row className="mb-3">
-              <Form.Group as={Col} md="6" controlId="formGridName" className="d-flex align-items-center">
-                <Form.Label className="me-2 mb-0">Name:</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  name="name" 
-                  placeholder="Name" 
-                  onChange={handleChange} 
-                  required 
-                />
-              </Form.Group>
-              <Form.Group as={Col} md="6" controlId="formGridRace" className="d-flex align-items-center">
-                <Form.Label className="me-2 mb-0">Race:</Form.Label>
-                <Dropdown
-                  aria-label="Character race select" 
-                  value={character.race}
-                  options={raceOptions}
-                  onChange={(e) => handleDropdownChange(e, 'race')}
-                  placeholder="Select character race"
-                  className="w-100 text-start"
-                  required
-                />
-              </Form.Group>
+              <Col md={6} className="mb-3">
+                <div className="p-field d-flex align-items-center">
+                  <label htmlFor="name" className="me-2 mb-0">Name:</label>
+                  <InputText
+                    id="name" 
+                    name="name" 
+                    placeholder="Name"
+                    value={character.name} 
+                    onChange={handleChange}
+                    className="w-100"
+                    required 
+                  />
+                </div>
+              </Col>
+              <Col md={6} className="mb-3">
+                <div className="p-field d-flex align-items-center">
+                  <label htmlFor="race" className="me-2 mb-0">Race:</label>
+                  <Dropdown
+                    id="race"
+                    name="race"
+                    aria-label="Character race select" 
+                    value={character.race}
+                    options={raceOptions}
+                    onChange={handleChange}
+                    placeholder="Select character race"
+                    className="w-100 text-start"
+                    required
+                  />
+                </div>
+              </Col>
             </Row>
             <h3>Primary Stats</h3>
             <Row>
-              <StatFormGroup statsType="primaryStats" />
+              {Object.entries(character.primaryStats).map(([stat, value]) => (
+                <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
+                  <div className="p-field">
+                    <label htmlFor={stat}>{statFullNames[stat]}</label>
+                    <InputText
+                      id={stat}
+                      name={stat}
+                      value={character.primaryStats[stat]}
+                      onChange={(e) => handleStatChange(e, 'primaryStats')}
+                      keyfilter="int"
+                      className="w-100"
+                      required
+                    />
+                  </div>
+                </Col>
+              ))}
             </Row>
             <h3>Secondary Stats</h3>
             <Row>
-              <StatFormGroup statsType="secondaryStats" />
+              {Object.entries(character.secondaryStats).map(([stat, value]) => (
+                <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
+                  <div className="p-field">
+                    <label htmlFor={stat}>{statFullNames[stat]}</label>
+                    <InputText
+                      id={stat}
+                      name={stat}
+                      value={character.secondaryStats[stat]}
+                      onChange={(e) => handleStatChange(e, 'secondaryStats')}
+                      keyfilter="int"
+                      className="w-100"
+                      required
+                    />
+                  </div>
+                </Col>
+              ))}
             </Row>
             <h3>Armor</h3>
             <Row>
               <Col>
                 <MultiSelect
+                  id="armor"
+                  name="armor"
                   aria-label="Armor select"
                   value={armorSelection.selectedArmorIds}
                   options={armorOptions}
@@ -242,67 +311,90 @@ const CharacterCreator = () => {
             </Row>
             <Row>
               {Object.keys(character.armor).map((location) => (
-                <Form.Group as={Col} md="12" key={location} controlId={location} className="d-flex align-items-center my-3">
-                  <Col md={2}>
-                    <Form.Label className="me-2 mb-0">{location}:</Form.Label>
-                  </Col>
-                  <Col md={10}>
-                    <Form.Control
-                      type="text"
-                      name={location}
-                      value={getArmorNameById(character.armor[location])}
-                      readOnly
-                    />
-                  </Col>
-                </Form.Group>
+                <Col md={12} lg={6} key={location} className="my-3">
+                  <div className="p-field d-flex align-items-center">
+                    <label htmlFor={location} className="armor-label me-2 mb-0">{locationFullNames[location]}:</label>
+                      <InputText
+                        id={location}
+                        name={location}
+                        value={getArmorNameById(character.armor[location])}
+                        variant="filled"
+                        className="w-100"
+                        readOnly
+                      />
+                  </div>
+                </Col>
               ))}
             </Row>
-            <Form.Group className="mb-3">
-              <Form.Label>Weapons</Form.Label>
+            <h3>Weapons</h3>
+            <div className="p-field mb-3">
               <MultiSelect
+                id="weapons"
+                name="weapons"
                 aria-label="Weapons select"
                 value={character.weapons}
                 options={weaponOptions}
-                onChange={(e) => handleDropdownChange(e, 'weapons')}
+                onChange={handleChange}
                 placeholder="Select weapons"
                 display="chip"
                 showClear
                 filter
                 className="w-100 text-start"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Skills</Form.Label>
+            </div>
+            <h3>Skills</h3>
+            <div className="p-field mb-3">
               <MultiSelect
+                id="skills"
+                name="skills"
                 aria-label="Skills select"
-                value={character.skills}
+                value={character.skills.map(skill => skill.skill)}
                 options={skillOptions}
-                onChange={(e) => handleDropdownChange(e, 'skills')}
+                onChange={handleSkillChange}
                 placeholder="Select skills"
                 display="chip"
                 showClear
                 filter
                 className="w-100 text-start"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Talents</Form.Label>
+            </div>
+            {character.skills.map((skill, index) => (
+              <Row key={skill.skill}>
+                <Col md={10} className="mb-3">
+                  <div className="p-field d-flex align-items-center">
+                    <label htmlFor={`factor-${skill.skill}`} className="me-2 mb-0 factor-label">
+                      {skills.find(s => s._id === skill.skill)?.name} Factor
+                    </label>
+                    <SelectButton 
+                      id={`factor-${skill.skill}`}
+                      name={`factor-${skill.skill}`}
+                      value={skill.factor}
+                      options={[{ label: '0', value: 0 }, { label: '10', value: 10 }, { label: '20', value: 20 }]}
+                      onChange={(e) => handleFactorChange(e, skill.skill)}
+                      className="w-100"
+                    />
+                  </div>
+                </Col>
+              </Row>
+            ))}
+            <h3>Talents</h3>
+            <div className="p-field mb-3">
               <MultiSelect
+                id="talents"
+                name="talents"
                 aria-label="Talents select"
                 value={character.talents}
                 options={talentOptions}
-                onChange={(e) => handleDropdownChange(e, 'talents')}
+                onChange={handleChange}
                 placeholder="Select talents"
                 display="chip"
                 showClear
                 filter
                 className="w-100 text-start"
               />
-            </Form.Group>
+            </div>
             <Button variant="primary" type="submit">Create Character</Button>
-          </Form>
-          {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-          {success && <Alert variant="success" className="mt-3">{success}</Alert>}
+          </form>
         </Col>
       </Row>
     </Container>
