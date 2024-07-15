@@ -1,16 +1,16 @@
-import { ListGroup } from "react-bootstrap";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 const SkillBrowser = ({ skillsData }) => {
   return (
-    <ListGroup>
-      {skillsData.map((skill, index) => (
-        <ListGroup.Item key={index}>
-          <h5>{skill.name}</h5>
-          <p>Base Stat: {skill.baseStat}</p>
-          <p>Description: {skill.description}</p>
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+    <>
+      <h3>Browse Skills</h3>
+      <DataTable value={skillsData} stripedRows paginator rows={20} size='large' removableSort>
+        <Column field="name" header="Name" sortable></Column>
+        <Column field="baseStat" header="Base Stat" sortable></Column>
+        <Column field="description" header="Description"></Column>
+      </DataTable>
+    </>
   );
 };
 

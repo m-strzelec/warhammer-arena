@@ -1,17 +1,38 @@
-import { ListGroup } from "react-bootstrap";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Chip } from 'primereact/chip';
 
 const ArmorBrowser = ({ armorsData }) => {
+  const displayLocations = (rowData) => {
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        {rowData.locations.map((item, index) => (
+          <Chip key={index} label={item} />
+        ))}
+      </div>
+    );
+  };
+
+  const displayTraits = (rowData) => {
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        {rowData.traits.map((item, index) => (
+          <Chip key={index} label={item.name} />
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <ListGroup>
-      {armorsData.map((armor, index) => (
-        <ListGroup.Item key={index}>
-          <h5>{armor.name}</h5>
-          <p>Locations: {armor.locations.join(', ')}</p>
-          <p>Protection Factor: {armor.protectionFactor}</p>
-          <p>Traits: {armor.traits.map(trait => trait.name).join(', ')}</p>
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+    <>
+      <h3>Browse Armors</h3>
+      <DataTable value={armorsData} stripedRows paginator rows={20} size='large' removableSort>
+        <Column field="name" header="Name" sortable></Column>
+        <Column field="locations" header="Locations" sortable body={displayLocations}></Column>
+        <Column field="protectionFactor" header="Protection Factor" sortable></Column>
+        <Column field="traits" header="Traits" body={displayTraits}></Column>
+      </DataTable>
+    </>
   );
 };
 

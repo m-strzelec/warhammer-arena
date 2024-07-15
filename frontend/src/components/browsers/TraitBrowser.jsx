@@ -1,15 +1,15 @@
-import { ListGroup } from "react-bootstrap";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 const TraitBrowser = ({ traitsData }) => {
-  return(
-    <ListGroup>
-      {traitsData.map((trait, index) => (
-        <ListGroup.Item key={index}>
-          <h5>{trait.name}</h5>
-          <p>Description: {trait.description}</p>
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+  return (
+    <>
+      <h3>Browse Traits</h3>
+      <DataTable value={traitsData} stripedRows paginator rows={20} size='large' removableSort>
+        <Column field="name" header="Name" sortable></Column>
+        <Column field="description" header="Description"></Column>
+      </DataTable>
+    </>
   );
 };
 
