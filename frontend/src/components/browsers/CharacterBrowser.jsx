@@ -17,7 +17,7 @@ const CharacterBrowser = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        showToast('danger', 'Error', error.response.data.message);
+        showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
       }
     };
@@ -31,7 +31,7 @@ const CharacterBrowser = () => {
       const response = await getCharacterById(characterId);
       setCharacterData(response.data);
     } catch (error) {
-      showToast('danger', 'Error', error.response.data.message);
+      showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     }
   };

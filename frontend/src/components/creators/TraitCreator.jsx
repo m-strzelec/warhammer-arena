@@ -23,7 +23,7 @@ const TraitCreator = () => {
       showToast('success', 'Success', 'Trait created successfully');
       setTrait({ name: '', description: '' });
     } catch (error) {
-      showToast('danger', 'Error', error.response.data.message);
+      showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     }
   };

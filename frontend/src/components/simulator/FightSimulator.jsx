@@ -25,7 +25,7 @@ const FightSimulator = () => {
         const response = await getCharacters();
         setCharacters(response.data);
       } catch (error) {
-        showToast('danger', 'Error', error.response.data.message);
+        showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
       }
     };
@@ -44,7 +44,7 @@ const FightSimulator = () => {
       setFightLog(response.data.log);
       setWinner(response.data.winnerId);
     } catch (error) {
-      showToast('danger', 'Error', error.response.data.message);
+      showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     } finally {
       setLoading(false);

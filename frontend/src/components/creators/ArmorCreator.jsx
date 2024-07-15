@@ -35,7 +35,7 @@ const ArmorCreator = ({ traitOptions }) => {
         showToast('success', 'Success', 'Armor created successfully');
         setArmor({ name: '', locations: [], protectionFactor: '', traits: [] });
       } catch (error) {
-        showToast('danger', 'Error', error.response.data.message);
+        showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
       }
     }

@@ -29,7 +29,7 @@ const WeaponCreator = ({ traitOptions }) => {
       showToast('success', 'Success', 'Weapon created successfully');
       setWeapon({ name: '', damageFactor: '', traits: [], type: '', handedness: '' });
     } catch (error) {
-      showToast('danger', 'Error', error.response.data.message);
+      showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     }
   };

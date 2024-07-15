@@ -69,7 +69,7 @@ const CharacterCreator = () => {
         setSkills(skillsData.data);
         setTalents(talentsData.data);
       } catch (error) {
-        showToast('danger', 'Error', error.response.data.message);
+        showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
       }
     };
@@ -136,7 +136,7 @@ const CharacterCreator = () => {
       await createCharacter(character);
       showToast('success', 'Success', 'Character created successfully');
     } catch (error) {
-      showToast('danger', 'Error', error.response.data.message);
+      showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     }
   };
