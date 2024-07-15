@@ -176,7 +176,7 @@ const CharacterCreator = () => {
 
   return (
     <Container>
-      <Row className="text-center mb-2">
+      <Row>
         <Col>
           <p className="lead">Fill in the details to create your character.</p>
         </Col>

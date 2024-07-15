@@ -65,11 +65,11 @@ const CreateItemsPage = () => {
           <Col sm={9}>
             <Tab.Content>
               <Tab.Pane eventKey="" active={key === ''}>
-              <Image
-                src={create_items}
-                alt="ancient dark fantasy forge"
-                fluid
-              />
+                <Image
+                  src={create_items}
+                  alt="ancient dark fantasy forge"
+                  fluid
+                />
               </Tab.Pane>
               <Tab.Pane eventKey="armor" active={key === 'armor'}>
                 <ArmorCreator traitOptions={traitOptions} />
