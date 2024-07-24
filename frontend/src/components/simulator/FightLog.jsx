@@ -5,22 +5,12 @@ const FightLog = ({ fightLog, char1Name, char2Name }) => {
     const style = { fontWeight: 'bold' };
 
     if (log.includes('hits')) style.color = 'green';
-    if (log.includes('misses')) style.color = '#9b30ff'; // purple
-    if (log.includes('dodges')) style.color = 'blue';
+    else if (log.includes('misses')) style.color = '#9b30ff'; // purple
+    else if (log.includes('dodges')) style.color = 'mediumblue';
+    else if (log.includes('parries')) style.color = 'orange';
+    else if (log.includes('Ulric')) style.color = 'crimson';
 
-    if (log.includes('misses')) {
-      if (log.startsWith(char1Name)) {
-        style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
-      } else if (log.startsWith(char2Name)) {
-        style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
-      }
-    } else if (log.includes('dodges')) {
-      if (log.startsWith(char1Name)) {
-        style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // light red for Character 2
-      } else if (log.startsWith(char2Name)) {
-        style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
-      }
-    } else if (log.startsWith(char1Name)) {
+    if (log.startsWith(char1Name)) {
       style.backgroundColor = 'rgba(0, 128, 0, 0.1)'; // light green for Character 1
       currentCharacter = char1Name;
     } else if (log.startsWith(char2Name)) {
@@ -47,38 +37,20 @@ const FightLog = ({ fightLog, char1Name, char2Name }) => {
   };
 
   let currentCharacter = null;
-  let skipNext = false;
 
-  return(
+  return (
     <Card className="mb-4">
       <Card.Body>
-        {fightLog.slice(0, -2).map((log, index) => {
-          if (skipNext) {
-            skipNext = false;
-            return (
-              <p 
-                key={index} 
-                style={{ fontWeight: 'bold', backgroundColor: currentCharacter === char1Name ? 'rgba(0, 128, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)' }}>
-                {highlightNumbers(log)}
-              </p>
-            );
-          }
+        {fightLog.map((log, index) => {
           const { style, currentCharacter: newCharacter } = getLogStyle(log, currentCharacter);
           currentCharacter = newCharacter;
-          if (style.backgroundColor !== 'transparent' && !log.includes('misses') && !log.includes('dodges')) {
-            skipNext = true;
-          }
+
           return (
             <p key={index} style={style}>
               {highlightNumbers(log)}
             </p>
           );
         })}
-        {fightLog.slice(-2).map((log, index) => (
-          <p key={index} style={{ fontWeight: 'bold', backgroundColor: 'transparent' }}>
-            {highlightNumbers(log)}
-          </p>
-        ))}
       </Card.Body>
     </Card>
   );

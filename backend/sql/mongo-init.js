@@ -26,6 +26,11 @@ db.skills.insertMany([
         name: 'Dodge Blow',
         baseStat: 'Ag',
         description: 'Allows character to dodge attacks.'
+    },
+    {
+        name: 'Parry',
+        baseStat: 'WS',
+        description: 'Allows character to parry attacks.'
     }
 ]);
   
@@ -52,7 +57,14 @@ db.weapons.insertMany([
         traits: [db.traits.findOne({ name: 'Fast' })._id],
         type: 'melee',
         handedness: 'one-handed'
-    }
+    },
+    {
+        name: 'Shield',
+        damageFactor: -2,
+        traits: [],
+        type: 'melee',
+        handedness: 'one-handed'
+    },
 ]);
   
 // Armors
@@ -111,9 +123,15 @@ db.characters.insertMany([
             rightLeg: null
         },
         weapons: [
-            db.weapons.findOne({ name: 'Dwarven Axe' })._id
+            db.weapons.findOne({ name: 'Dwarven Axe' })._id,
+            db.weapons.findOne({ name: 'Shield' })._id
         ],
-        skills: [],
+        skills: [
+            {
+                skill: db.skills.findOne({ name: 'Parry' })._id,
+                factor: 20
+            },
+        ],
         talents: [
             db.talents.findOne({ name: 'Strike Mighty Blow' })._id
         ],
@@ -122,7 +140,7 @@ db.characters.insertMany([
         name: 'Aragorn',
         race: 'human',
         primaryStats: {
-            WS: 55,
+            WS: 50,
             BS: 50,
             S: 45,
             T: 40,
@@ -150,13 +168,18 @@ db.characters.insertMany([
             rightLeg: db.armors.findOne({ name: 'Leather Armor' })._id
         },
         weapons: [
-            db.weapons.findOne({ name: 'Elven Sword' })._id
+            db.weapons.findOne({ name: 'Elven Sword' })._id,
+            db.weapons.findOne({ name: 'Shield' })._id
         ],
         skills: [
             {
-                skill: db.skills.findOne({ name: 'Dodge Blow' })._id,
-                factor: 10
+                skill: db.skills.findOne({ name: 'Parry' })._id,
+                factor: 0
             },
+            {
+                skill: db.skills.findOne({ name: 'Dodge Blow' })._id,
+                factor: 20
+            }
         ],
         talents: []
     }
