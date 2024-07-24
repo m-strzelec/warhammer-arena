@@ -1,0 +1,23 @@
+.nav-link, .items-header {
+    cursor: pointer;
+}
+
+.items-header:hover {
+    background-color: #f8f9fa;
+}
+  
+.tab-content {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.create-items {
+    min-height: 768px;
+}
+
+.create-label {
+    width: 100px;
+}
+  

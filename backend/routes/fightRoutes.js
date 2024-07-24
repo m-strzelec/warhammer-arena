@@ -1,5 +1,9 @@
 const express = require('express');
+const { createFight, getFights, getFightById } = require('../controllers/fightController');
 const router = express.Router();
-const HttpStatus = require('http-status-codes');
+
+router.post('/', createFight);
+router.get('/', getFights);
+router.get('/:id', getFightById);
 
 module.exports = router;
