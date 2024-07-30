@@ -14,4 +14,4 @@ export const getArmorById = (armorId) => {
 
 export const updateArmor = (armorId, armor) => {
     return api.put(`/armors/${armorId}`, armor);
-}
+};

@@ -5,6 +5,6 @@ const router = express.Router();
 router.post('/', createArmor);
 router.get('/', getArmors);
 router.get('/:id', getArmorById);
-router.put('/', updateArmor);
+router.put('/:id', updateArmor);
 
 module.exports = router;
