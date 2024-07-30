@@ -11,3 +11,7 @@ export const getWeapons = () => {
 export const getWeaponById = (weaponId) => {
     return api.get(`/weapons/${weaponId}`);
 };
+
+export const updateWeapon = (weaponId, weapon) => {
+    return api.put(`/weapons/${weaponId}`, weapon);
+  };
