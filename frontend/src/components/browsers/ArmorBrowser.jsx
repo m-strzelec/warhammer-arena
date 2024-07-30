@@ -23,14 +23,23 @@ const ArmorBrowser = ({ armorsData }) => {
     );
   };
 
+  const updateRow = (rowData) => {
+    
+  };
+
+  const rowConfirmer = (rowData) => {
+
+  };
+
   return (
     <>
       <h3>Browse Armors</h3>
-      <DataTable value={armorsData} stripedRows paginator rows={20} size='large' removableSort>
+      <DataTable value={armorsData} editMode="row" onRowMethodComplete={rowConfirmer} stripedRows paginator rows={20} size='large' removableSort>
         <Column field="name" header="Name" sortable></Column>
         <Column field="locations" header="Locations" sortable body={displayLocations}></Column>
         <Column field="protectionFactor" header="Protection Factor" sortable></Column>
         <Column field="traits" header="Traits" body={displayTraits}></Column>
+        <Column rowEditor={updateRow}></Column>
       </DataTable>
     </>
   );

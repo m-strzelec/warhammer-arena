@@ -11,3 +11,7 @@ export const getArmors = () => {
 export const getArmorById = (armorId) => {
     return api.get(`/armors/${armorId}`);
 };
+
+export const updateArmor = (armorId, armor) => {
+    return api.put(`/armors/${armorId}`, armor);
+}
