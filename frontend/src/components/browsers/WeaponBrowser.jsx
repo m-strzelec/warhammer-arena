@@ -8,9 +8,11 @@ import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { updateWeapon } from '../../services/weaponService';
 import { weaponTypes, weaponHandedness } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const WeaponBrowser = ({ weaponsData, traitOptions }) => {
   const [weapons, setWeapons] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setWeapons(weaponsData);
@@ -35,9 +37,11 @@ const WeaponBrowser = ({ weaponsData, traitOptions }) => {
 
     try {
       await updateWeapon(newData._id, newData);
+      showToast('success', 'Success', 'Weapon updated successfully');
       console.log('Weapon updated successfully');
     } catch (error) {
-      console.error('Error updating weapon:', error);
+      showToast('error', 'Error', error.response.data.message);
+      console.error('Error updating weapon:', error.response.data?.error || error.response.data.message);
     }
   };
 

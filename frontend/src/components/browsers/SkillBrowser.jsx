@@ -5,9 +5,11 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { updateSkill } from '../../services/skillService';
 import { primaryStatFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const SkillBrowser = ({ skillsData }) => {
   const [skills, setSkills] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setSkills(skillsData);
@@ -27,9 +29,11 @@ const SkillBrowser = ({ skillsData }) => {
 
     try {
       await updateSkill(newData._id, newData);
+      showToast('success', 'Success', 'Skill updated successfully');
       console.log('Skill updated successfully');
     } catch (error) {
-      console.error('Error updating skill:', error);
+      showToast('error', 'Error', error.response.data.message);
+      console.error('Error updating skill:', error.response.data?.error || error.response.data.message);
     }
   };
 

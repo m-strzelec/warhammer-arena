@@ -7,9 +7,11 @@ import { InputNumber } from 'primereact/inputnumber';
 import { MultiSelect } from 'primereact/multiselect';
 import { updateArmor } from '../../services/armorService';
 import { locationFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
 
 const ArmorBrowser = ({ armorsData }) => {
   const [armors, setArmors] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setArmors(armorsData);
@@ -49,9 +51,11 @@ const ArmorBrowser = ({ armorsData }) => {
 
     try {
       await updateArmor(newData._id, newData);
+      showToast('success', 'Success', 'Armor updated successfully');
       console.log('Armor updated successfully');
     } catch (error) {
-      console.error('Error updating armor:', error);
+      showToast('error', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
     }
   };
 
@@ -85,7 +89,7 @@ const ArmorBrowser = ({ armorsData }) => {
         stripedRows
         paginator
         rows={20}
-        size='large'
+        size="large"
         removableSort
       >
         <Column field="name" header="Name" sortable editor={(options) => textEditor(options)}></Column>

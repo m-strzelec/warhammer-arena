@@ -3,9 +3,11 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { updateTrait } from '../../services/traitService';
+import { useToast } from '../../contexts/ToastContext';
 
 const TraitBrowser = ({ traitsData }) => {
   const [traits, setTraits] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setTraits(traitsData);
@@ -20,9 +22,11 @@ const TraitBrowser = ({ traitsData }) => {
 
     try {
       await updateTrait(newData._id, newData);
+      showToast('success', 'Success', 'Trait updated successfully');
       console.log('Trait updated successfully');
     } catch (error) {
-      console.error('Error updating trait:', error);
+      showToast('error', 'Error', error.response.data.message);
+      console.error('Error updating trait:', error.response.data?.error || error.response.data.message);
     }
   };
 
