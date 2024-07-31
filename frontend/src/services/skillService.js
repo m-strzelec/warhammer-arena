@@ -11,3 +11,7 @@ export const getSkills = () => {
 export const getSkillById = (skillId) => {
     return api.get(`/skills/${skillId}`);
 };
+
+export const updateSkill = (skillId, skillData) => {
+    return api.put(`/skills/${skillId}`, skillData);
+};

@@ -81,10 +81,10 @@ const BrowseItemsPage = () => {
                 />
               </Tab.Pane>
               <Tab.Pane eventKey="armor" active={key === 'armor'}>
-                <ArmorBrowser armorsData={armors} />
+                <ArmorBrowser armorsData={armors} traitOptions={traits} />
               </Tab.Pane>
               <Tab.Pane eventKey="weapon" active={key === 'weapon'}>
-                <WeaponBrowser weaponsData={weapons} />
+                <WeaponBrowser weaponsData={weapons} traitOptions={traits} />
               </Tab.Pane>
               <Tab.Pane eventKey="skill" active={key === 'skill'}>
                 <SkillBrowser skillsData={skills} />

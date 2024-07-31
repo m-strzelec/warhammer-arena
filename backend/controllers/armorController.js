@@ -44,8 +44,35 @@ const getArmorById = async (req, res) => {
     }
 };
 
+const updateArmor = async (req, res) => {
+    try {
+        const { name, locations, protectionFactor, traits } = req.body;
+        if (!name || !locations || !protectionFactor) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
+                message: !name ? 'No armor name was given' : 
+                    !locations ? 'No armor locations were given' :
+                        'No protection factor was given'
+            });
+        }
+
+        const updatedArmor = await Armor.findByIdAndUpdate(
+            req.params.id,
+            { name, locations, protectionFactor, traits },
+            { new: true }
+        );
+
+        if (!updatedArmor) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Armor not found' });
+        }
+        res.status(HttpStatus.StatusCodes.OK).json(updatedArmor);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating armor', error: error.message });
+    }
+};
+
 module.exports = {
     createArmor,
     getArmors,
-    getArmorById
+    getArmorById,
+    updateArmor
 };

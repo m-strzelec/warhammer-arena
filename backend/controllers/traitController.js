@@ -6,8 +6,7 @@ const createTrait = async (req, res) => {
         const { name, description } = req.body;
         if (!name || !description) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
-                message: !name ? 'No trait name was given' : 
-                    'No description was given'
+                message: !name ? 'No trait name was given' : 'No description was given'
             });
         }
         const existingTrait = await Trait.findOne({ name });
@@ -43,8 +42,32 @@ const getTraitById = async (req, res) => {
     }
 };
 
+const updateTrait = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description } = req.body;
+
+        if (!name || !description) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
+                message: !name ? 'No trait name was given' : 'No description was given'
+            });
+        }
+
+        const trait = await Trait.findByIdAndUpdate(id, { name, description }, { new: true });
+
+        if (!trait) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Trait not found' });
+        }
+
+        res.status(HttpStatus.StatusCodes.OK).json(trait);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating trait', error: error.message });
+    }
+};
+
 module.exports = {
     createTrait,
     getTraits,
-    getTraitById
+    getTraitById,
+    updateTrait
 };

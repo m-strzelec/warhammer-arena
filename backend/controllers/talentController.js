@@ -6,8 +6,7 @@ const createTalent = async (req, res) => {
         const { name, description } = req.body;
         if (!name || !description) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
-                message: !name ? 'No talent name was given' : 
-                    'No description was given'
+                message: !name ? 'No talent name was given' : 'No description was given'
             });
         }
         const existingTalent = await Talent.findOne({ name });
@@ -43,8 +42,34 @@ const getTalentById = async (req, res) => {
     }
 };
 
+const updateTalent = async (req, res) => {
+    try {
+        const { name, description } = req.body;
+        if (!name || !description) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
+                message: !name ? 'No talent name was given' : 'No description was given'
+            });
+        }
+
+        const updatedTalent = await Talent.findByIdAndUpdate(
+            req.params.id,
+            { name, description },
+            { new: true }
+        );
+
+        if (!updatedTalent) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Talent not found' });
+        }
+
+        res.status(HttpStatus.StatusCodes.OK).json(updatedTalent);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating talent', error: error.message });
+    }
+};
+
 module.exports = {
     createTalent,
     getTalents,
-    getTalentById
+    getTalentById,
+    updateTalent
 };

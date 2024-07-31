@@ -5,8 +5,8 @@ const createWeapon = async (req, res) => {
     try {
         const { name, damageFactor, traits, type, handedness } = req.body;
         if (!name || !damageFactor || !type || !handedness) {
-            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
-                message: !name ? 'No weapon name was given' : 
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
+                message: !name ? 'No weapon name was given' :
                     !damageFactor ? 'No damage factor was given' :
                         !type ? 'No weapon type was given' :
                             'No weapon handedness was given'
@@ -45,8 +45,35 @@ const getWeaponById = async (req, res) => {
     }
 };
 
+const updateWeapon = async (req, res) => {
+    try {
+        const { name, damageFactor, traits, type, handedness } = req.body;
+        if (!name || !damageFactor || !type || !handedness) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
+                message: !name ? 'No weapon name was given' :
+                    !damageFactor ? 'No damage factor was given' :
+                        !type ? 'No weapon type was given' :
+                            'No weapon handedness was given'
+            });
+        }
+
+        const updatedWeapon = await Weapon.findByIdAndUpdate(
+            req.params.id,
+            { name, damageFactor, traits, type, handedness },
+            { new: true }
+        );
+        if (!updatedWeapon) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Weapon not found' });
+        }
+        res.status(HttpStatus.StatusCodes.OK).json(updatedWeapon);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating weapon', error: error.message });
+    }
+};
+
 module.exports = {
     createWeapon,
     getWeapons,
-    getWeaponById
+    getWeaponById,
+    updateWeapon
 };
