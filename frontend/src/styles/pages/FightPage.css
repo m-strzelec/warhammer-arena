@@ -1,0 +1,218 @@
+/* General Page Styles */
+body {
+    background-color: #121212; /* Dark background for a grim atmosphere */
+    color: #f0f0f0; /* Light text for readability */
+    font-family: 'Spectral', serif; /* Gothic-style serif font for an epic feel */
+}
+
+h1.display-4 {
+    color: #d4af37; /* Gold color for headers */
+    text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.8); /* Deep shadow for a dramatic effect */
+    font-family: 'Uncial Antiqua', serif; /* Ancient script font for a unique look */
+    animation: battleCry 1.5s ease-in-out; /* Custom animation for headers */
+}
+
+p.lead {
+    color: #bbbbbb; /* Softer text color for subtitles */
+    font-size: 1.2rem;
+}
+
+p {
+    color: #ffffffd5; /* Bright white for maximum visibility */
+}
+
+/* Container Styling */
+.container {
+    padding: 30px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #1c1c1c 30%, #0e0e0e 90%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); /* Strong shadow for depth */
+    animation: fadeInBattle 1.5s ease-in-out; /* Smooth fade-in effect */
+}
+
+/* Dropdown Styles */
+.p-dropdown {
+    background-color: #2c2c2c; /* Darker background for dropdown */
+    border: 1px solid #555555; /* Border to enhance the dropdown */
+    color: #f0f0f0; /* Light text for clarity */
+    transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.p-dropdown .p-dropdown-trigger {
+    background-color: #444444; /* Dark trigger button */
+    border: none;
+    color: #d4af37; /* Gold icon for dropdown */
+    transition: transform 0.3s ease; /* Smooth scaling */
+}
+
+.p-dropdown .p-dropdown-trigger:hover {
+    transform: scale(1.15); /* Slight zoom on hover */
+}
+
+.p-dropdown .p-dropdown-panel {
+    background-color: #2c2c2c; /* Dropdown panel background */
+    border: 1px solid #555555; /* Border for dropdown panel */
+    animation: fadeInBattle 0.6s ease-in-out; /* Fade-in effect for dropdown */
+}
+
+/* Button Styles */
+button.btn-primary {
+    background-color: #d4af37; /* Gold background for buttons */
+    border: none;
+    color: #121212; /* Dark text for contrast */
+    font-weight: bold;
+    padding: 12px 28px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: fadeInUp 1.5s ease-in-out; /* Fade-in from below */
+}
+
+button.btn-primary:hover {
+    background-color: #b89529; /* Slightly darker gold on hover */
+    transform: translateY(-3px); /* Lift effect on hover */
+}
+
+button.btn-primary:active {
+    background-color: #a48023; /* Darker gold on click */
+    transform: translateY(0); /* Remove lift effect on click */
+}
+
+/* Spinner Styles */
+.spinner-border {
+    color: #d4af37; /* Gold spinner */
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.alert h2 {
+    margin: 0;
+    color: #d4af37; /* Gold color for the winner text */
+}
+
+.alert-success {
+    background-color: rgba(0, 128, 0, 0.15); /* Light green for success */
+}
+
+.alert-danger {
+    background-color: rgba(128, 0, 0, 0.15); /* Light red for danger */
+}
+
+/* Card Styles */
+.card {
+    background-color: #1e1e1e; /* Dark background for cards */
+    border: 1px solid #555555; /* Border to define the card */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); /* Strong shadow for depth */
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in effect */
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    color: #d4af37; /* Gold color for card titles */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Strong shadow for emphasis */
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    animation: fadeInDown 1.2s ease-in-out; /* Slide-in from the top */
+}
+
+/* Fight Log Styling */
+.stat-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #555555; /* Border to define items */
+    animation: fadeInLeft 1s ease-in-out; /* Slide-in from the left */
+    color: #f0f0f0; /* Ensure the text is light for readability */
+}
+
+.stat-item p {
+    margin: 0;
+    font-weight: bold;
+}
+
+.stat-item p span {
+    font-weight: bold;
+    color: #e57373; /* Bright red for numbers, to stand out better against the background */
+}
+
+.stat-item p span.critical {
+    color: #ff6347; /* Bright orange-red for critical hits */
+}
+
+.stat-item p span.miss {
+    color: #9370db; /* Medium purple for misses */
+}
+
+.stat-item p span.dodge {
+    color: #4682b4; /* Steel blue for dodges */
+}
+
+.stat-item p span.parry {
+    color: #ffeb3b; /* Bright yellow for parries */
+}
+
+.stat-item p span.hit {
+    color: #7cfc00; /* Lawn green for hits */
+}
+
+.stat-item p span.ulric {
+    color: #ff4500; /* Orange-red for special events like Ulric's Fury */
+}
+
+/* Custom Animations */
+@keyframes battleCry {
+    0% {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInBattle {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

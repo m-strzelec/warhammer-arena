@@ -1,19 +1,277 @@
-.nav-link, .items-header {
+/* General Page Styles */
+body {
+    background-color: #1b1b1b; /* Darker background for immersive fantasy theme */
+    color: #e8e8e8; /* Slightly lighter text for better readability */
+    font-family: 'Merriweather', serif; /* Serif font to enhance the fantasy theme */
+    animation: fadeIn 1s ease-in-out; /* Fade-in effect for the entire body */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+h1.display-4 {
+    color: #ffd700; /* Golden color for headers */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Deeper shadow for dramatic effect */
+    font-family: 'Cinzel', serif; /* Roman-style serif font for grandeur */
+    animation: fadeInScale 1.2s ease-in-out; /* Appear from nowhere with scaling */
+    letter-spacing: 1px; /* Slightly increased spacing for better readability */
+}
+
+p.lead {
+    color: #d4d4d4; /* Softer text color for subtitles */
+    font-size: 1.3rem; /* Slightly larger font for better readability */
+    font-family: 'Merriweather', serif; /* Consistent serif font */
+    animation: fadeInScale 1.5s ease-in-out; /* Appear from nowhere with scaling */
+    margin-bottom: 1.5rem; /* Increased spacing below the lead text */
+}
+
+/* Container Styling */
+.container {
+    padding: 25px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #333333 30%, #222222 90%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); /* Stronger shadow for a layered look */
+    animation: fadeInUp 1.2s ease-in-out; /* Fade-in from below */
+}
+
+/* Navigation and Tab Styles */
+.nav-link {
+    color: #f8f9fa;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    transition: all 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-link.active, .nav-link:hover {
+    color: #1b1b1b;
+    background-color: #ffd700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Enhanced shadow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Enhanced shadow on hover */
+}
+
+.items-header {
     cursor: pointer;
+    transition: all 0.3s ease, transform 0.3s ease;
 }
 
 .items-header:hover {
-    background-color: #f8f9fa;
-}
-  
-.tab-content {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
+    background-color: #4b4b4b;
+    transform: translateY(-4px); /* Lift the header slightly on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
-.browse-items {
-    min-height: 768px;
+/* Tab Content Styles */
+.tab-content {
+    padding: 25px;
+    background-color: #333333;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    border: 1px solid #555555;
+    animation: fadeInScale 1.5s ease-in-out; /* Smooth fade-in with scaling */
 }
-  
+
+/* DataTable Styling */
+.p-datatable-header {
+    background-color: #1b1b1b;
+    border-bottom: 2px solid #ffd700; /* Golden border to highlight the header */
+    color: #f8f9fa;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for the header */
+    animation: fadeIn 1.2s ease-in-out; /* Smooth fade-in */
+}
+
+.p-datatable-thead th {
+    background-color: #3a3a3a;
+    color: #ffd700; /* Golden color for column headers */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Subtle shadow */
+    border-bottom: 2px solid #555555; /* Dark border for separation */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.p-datatable-tbody tr {
+    background-color: #2b2b2b;
+    color: #f8f9fa;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.p-datatable-tbody tr:nth-child(even) {
+    background-color: #323232;
+}
+
+.p-datatable-tbody tr:hover {
+    background-color: #4b4b4b;
+    transform: scale(1.02); /* Slight zoom effect on hover */
+}
+
+.p-datatable-tbody .p-column-title {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.p-datatable-tbody .p-row-editor-init, 
+.p-datatable-tbody .p-row-editor-save, 
+.p-datatable-tbody .p-row-editor-cancel {
+    color: #f8f9fa;
+    background-color: #3a3a3a;
+    border: 1px solid #555555;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.p-datatable-tbody .p-row-editor-init:hover, 
+.p-datatable-tbody .p-row-editor-save:hover, 
+.p-datatable-tbody .p-row-editor-cancel:hover {
+    background-color: #ffd700;
+    color: #1b1b1b;
+    transform: scale(1.15); /* Slightly enlarge on hover */
+}
+
+.p-datatable-footer {
+    background-color: #1b1b1b;
+    border-top: 2px solid #ffd700;
+    color: #f8f9fa;
+    text-align: right;
+    padding: 12px 24px;
+}
+
+/* Chip Styles */
+.p-chip {
+    background-color: #3a3a3a;
+    color: #f8f9fa;
+    border-radius: 5px;
+    padding: 6px 12px;
+    margin-right: 6px;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.p-chip .p-chip-text {
+    font-weight: bold;
+}
+
+.p-chip:hover {
+    background-color: #ffd700;
+    color: #1b1b1b;
+    transform: translateY(-3px); /* Slight lift on hover */
+}
+
+/* Input and Dropdown Styling */
+.p-inputtext, .p-dropdown, .p-multiselect {
+    background-color: #3a3a3a;
+    border: 1px solid #555555;
+    color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.p-inputtext:focus, .p-dropdown:focus, .p-multiselect:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); /* Stronger glow effect */
+    transform: scale(1.05); /* Slight enlargement on focus */
+}
+
+.p-dropdown-trigger {
+    background-color: #4b4b4b;
+    border: none;
+    color: #ffd700;
+}
+
+.p-dropdown-panel, .p-multiselect-panel {
+    background-color: #2b2b2b;
+    border: 1px solid #555555;
+    color: #f8f9fa;
+    animation: fadeInScale 0.5s ease-in-out; /* Smooth fade-in with scaling */
+}
+
+.p-dropdown-item, .p-multiselect-item {
+    color: #f8f9fa;
+    background-color: #3a3a3a;
+    padding: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.p-dropdown-item:hover, .p-multiselect-item:hover {
+    background-color: #4b4b4b;
+}
+
+/* Browse Items Specific Styles */
+.browse-items {
+    min-height: 800px;
+    padding: 25px;
+    background: linear-gradient(135deg, #3a3a3a 30%, #2b2b2b 90%);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    animation: fadeInScale 1.2s ease-in-out; /* Fade-in effect with scaling */
+}
+
+.items-header {
+    padding: 12px;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.items-header:hover {
+    background-color: #4b4b4b;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    transform: translateY(-4px); /* Slight lift on hover */
+}
+
+.tab-content {
+    padding: 25px;
+    background-color: #3a3a3a;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    border: 1px solid #555555;
+    animation: fadeInScale 1.5s ease-in-out; /* Smooth fade-in with scaling */
+}
+
+/* Image Styles */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+    transform: scale(1.1); /* Larger scale on hover */
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.8); /* Stronger shadow on hover */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

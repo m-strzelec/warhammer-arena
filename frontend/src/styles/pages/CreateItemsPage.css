@@ -1,23 +1,254 @@
-.nav-link, .items-header {
-    cursor: pointer;
+/* General Page Styles */
+body {
+    background-color: #141414; /* Darker background for an intense theme */
+    color: #f2f2f2; /* Light text for clarity */
+    font-family: 'Lora', serif; /* Elegant serif font for a different feel */
 }
 
-.items-header:hover {
-    background-color: #f8f9fa;
-}
-  
-.tab-content {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
+h1.display-4 {
+    color: #ff6f61; /* Warm coral color for headers */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Strong shadow for emphasis */
+    animation: bounceIn 1s ease-in-out; /* Bounce animation for headers */
 }
 
-.create-items {
-    min-height: 768px;
+p.lead {
+    color: #e0e0e0; /* Slightly lighter text for subtitles */
+    font-size: 1.25rem;
 }
 
+/* Container Styling */
+.container {
+    padding: 25px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #282828 30%, #1c1c1c 90%);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* Stronger shadow for depth */
+    animation: fadeInUp 1s ease-in-out; /* Fade-in from below */
+}
+
+/* Form Elements */
+.p-field label {
+    font-weight: 600;
+    color: #ff6f61; /* Coral color for label text */
+}
+
+.p-field input, .p-field .p-dropdown, .p-field .p-multiselect {
+    background-color: #1e1e1e; /* Darker background for input fields */
+    border: 1px solid #555; /* Border that complements the dark theme */
+    color: #f2f2f2; /* Light text for input content */
+    transition: all 0.3s ease; /* Smooth transition for input focus */
+}
+
+.p-field input:focus, .p-field .p-dropdown:focus, .p-field .p-multiselect:focus {
+    border-color: #ff6f61; /* Highlighted border on focus */
+    box-shadow: 0 0 10px rgba(255, 111, 97, 0.5); /* Coral glow effect on focus */
+}
+
+.p-field .p-dropdown .p-dropdown-trigger {
+    background-color: #333; /* Dropdown trigger matches the theme */
+    border: none;
+    color: #ff6f61; /* Coral icon for the dropdown */
+    transition: transform 0.3s ease; /* Smooth scale effect */
+}
+
+.p-field .p-dropdown .p-dropdown-trigger:hover {
+    transform: scale(1.15); /* Slight zoom on hover */
+}
+
+.p-field .p-dropdown .p-dropdown-panel {
+    background-color: #1e1e1e; /* Dropdown panel matches the input fields */
+    border: 1px solid #555; /* Border for the dropdown panel */
+    animation: fadeIn 0.6s ease-in-out; /* Fade-in for dropdown */
+}
+
+.p-field .p-multiselect .p-multiselect-trigger {
+    background-color: #333; /* Multiselect trigger matches the theme */
+    border: none;
+    color: #ff6f61; /* Coral icon for the multiselect */
+    transition: transform 0.3s ease; /* Smooth scale effect */
+}
+
+.p-field .p-multiselect .p-multiselect-trigger:hover {
+    transform: scale(1.15); /* Slight zoom on hover */
+}
+
+/* Armor and Factor Labels */
 .create-label {
-    width: 100px;
+    width: 120px;
+    color: #ff6f61; /* Coral color for labels */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Stronger shadow for depth */
+    animation: fadeInRight 1s ease-in-out; /* Slide-in from right */
 }
-  
+
+/* Button Styles */
+button.btn-primary {
+    background-color: #ff6f61;
+    border: none;
+    color: #141414;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: fadeInUp 1.5s ease-in-out; /* Fade-in from below */
+}
+
+button.btn-primary:hover {
+    background-color: #e65850; /* Darker coral on hover */
+    transform: translateY(-3px); /* More pronounced lift effect on hover */
+}
+
+button.btn-primary:active {
+    background-color: #cc5148; /* Darker color on click */
+    transform: translateY(0); /* Remove lift effect on click */
+}
+
+/* Fieldset Styles */
+fieldset {
+    border: 1px solid #555;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #2e2e2e;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+    margin-bottom: 25px;
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in */
+}
+
+legend {
+    color: #ff6f61; /* Coral color for legend text */
+    padding: 0 12px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Stronger shadow */
+    animation: fadeInLeft 1s ease-in-out; /* Slide-in from left */
+}
+
+/* Splitter Styles */
+.p-splitter-panel {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 20px;
+    animation: fadeIn 1s ease-in-out; /* Smooth fade-in */
+}
+
+.p-splitter-gutter {
+    background-color: #555;
+    border-radius: 6px;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.p-splitter-gutter-handle {
+    background-color: #ff6f61;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.p-splitter-gutter:hover {
+    background-color: #666; /* Darken on hover */
+}
+
+/* Character Card */
+.character-card {
+    background-color: #2e2e2e;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+    margin-bottom: 35px;
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in */
+}
+
+.character-card .card-title {
+    color: #ff6f61; /* Coral color for card title */
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8); /* Strong shadow for card title */
+    font-size: 2rem;
+    margin-bottom: 25px;
+    animation: fadeInDown 1s ease-in-out; /* Slide-in from top */
+}
+
+/* Stat Item Styling */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-bottom: 1px solid #555;
+    animation: fadeInLeft 1s ease-in-out; /* Slide-in from left */
+}
+
+.stat-item .stat-name {
+    font-weight: bold;
+    color: #ff6f61; /* Coral color for stat names */
+}
+
+.stat-item .stat-value {
+    flex: 1;
+    text-align: right;
+    color: #f2f2f2; /* Light text for values */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

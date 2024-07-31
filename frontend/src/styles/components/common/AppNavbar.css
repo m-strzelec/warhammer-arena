@@ -1,18 +1,89 @@
-.navbar-dark .navbar-brand {
-    color: #61dafb;
-    font-size: 34px;
+/* Navbar Styling */
+.navbar {
+    background-color: #1a1a1a; /* Deep dark background for a grim and epic feel */
+    border-bottom: 2px solid #444; /* Solid border for a strong foundation */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Deep shadow for depth */
+    font-family: 'Cinzel', serif; /* Regal serif font for a Warhammer vibe */
+    padding: 0.8rem 1.5rem; /* Adjusted padding for a more compact look */
+}
+
+.navbar-brand {
+    color: #d4af37; /* Gold color for the brand to evoke grandeur */
+    font-size: 32px;
     font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); /* Subtle shadow for depth */
+    transition: color 0.3s ease, text-shadow 0.3s ease; /* Smooth transition for hover effects */
 }
-  
+
+.navbar-brand:hover {
+    color: #f0e68c; /* Lighter gold on hover */
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8); /* Enhanced shadow on hover */
+}
+
 .navbar-dark .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 215, 0, 0.85); /* Golden color for nav links */
+    font-size: 22px;
+    font-weight: 500;
+    padding: 0.7rem 1rem; /* Adjusted padding for better spacing */
+    text-transform: uppercase; /* Uppercase text for a bold look */
+    transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+    border-radius: 8px; /* Slightly rounded corners for a refined look */
 }
-  
+
 .navbar-dark .navbar-nav .nav-link:hover {
-    color: #ffffff;
+    color: #ffffff; /* Bright white on hover */
+    background-color: rgba(212, 175, 55, 0.15); /* Subtle gold background on hover */
+    transform: scale(1.05); /* Slight zoom on hover */
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3); /* Soft glow on hover */
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #d4af37; /* Keep gold color for active links */
+    background-color: rgba(212, 175, 55, 0.25); /* Highlight active link with a darker background */
+    border-bottom: 2px solid #f0e68c; /* Gold underline to indicate active page */
 }
 
 .nav-link {
-    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 24px;
+    transition: all 0.3s ease; /* Smooth all transitions */
+}
+
+/* Navbar Icon Styling */
+.nav-link .d-inline-block {
+    color: #d4af37; /* Gold color for icons */
+    transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.nav-link:hover .d-inline-block {
+    color: #f0e68c; /* Lighter gold on hover */
+    transform: rotate(20deg); /* Slight rotation on hover */
+}
+
+.navbar-collapse {
+    justify-content: center; /* Center align the collapse items */
+}
+
+/* Navbar Image Styling */
+.navbar-brand img {
+    border-radius: 10px; /* Slightly rounded corners for the logo image */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Deep shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9); /* Enhanced shadow on hover */
+}
+
+/* Custom Animations */
+@keyframes rotateIcon {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }

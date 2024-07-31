@@ -1,5 +1,76 @@
+/* Unique Footer Styles */
 footer {
-    background-color: #282c34;
-    color: white;
-    padding: 1rem 0;
+    background: linear-gradient(120deg, #0a0a0a 0%, #191919 100%); /* Slightly adjusted gradient for a fresh look */
+    color: #dddddd; /* Softer light text for readability */
+    padding: 2.5rem 0; /* Increased padding for a more substantial feel */
+    border-top: 5px solid #444; /* Slightly thicker border for emphasis */
+    font-family: 'Cinzel', serif; /* Roman-style serif font for a regal look */
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7); /* Softer shadow for subtle depth */
+    text-align: center; /* Center content for a balanced layout */
+    position: relative;
+    z-index: 1000;
+    overflow: hidden; /* Contain any overflow */
+}
+
+/* Decorative Element */
+footer::before {
+    content: '';
+    display: block;
+    width: 85%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #b8860b, transparent); /* New golden gradient */
+    margin: 0 auto 2rem auto;
+    animation: pulse 4s infinite; /* Subtle pulsing effect */
+}
+
+/* Footer Text Styling */
+footer p {
+    margin: 0;
+    font-size: 1.3rem; /* Slightly larger font size */
+    color: #b8860b; /* New golden color for the text */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Adjusted shadow for a softer effect */
+    animation: glow 3s infinite alternate; /* Alternating glow effect */
+}
+
+/* Hover Effects */
+footer p:hover {
+    color: #ffcc00; /* Brighter gold on hover */
+    text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.8); /* Enhanced glow on hover */
+    transform: scale(1.05); /* Slight scaling on hover */
+}
+
+/* Custom Animations */
+@keyframes glow {
+    from {
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+    }
+    to {
+        text-shadow: 3px 3px 20px rgba(255, 255, 255, 1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+/* Footer Responsive Styles */
+@media (max-width: 768px) {
+    footer p {
+        font-size: 1.1rem; /* Adjust font size for smaller screens */
+    }
+
+    footer::before {
+        width: 90%;
+    }
 }

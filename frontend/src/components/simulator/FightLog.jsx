@@ -6,7 +6,7 @@ const FightLog = ({ fightLog, char1Name, char2Name }) => {
 
     if (log.includes('hits')) style.color = 'green';
     else if (log.includes('misses')) style.color = '#9b30ff'; // purple
-    else if (log.includes('dodges')) style.color = 'mediumblue';
+    else if (log.includes('dodges')) style.color = '#6cbdff';
     else if (log.includes('parries')) style.color = 'orange';
     else if (log.includes('Ulric')) style.color = 'crimson';
 

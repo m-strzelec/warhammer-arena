@@ -1,0 +1,135 @@
+/* General Page Styles */
+body {
+    background-color: #0f0f0f; /* Dark background to emphasize the Warhammer theme */
+    color: #eaeaea; /* Light text for readability */
+    font-family: 'Merriweather', serif; /* Serif font for a classic, fantasy feel */
+}
+
+h1 {
+    color: #e8c547; /* Gold color for headers to create a regal feel */
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8); /* Strong shadow for depth */
+    font-family: 'Cinzel', serif; /* Classic serif font for an ancient touch */
+    animation: headerFadeIn 1.5s ease-in-out; /* Fade-in animation for headers */
+}
+
+p.lead {
+    color: #b8b8b8; /* Slightly lighter text for subtitles */
+    font-size: 1.25rem;
+}
+
+/* Button Styles */
+button.btn-success,
+button.btn-primary,
+button.btn-warning,
+button.btn-info,
+button.btn-secondary {
+    font-weight: bold;
+    padding: 12px 28px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    animation: buttonFadeIn 1.8s ease-in-out; /* Staggered fade-in for buttons */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); /* Strong shadow for depth */
+}
+
+button.btn-success:hover {
+    background-color: #2e8b57; /* Darker green on hover */
+    transform: translateY(-3px); /* Lift effect on hover */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8); /* Enhanced shadow on hover */
+}
+
+button.btn-primary:hover {
+    background-color: #1e90ff; /* Brighter blue on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+button.btn-warning:hover {
+    background-color: #ffb84d; /* Brighter orange on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+button.btn-info:hover {
+    background-color: #00ced1; /* Brighter turquoise on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+button.btn-secondary:hover {
+    background-color: #696969; /* Darker gray on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+button:active {
+    transform: translateY(0); /* Remove lift effect on click */
+}
+
+/* Image Styles */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); /* Strong shadow for image depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: imageFadeIn 2s ease-in-out; /* Smooth fade-in for images */
+}
+
+img:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.9); /* Enhanced shadow on hover */
+}
+
+/* Container Styling */
+.container {
+    padding: 40px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #1a1a1a 30%, #0d0d0d 90%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Strong shadow for the main container */
+    animation: containerFadeIn 1.5s ease-in-out; /* Smooth fade-in for the container */
+}
+
+/* Custom Animations */
+@keyframes headerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes buttonFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes imageFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

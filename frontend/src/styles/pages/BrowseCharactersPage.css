@@ -1,12 +1,139 @@
+/* General Styling for the Browse Characters Page */
+.browse-characters {
+    min-height: 768px;
+    padding: 20px;
+    background: linear-gradient(135deg, #2a2a2a 30%, #1c1c1c 90%);
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+}
+
+h1.display-4 {
+    color: #ffd700;
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+    font-family: 'Cinzel', serif;
+    margin-bottom: 10px;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+p.lead {
+    color: #cccccc;
+    font-size: 1.25rem;
+    font-family: 'Merriweather', serif;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+/* Card Styling for Character Details */
 .character-card {
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    background-color: #f8f9fa;
+    border: 1px solid #444;
+    border-radius: 10px;
+    background-color: #2a2a2a;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 1.5s ease-in-out;
 }
 
-.browse-characters {
-    min-height: 768px;
+.character-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.9);
 }
-  
+
+.character-card .card-title {
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+}
+
+.character-card strong {
+    color: #ffd700;
+    font-size: 1.2rem;
+    font-family: 'Cinzel', serif;
+}
+
+.character-card .stat-item {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #333;
+    color: #f8f9fa;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.character-card .stat-item:hover {
+    background-color: #444;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+}
+
+.character-card .stat-name {
+    font-weight: bold;
+    color: #ffd700;
+    margin-right: 5px;
+}
+
+.character-card .stat-value {
+    color: #f8f9fa;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Dropdown Styling */
+.p-dropdown {
+    background-color: #333;
+    border: 1px solid #444;
+    color: #f8f9fa;
+    border-radius: 4px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.p-dropdown:focus, .p-dropdown:hover {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.p-dropdown .p-dropdown-trigger {
+    background-color: #444;
+    border: none;
+    color: #ffd700;
+}
+
+.p-dropdown-panel {
+    background-color: #262626;
+    border: 1px solid #444;
+    color: #f8f9fa;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
