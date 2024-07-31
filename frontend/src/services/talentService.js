@@ -11,3 +11,7 @@ export const getTalents = () => {
 export const getTalentById = (talentId) => {
     return api.get(`/talents/${talentId}`);
 };
+
+export const updateTalent = (talentId, talent) => {
+    return api.put(`/talents/${talentId}`, talent);
+};
