@@ -4,10 +4,10 @@ const Weapon = require('../models/Weapon');
 const createWeapon = async (req, res) => {
     try {
         const { name, damageFactor, traits, type, handedness } = req.body;
-        if (!name || damageFactor === undefined || !type || !handedness) {
+        if (!name || !damageFactor || !type || !handedness) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
                 message: !name ? 'No weapon name was given' :
-                    damageFactor === undefined ? 'No damage factor was given' :
+                    !damageFactor ? 'No damage factor was given' :
                         !type ? 'No weapon type was given' :
                             'No weapon handedness was given'
             });
@@ -48,10 +48,10 @@ const getWeaponById = async (req, res) => {
 const updateWeapon = async (req, res) => {
     try {
         const { name, damageFactor, traits, type, handedness } = req.body;
-        if (!name || damageFactor === undefined || !type || !handedness) {
+        if (!name || !damageFactor || !type || !handedness) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
                 message: !name ? 'No weapon name was given' :
-                    damageFactor === undefined ? 'No damage factor was given' :
+                    !damageFactor ? 'No damage factor was given' :
                         !type ? 'No weapon type was given' :
                             'No weapon handedness was given'
             });

@@ -47,7 +47,6 @@ const getArmorById = async (req, res) => {
 const updateArmor = async (req, res) => {
     try {
         const { name, locations, protectionFactor, traits } = req.body;
-        const armorId = req.params.id;
         if (!name || !locations || !protectionFactor) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
                 message: !name ? 'No armor name was given' : 
@@ -55,16 +54,17 @@ const updateArmor = async (req, res) => {
                         'No protection factor was given'
             });
         }
-        const existingArmor = await Armor.findById(armorId);
-        if (!existingArmor) {
+
+        const updatedArmor = await Armor.findByIdAndUpdate(
+            req.params.id,
+            { name, locations, protectionFactor, traits },
+            { new: true }
+        );
+
+        if (!updatedArmor) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Armor not found' });
         }
-        existingArmor.name = name;
-        existingArmor.locations = locations;
-        existingArmor.protectionFactor = protectionFactor;
-        existingArmor.traits = traits;
-        await existingArmor.save();
-        res.status(HttpStatus.StatusCodes.OK).json(existingArmor);
+        res.status(HttpStatus.StatusCodes.OK).json(updatedArmor);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating armor', error: error.message });
     }

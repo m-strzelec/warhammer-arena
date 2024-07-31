@@ -9,7 +9,7 @@ import { updateArmor } from '../../services/armorService';
 import { locationFullNames } from '../utils/constants';
 import { useToast } from '../../contexts/ToastContext';
 
-const ArmorBrowser = ({ armorsData }) => {
+const ArmorBrowser = ({ armorsData, traitOptions }) => {
   const [armors, setArmors] = useState([]);
   const { showToast } = useToast();
 
@@ -33,10 +33,11 @@ const ArmorBrowser = ({ armorsData }) => {
   };
 
   const displayTraits = (rowData) => {
+    const traits = rowData.traits || [];
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {rowData.traits.map((item, index) => (
-          <Chip key={index} label={item.name} />
+        {traits.map((item) => (
+          <Chip key={item._id} label={item.name} />
         ))}
       </div>
     );
@@ -52,10 +53,9 @@ const ArmorBrowser = ({ armorsData }) => {
     try {
       await updateArmor(newData._id, newData);
       showToast('success', 'Success', 'Armor updated successfully');
-      console.log('Armor updated successfully');
     } catch (error) {
-      showToast('error', 'Error', error.response.data.message);
-      console.error(error.response.data?.error || error.response.data.message);
+      showToast('error', 'Error', error.response?.data?.message || 'Error updating armor');
+      console.error('Error updating armor:', error.response?.data?.error || error.response?.data?.message);
     }
   };
 
@@ -73,7 +73,8 @@ const ArmorBrowser = ({ armorsData }) => {
         value={options.value}
         options={selectionOptions}
         onChange={(e) => options.editorCallback(e.value)}
-        placeholder="Select options"
+        optionLabel="name"
+        placeholder="Select traits"
         display="chip"
       />
     );
@@ -95,7 +96,7 @@ const ArmorBrowser = ({ armorsData }) => {
         <Column field="name" header="Name" sortable editor={(options) => textEditor(options)}></Column>
         <Column field="locations" header="Locations" sortable body={displayLocations} editor={(options) => multiSelectEditor(options, armorLocations)}></Column>
         <Column field="protectionFactor" header="Protection Factor" sortable editor={(options) => numberEditor(options)}></Column>
-        <Column field="traits" header="Traits" body={displayTraits}></Column>
+        <Column field="traits" header="Traits" body={displayTraits} editor={(options) => multiSelectEditor(options, traitOptions)}></Column>
         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
       </DataTable>
     </>

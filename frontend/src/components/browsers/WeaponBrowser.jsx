@@ -19,10 +19,11 @@ const WeaponBrowser = ({ weaponsData, traitOptions }) => {
   }, [weaponsData]);
 
   const displayTraits = (rowData) => {
+    const traits = rowData.traits || [];
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {rowData.traits.map((item, index) => (
-          <Chip key={index} label={item.name} />
+        {traits.map((item) => (
+          <Chip key={item._id} label={item.name} />
         ))}
       </div>
     );
@@ -72,7 +73,8 @@ const WeaponBrowser = ({ weaponsData, traitOptions }) => {
         value={options.value}
         options={selectionOptions}
         onChange={(e) => options.editorCallback(e.value)}
-        placeholder="Select options"
+        optionLabel="name"
+        placeholder="Select traits"
         display="chip"
       />
     );
