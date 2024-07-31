@@ -7,6 +7,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { updateWeapon } from '../../services/weaponService';
+import { weaponTypes, weaponHandedness } from '../utils/constants';
 
 const WeaponBrowser = ({ weaponsData, traitOptions }) => {
   const [weapons, setWeapons] = useState([]);
@@ -14,16 +15,6 @@ const WeaponBrowser = ({ weaponsData, traitOptions }) => {
   useEffect(() => {
     setWeapons(weaponsData);
   }, [weaponsData]);
-
-  const weaponTypes = [
-    { label: 'Melee', value: 'melee' },
-    { label: 'Range', value: 'range' }
-  ];
-
-  const weaponHandedness = [
-    { label: 'One-handed', value: 'one-handed' },
-    { label: 'Two-handed', value: 'two-handed' }
-  ];
 
   const displayTraits = (rowData) => {
     return (

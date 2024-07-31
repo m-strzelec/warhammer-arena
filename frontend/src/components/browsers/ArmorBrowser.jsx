@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { MultiSelect } from 'primereact/multiselect';
 import { updateArmor } from '../../services/armorService';
+import { locationFullNames } from '../utils/constants';
 
 const ArmorBrowser = ({ armorsData }) => {
   const [armors, setArmors] = useState([]);
@@ -14,14 +15,10 @@ const ArmorBrowser = ({ armorsData }) => {
     setArmors(armorsData);
   }, [armorsData]);
 
-  const locations = [
-    { label: 'Head', value: 'head' },
-    { label: 'Body', value: 'body' },
-    { label: 'Left Arm', value: 'leftArm' },
-    { label: 'Right Arm', value: 'rightArm' },
-    { label: 'Left Leg', value: 'leftLeg' },
-    { label: 'Right Leg', value: 'rightLeg' },
-  ];
+  const armorLocations = Object.entries(locationFullNames).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
 
   const displayLocations = (rowData) => {
     return (
@@ -92,7 +89,7 @@ const ArmorBrowser = ({ armorsData }) => {
         removableSort
       >
         <Column field="name" header="Name" sortable editor={(options) => textEditor(options)}></Column>
-        <Column field="locations" header="Locations" sortable body={displayLocations} editor={(options) => multiSelectEditor(options, locations)}></Column>
+        <Column field="locations" header="Locations" sortable body={displayLocations} editor={(options) => multiSelectEditor(options, armorLocations)}></Column>
         <Column field="protectionFactor" header="Protection Factor" sortable editor={(options) => numberEditor(options)}></Column>
         <Column field="traits" header="Traits" body={displayTraits}></Column>
         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>

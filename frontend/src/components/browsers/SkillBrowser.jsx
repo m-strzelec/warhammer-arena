@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { updateSkill } from '../../services/skillService';
+import { primaryStatFullNames } from '../utils/constants';
 
 const SkillBrowser = ({ skillsData }) => {
   const [skills, setSkills] = useState([]);
@@ -12,16 +13,10 @@ const SkillBrowser = ({ skillsData }) => {
     setSkills(skillsData);
   }, [skillsData]);
 
-  const baseStats = [
-    { label: 'Weapon Skill', value: 'WS' },
-    { label: 'Ballistic Skill', value: 'BS' },
-    { label: 'Strength', value: 'S' },
-    { label: 'Toughness', value: 'T' },
-    { label: 'Agility', value: 'Ag' },
-    { label: 'Intelligence', value: 'Int' },
-    { label: 'Will Power', value: 'WP' },
-    { label: 'Fellowship', value: 'Fel' },
-  ];
+  const baseStats = Object.entries(primaryStatFullNames).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
 
   const onRowEditComplete = async (e) => {
     let updatedSkills = [...skills];
