@@ -44,8 +44,36 @@ const getSkillById = async (req, res) => {
     }
 };
 
+const updateSkill = async (req, res) => {
+    try {
+        const { name, baseStat, description } = req.body;
+        if (!name || !baseStat || !description) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
+                message: !name ? 'No skill name was given' :
+                    !baseStat ? 'No base stat was given' :
+                        'No description was given'
+            });
+        }
+
+        const skill = await Skill.findByIdAndUpdate(
+            req.params.id,
+            { name, baseStat, description },
+            { new: true }
+        );
+
+        if (!skill) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Skill not found' });
+        }
+
+        res.status(HttpStatus.StatusCodes.OK).json(skill);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating skill', error: error.message });
+    }
+};
+
 module.exports = {
     createSkill,
     getSkills,
-    getSkillById
+    getSkillById,
+    updateSkill
 };
