@@ -108,23 +108,39 @@ p.lead {
     font-weight: bold;
 }
 
-.p-datatable-tbody .p-row-editor-init, 
-.p-datatable-tbody .p-row-editor-save, 
-.p-datatable-tbody .p-row-editor-cancel {
-    color: #f8f9fa;
-    background-color: #3a3a3a;
-    border: 1px solid #555555;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+/* DataTable Icon Styling */
+.p-row-editor-init::before {
+    content: "\f044"; /* FontAwesome pen icon (edit) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ffd700;
+    font-size: 1.2rem;
 }
 
-.p-datatable-tbody .p-row-editor-init:hover, 
-.p-datatable-tbody .p-row-editor-save:hover, 
-.p-datatable-tbody .p-row-editor-cancel:hover {
-    background-color: #ffd700;
-    color: #1b1b1b;
-    transform: scale(1.15); /* Slightly enlarge on hover */
+.p-row-editor-save::before {
+    content: "\f00c"; /* FontAwesome check icon (save) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ffd700;
+    font-size: 1.2rem;
 }
 
+.p-row-editor-cancel::before {
+    content: "\f00d"; /* FontAwesome times icon (cancel) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+.p-row-editor-init:hover,
+.p-row-editor-save:hover,
+.p-row-editor-cancel:hover {
+    color: #ffffff; /* White color on hover for better visibility */
+    transform: scale(1.15); /* Slight enlargement on hover */
+}
+
+/* DataTable Footer Styling */
 .p-datatable-footer {
     background-color: #1b1b1b;
     border-top: 2px solid #ffd700;
