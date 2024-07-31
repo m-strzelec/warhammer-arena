@@ -26,7 +26,7 @@ const ArmorBrowser = ({ armorsData, traitOptions }) => {
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {rowData.locations.map((item, index) => (
-          <Chip key={index} label={item} />
+          <Chip key={index} label={locationFullNames[item]} />
         ))}
       </div>
     );
@@ -53,6 +53,7 @@ const ArmorBrowser = ({ armorsData, traitOptions }) => {
     try {
       await updateArmor(newData._id, newData);
       showToast('success', 'Success', 'Armor updated successfully');
+      console.log('Armor updated successfully');
     } catch (error) {
       showToast('error', 'Error', error.response?.data?.message || 'Error updating armor');
       console.error('Error updating armor:', error.response?.data?.error || error.response?.data?.message);
@@ -67,7 +68,19 @@ const ArmorBrowser = ({ armorsData, traitOptions }) => {
     return <InputNumber value={options.value} onValueChange={(e) => options.editorCallback(e.value)} />;
   };
 
-  const multiSelectEditor = (options, selectionOptions) => {
+  const multiSelectEditorLocations = (options, selectionOptions) => {
+    return (
+      <MultiSelect
+        value={options.value}
+        options={selectionOptions}
+        onChange={(e) => options.editorCallback(e.value)}
+        placeholder="Select traits"
+        display="chip"
+      />
+    );
+  };
+
+  const multiSelectEditorTraits = (options, selectionOptions) => {
     return (
       <MultiSelect
         value={options.value}
@@ -94,9 +107,9 @@ const ArmorBrowser = ({ armorsData, traitOptions }) => {
         removableSort
       >
         <Column field="name" header="Name" sortable editor={(options) => textEditor(options)}></Column>
-        <Column field="locations" header="Locations" sortable body={displayLocations} editor={(options) => multiSelectEditor(options, armorLocations)}></Column>
+        <Column field="locations" header="Locations" sortable body={displayLocations} editor={(options) => multiSelectEditorLocations(options, armorLocations)}></Column>
         <Column field="protectionFactor" header="Protection Factor" sortable editor={(options) => numberEditor(options)}></Column>
-        <Column field="traits" header="Traits" body={displayTraits} editor={(options) => multiSelectEditor(options, traitOptions)}></Column>
+        <Column field="traits" header="Traits" body={displayTraits} editor={(options) => multiSelectEditorTraits(options, traitOptions)}></Column>
         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
       </DataTable>
     </>
