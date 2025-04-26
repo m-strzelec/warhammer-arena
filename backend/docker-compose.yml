@@ -24,5 +24,44 @@ services:
       - ${DB_PORT}:${DB_PORT}
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
+      - mongo_data:/data/db
       - ./sql:/docker-entrypoint-initdb.d/
+    networks:
+      - wharena-network
+
+  trait-service:
+    container_name: trait-service
+    build:
+      context: ./trait-service
+    ports:
+      - ${TRAIT_SERVICE_PORT}:${TRAIT_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${TRAIT_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .trait-service/.env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - wharena-network
+
+networks:
+  wharena-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+    driver: local
