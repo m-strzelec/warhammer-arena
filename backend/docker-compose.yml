@@ -83,12 +83,38 @@ services:
       - armor-network
       - wharena-network
 
+  weapon-service:
+    container_name: weapon-service
+    build:
+      context: ./weapon-service
+    ports:
+      - ${WEAPON_SERVICE_PORT}:${WEAPON_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${WEAPON_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - weapon-network
+      - wharena-network
+
 networks:
   wharena-network:
     driver: bridge
   trait-network:
     driver: bridge
   armor-network:
+    driver: bridge
+  weapon-network:
     driver: bridge
 
 volumes:
