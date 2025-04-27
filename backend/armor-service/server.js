@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
 
-app.use('/armors', armorRoutes);
+app.use('/api/armors', armorRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

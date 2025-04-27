@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
 
-app.use('/skills', skillRoutes);
+app.use('/api/skills', skillRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

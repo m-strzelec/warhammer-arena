@@ -1,18 +1,4 @@
 services:
-  backend:
-    container_name: backend
-    build:
-      context: .
-    ports:
-      - ${APP_PORT}:${APP_PORT}
-    environment:
-      - NODE_ENV=production
-      - PORT=${APP_PORT}
-      - MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}?authSource=admin
-    env_file:
-      - .env
-    depends_on:
-      - mongo
   mongo:
     image: mongo:latest
     container_name: mongo
@@ -29,6 +15,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     volumes:
       - mongo_data:/data/db
       - ./sql:/docker-entrypoint-initdb.d/
@@ -44,19 +31,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${TRAIT_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/traits/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - trait-network
       - wharena-network
 
   armor-service:
@@ -68,19 +56,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${ARMOR_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${ARMOR_SERVICE_PORT}/armors/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${ARMOR_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - armor-network
       - wharena-network
 
   weapon-service:
@@ -92,19 +81,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${WEAPON_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/weapons/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - weapon-network
       - wharena-network
 
   talent-service:
@@ -116,19 +106,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${TALENT_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/talents/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - talent-network
       - wharena-network
 
   skill-service:
@@ -140,19 +131,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${SKILL_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/skills/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - skill-network
       - wharena-network
 
   character-service:
@@ -164,19 +156,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${CHARACTER_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${CHARACTER_SERVICE_PORT}/characters/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${CHARACTER_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - character-network
       - wharena-network
 
   fight-service:
@@ -188,37 +181,44 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${FIGHT_SERVICE_PORT}
-      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
     env_file:
       - .env
     depends_on:
       mongo:
         condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${FIGHT_SERVICE_PORT}/fights/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${FIGHT_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     networks:
-      - fight-network
+      - wharena-network
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:80
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${FRONTEND_PORT}/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
       - wharena-network
 
 networks:
   wharena-network:
-    driver: bridge
-  trait-network:
-    driver: bridge
-  armor-network:
-    driver: bridge
-  weapon-network:
-    driver: bridge
-  talent-network:
-    driver: bridge
-  skill-network:
-    driver: bridge
-  character-network:
-    driver: bridge
-  fight-network:
     driver: bridge
 
 volumes:

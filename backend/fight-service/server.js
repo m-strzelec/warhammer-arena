@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
 
-app.use('/fights', fightRoutes);
+app.use('/api/fights', fightRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

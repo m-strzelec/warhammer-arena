@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
 
-app.use('/traits', traitRoutes);
+app.use('/api/traits', traitRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
