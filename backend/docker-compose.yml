@@ -107,6 +107,30 @@ services:
       - weapon-network
       - wharena-network
 
+  talent-service:
+    container_name: talent-service
+    build:
+      context: ./talent-service
+    ports:
+      - ${TALENT_SERVICE_PORT}:${TALENT_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${TALENT_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wharena-network
+      - trait-network
+
   skill-service:
     container_name: skill-service
     build:
@@ -139,6 +163,8 @@ networks:
   armor-network:
     driver: bridge
   weapon-network:
+    driver: bridge
+  talent-network:
     driver: bridge
   skill-network:
     driver: bridge
