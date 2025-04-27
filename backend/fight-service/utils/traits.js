@@ -5,4 +5,3 @@ const TraitEffects = {
   };
   
   module.exports = TraitEffects;
-  

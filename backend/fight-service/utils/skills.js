@@ -12,4 +12,3 @@ const SkillEffects = {
 };
   
 module.exports = SkillEffects;
-  

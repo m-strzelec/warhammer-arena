@@ -179,6 +179,30 @@ services:
       - character-network
       - wharena-network
 
+  fight-service:
+    container_name: fight-service
+    build:
+      context: ./fight-service
+    ports:
+      - ${FIGHT_SERVICE_PORT}:${FIGHT_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${FIGHT_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${FIGHT_SERVICE_PORT}/fights/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fight-network
+      - wharena-network
+
 networks:
   wharena-network:
     driver: bridge
@@ -193,6 +217,8 @@ networks:
   skill-network:
     driver: bridge
   character-network:
+    driver: bridge
+  fight-network:
     driver: bridge
 
 volumes:
