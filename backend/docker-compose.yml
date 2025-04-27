@@ -197,6 +197,48 @@ services:
     networks:
       - wharena-network
 
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ./gateway-service
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    environment:
+      - NODE_ENV=production
+      - GATEWAY_PORT=${GATEWAY_PORT}
+      - TRAIT_SERVICE_PORT=${TRAIT_SERVICE_PORT}
+      - ARMOR_SERVICE_PORT=${ARMOR_SERVICE_PORT}
+      - WEAPON_SERVICE_PORT=${WEAPON_SERVICE_PORT}
+      - SKILL_SERVICE_PORT=${SKILL_SERVICE_PORT}
+      - TALENT_SERVICE_PORT=${TALENT_SERVICE_PORT}
+      - CHARACTER_SERVICE_PORT=${CHARACTER_SERVICE_PORT}
+      - FIGHT_SERVICE_PORT=${FIGHT_SERVICE_PORT}
+    env_file:
+      - .env
+    depends_on:
+      trait-service:
+        condition: service_healthy
+      armor-service:
+        condition: service_healthy
+      weapon-service:
+        condition: service_healthy
+      skill-service:
+        condition: service_healthy
+      talent-service:
+        condition: service_healthy
+      character-service:
+        condition: service_healthy
+      fight-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${GATEWAY_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - wharena-network
+
   frontend:
     container_name: frontend
     build:
