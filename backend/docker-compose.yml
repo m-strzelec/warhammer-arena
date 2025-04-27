@@ -51,7 +51,7 @@ services:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/traits/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -75,7 +75,7 @@ services:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${ARMOR_SERVICE_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${ARMOR_SERVICE_PORT}/armors/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -99,7 +99,7 @@ services:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/weapons/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -123,13 +123,13 @@ services:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/talents/health"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
+      - talent-network
       - wharena-network
-      - trait-network
 
   skill-service:
     container_name: skill-service
@@ -147,12 +147,36 @@ services:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/skills/health"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - skill-network
+      - wharena-network
+
+  character-service:
+    container_name: character-service
+    build:
+      context: ./character-service
+    ports:
+      - ${CHARACTER_SERVICE_PORT}:${CHARACTER_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${CHARACTER_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${CHARACTER_SERVICE_PORT}/characters/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - character-network
       - wharena-network
 
 networks:
@@ -167,6 +191,8 @@ networks:
   talent-network:
     driver: bridge
   skill-network:
+    driver: bridge
+  character-network:
     driver: bridge
 
 volumes:

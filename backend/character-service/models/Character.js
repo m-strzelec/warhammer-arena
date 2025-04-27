@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 const Int32 = require('mongoose-int32').loadType(mongoose);
-const Skill = require('./Skill');
-const Talent = require('./Talent');
-const Weapon = require('./Weapon');
-const Armor = require('./Armor');
 
 const characterSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
@@ -47,20 +43,9 @@ const characterSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 characterSchema.pre('save', async function(next) {
-    try {
-        this.secondaryStats.SB = Math.floor(this.primaryStats.S / 10);
-        this.secondaryStats.TB = Math.floor(this.primaryStats.T / 10);
-        await Promise.all([
-            Armor.find({ _id: { $in: Object.values(this.armor).filter(id => id) } }).exec(),
-            Weapon.find({ _id: { $in: this.weapons } }).exec(),
-            Skill.find({ _id: { $in: this.skills.map(s => s.skill) } }).exec(),
-            Talent.find({ _id: { $in: this.talents } }).exec()
-        ]);
-        next();
-    } catch (err) {
-        next(err);
-    }
+    this.secondaryStats.SB = Math.floor(this.primaryStats.S / 10);
+    this.secondaryStats.TB = Math.floor(this.primaryStats.T / 10);
+    next();
 });
 
 module.exports = mongoose.model('Character', characterSchema);
-
