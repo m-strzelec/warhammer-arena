@@ -107,6 +107,30 @@ services:
       - weapon-network
       - wharena-network
 
+  skill-service:
+    container_name: skill-service
+    build:
+      context: ./skill-service
+    ports:
+      - ${SKILL_SERVICE_PORT}:${SKILL_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${SKILL_SERVICE_PORT}
+      - MONGO_URI=mongodb://{DB_HOSTNAME_PROD}:${DB_PORT}/{MONGO_DB}
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - skill-network
+      - wharena-network
+
 networks:
   wharena-network:
     driver: bridge
@@ -115,6 +139,8 @@ networks:
   armor-network:
     driver: bridge
   weapon-network:
+    driver: bridge
+  skill-network:
     driver: bridge
 
 volumes:
