@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Int32 = require('mongoose-int32').loadType(mongoose);
+const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
 const characterSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
@@ -43,9 +44,37 @@ const characterSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 characterSchema.pre('save', async function(next) {
-    this.secondaryStats.SB = Math.floor(this.primaryStats.S / 10);
-    this.secondaryStats.TB = Math.floor(this.primaryStats.T / 10);
-    next();
+    try {
+        this.secondaryStats.SB = Math.floor(this.primaryStats.S / 10);
+        this.secondaryStats.TB = Math.floor(this.primaryStats.T / 10);
+
+        const armorIds = Object.values(this.armor).filter(id => id);
+        const weaponIds = this.weapons || [];
+        const skillIds = (this.skills || []).map(s => s.skill);
+        const talentIds = this.talents || [];
+
+        const [armorsExist, weaponsExist, skillsExist, talentsExist] = await Promise.all([
+            armorIds.length ? sendRPCMessage('armor_rpc_queue', { action: 'checkArmorsExist', ids: armorIds }) : { valid: true },
+            weaponIds.length ? sendRPCMessage('weapon_rpc_queue', { action: 'checkWeaponsExist', ids: weaponIds }) : { valid: true },
+            skillIds.length ? sendRPCMessage('skill_rpc_queue', { action: 'checkSkillsExist', ids: skillIds }) : { valid: true },
+            talentIds.length ? sendRPCMessage('talent_rpc_queue', { action: 'checkTalentsExist', ids: talentIds }) : { valid: true },
+        ]);
+        if (!armorsExist.valid) {
+            throw new Error('One or more armors do not exist');
+        }
+        if (!weaponsExist.valid) {
+            throw new Error('One or more weapons do not exist');
+        }
+        if (!skillsExist.valid) {
+            throw new Error('One or more skills do not exist');
+        }
+        if (!talentsExist.valid) {
+            throw new Error('One or more talents do not exist');
+        }
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = mongoose.model('Character', characterSchema);
