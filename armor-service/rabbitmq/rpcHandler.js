@@ -9,7 +9,7 @@ const armorRPCHandler = async (message) => {
         return { valid: count === armorIds.length };
     }
 
-    if (action === 'findArmorsByIds') {
+    if (action === 'getArmorsByIds') {
         const armors = await Armor.find({ _id: { $in: armorIds } });
         return armors;
     }

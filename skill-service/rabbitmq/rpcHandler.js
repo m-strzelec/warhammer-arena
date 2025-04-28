@@ -9,7 +9,7 @@ const skillRPCHandler = async (message) => {
         return { valid: count === skillIds.length };
     }
 
-    if (action === 'findSkillsByIds') {
+    if (action === 'getSkillsByIds') {
         const skills = await Skill.find({ _id: { $in: skillIds } });
         return skills;
     }

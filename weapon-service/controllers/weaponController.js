@@ -30,7 +30,7 @@ const getWeapons = async (req, res) => {
         const weapons = await Weapon.find();
         const allTraitIds = [...new Set(weapons.flatMap(weapon => weapon.traits.map(id => id.toString())))];
         const traits = allTraitIds.length > 0 
-            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: allTraitIds }) 
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'getTraitsByIds', traitIds: allTraitIds }) 
             : [];
         const traitsMap = {};
         traits.forEach(trait => {
@@ -55,7 +55,7 @@ const getWeaponById = async (req, res) => {
         }
         const traitIds = weapon.traits.map(id => id.toString());
         const traits = traitIds.length > 0 
-            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: traitIds })
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'getTraitsByIds', traitIds: traitIds })
             : [];
         const weaponObj = weapon.toObject();
         weaponObj.traits = weaponObj.traits.map(id => traits.find(trait => trait._id.toString() === id)).filter(Boolean);

@@ -9,7 +9,7 @@ const traitRPCHandler = async (message) => {
         return { valid: count === traitIds.length };
     }
 
-    if (action === 'findTraitsByIds') {
+    if (action === 'getTraitsByIds') {
         const traits = await Trait.find({ _id: { $in: traitIds } });
         return traits;
     }

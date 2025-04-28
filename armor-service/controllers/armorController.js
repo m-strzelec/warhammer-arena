@@ -29,7 +29,7 @@ const getArmors = async (req, res) => {
         const armors = await Armor.find();
         const allTraitIds = [...new Set(armors.flatMap(armor => armor.traits.map(id => id.toString())))];
         const traits = allTraitIds.length > 0 
-            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: allTraitIds }) 
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'getTraitsByIds', traitIds: allTraitIds }) 
             : [];
         const traitsMap = {};
         traits.forEach(trait => {
@@ -54,7 +54,7 @@ const getArmorById = async (req, res) => {
         }
         const traitIds = armor.traits.map(id => id.toString());
         const traits = traitIds.length > 0 
-            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: traitIds }) 
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'getTraitsByIds', traitIds: traitIds }) 
             : [];
         const armorObj = armor.toObject();
         armorObj.traits = armorObj.traits.map(id => traits.find(trait => trait._id.toString() === id)).filter(Boolean);
