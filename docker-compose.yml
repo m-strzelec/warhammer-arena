@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
-      - ./sql:/docker-entrypoint-initdb.d/
+      - ./mongo-init:/docker-entrypoint-initdb.d/
     networks:
       - wharena-network
 
