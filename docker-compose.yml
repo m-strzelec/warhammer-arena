@@ -32,6 +32,7 @@ services:
       - NODE_ENV=production
       - PORT=${TRAIT_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -57,6 +58,7 @@ services:
       - NODE_ENV=production
       - PORT=${ARMOR_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -82,6 +84,7 @@ services:
       - NODE_ENV=production
       - PORT=${WEAPON_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -107,6 +110,7 @@ services:
       - NODE_ENV=production
       - PORT=${TALENT_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -132,6 +136,7 @@ services:
       - NODE_ENV=production
       - PORT=${SKILL_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -157,6 +162,7 @@ services:
       - NODE_ENV=production
       - PORT=${CHARACTER_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -182,6 +188,7 @@ services:
       - NODE_ENV=production
       - PORT=${FIGHT_SERVICE_PORT}
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
     depends_on:
@@ -259,10 +266,37 @@ services:
     networks:
       - wharena-network
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - wharena-network
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq
+      - rabbitmq-log:/var/log/rabbitmq
+
 networks:
   wharena-network:
     driver: bridge
 
 volumes:
   mongo_data:
+    driver: local
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
     driver: local
