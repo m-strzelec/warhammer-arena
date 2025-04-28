@@ -1,5 +1,6 @@
 const HttpStatus = require('http-status-codes');
 const Armor = require('../models/Armor');
+const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
 const createArmor = async (req, res) => {
     try {
@@ -25,8 +26,21 @@ const createArmor = async (req, res) => {
 
 const getArmors = async (req, res) => {
     try {
-        const armors = await Armor.find().populate('traits');
-        res.status(HttpStatus.StatusCodes.OK).json(armors);
+        const armors = await Armor.find();
+        const allTraitIds = [...new Set(armors.flatMap(armor => armor.traits.map(id => id.toString())))];
+        const traits = allTraitIds.length > 0 
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: allTraitIds }) 
+            : [];
+        const traitsMap = {};
+        traits.forEach(trait => {
+            traitsMap[trait._id] = trait;
+        });
+        const armorsWithTraits = armors.map(armor => {
+            const armorObj = armor.toObject();
+            armorObj.traits = armorObj.traits.map(id => traitsMap[id.toString()]).filter(Boolean);
+            return armorObj;
+        });
+        res.status(HttpStatus.StatusCodes.OK).json(armorsWithTraits);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching armors', error: error.message });
     }
@@ -34,11 +48,17 @@ const getArmors = async (req, res) => {
 
 const getArmorById = async (req, res) => {
     try {
-        const armor = await Armor.findById(req.params.id).populate('traits');
+        const armor = await Armor.findById(req.params.id);
         if (!armor) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Armor not found' });
         }
-        res.status(HttpStatus.StatusCodes.OK).json(armor);
+        const traitIds = armor.traits.map(id => id.toString());
+        const traits = traitIds.length > 0 
+            ? await sendRPCMessage('trait_rpc_queue', { action: 'findTraitsByIds', traitIds: traitIds }) 
+            : [];
+        const armorObj = armor.toObject();
+        armorObj.traits = armorObj.traits.map(id => traits.find(trait => trait._id.toString() === id)).filter(Boolean);
+        res.status(HttpStatus.StatusCodes.OK).json(armorObj);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching armor data', error: error.message });
     }
