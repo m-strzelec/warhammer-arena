@@ -11,7 +11,7 @@ const armorSchema = new mongoose.Schema({
 
 armorSchema.pre('save', async function(next) {
     try {
-        const response = await sendRPCMessage('trait_rpc_queue', { traitIds: this.traits });
+        const response = await sendRPCMessage('trait_rpc_queue', { action: 'checkTraitsExist', traitIds: this.traits });
         if (!response.valid) {
             throw new Error('One or more traits are invalid.');
         }
@@ -25,7 +25,7 @@ armorSchema.pre('findOneAndUpdate', async function (next) {
     try {
         const update = this.getUpdate();
         if (update.traits && Array.isArray(update.traits)) {
-            const response = await sendRPCMessage('trait_rpc_queue', { traitIds: update.traits });
+            const response = await sendRPCMessage('trait_rpc_queue', { action: 'checkTraitsExist', traitIds: update.traits });
             if (!response.valid) {
                 throw new Error('One or more traits do not exist');
             }
