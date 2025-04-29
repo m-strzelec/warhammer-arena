@@ -1,4 +1,4 @@
-const Skill = require('./models/Skill');
+const Skill = require('../models/Skill');
 
 const skillRPCHandler = async (message) => {
     const { action, skillIds } = JSON.parse(message.content.toString());

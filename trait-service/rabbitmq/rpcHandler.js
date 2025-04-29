@@ -1,4 +1,4 @@
-const Trait = require('./models/Trait');
+const Trait = require('../models/Trait');
 
 const traitRPCHandler = async (message) => {
     const { action, traitIds } = JSON.parse(message.content.toString());

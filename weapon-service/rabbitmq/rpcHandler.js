@@ -1,4 +1,4 @@
-const Weapon = require('./models/Weapon');
+const Weapon = require('../models/Weapon');
 
 const weaponRPCHandler = async (message) => {
     const { action, weaponIds } = JSON.parse(message.content.toString());

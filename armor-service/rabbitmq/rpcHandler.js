@@ -1,4 +1,4 @@
-const Armor = require('./models/Armor');
+const Armor = require('../models/Armor');
 
 const armorRPCHandler = async (message) => {
     const { action, armorIds } = JSON.parse(message.content.toString());

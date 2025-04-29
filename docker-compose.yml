@@ -39,11 +39,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TRAIT_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$TRAIT_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -65,11 +68,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${ARMOR_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$ARMOR_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -91,11 +97,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${WEAPON_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$WEAPON_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -117,11 +126,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${TALENT_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$TALENT_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -143,11 +155,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${SKILL_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$SKILL_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -169,11 +184,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${CHARACTER_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$CHARACTER_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -195,11 +213,14 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${FIGHT_SERVICE_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$FIGHT_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -224,24 +245,24 @@ services:
       - .env
     depends_on:
       trait-service:
-        condition: service_healthy
+        condition: service_started
       armor-service:
-        condition: service_healthy
+        condition: service_started
       weapon-service:
-        condition: service_healthy
+        condition: service_started
       skill-service:
-        condition: service_healthy
+        condition: service_started
       talent-service:
-        condition: service_healthy
+        condition: service_started
       character-service:
-        condition: service_healthy
+        condition: service_started
       fight-service:
-        condition: service_healthy
+        condition: service_started
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${GATEWAY_PORT}/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:$GATEWAY_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
     networks:
       - wharena-network
@@ -252,13 +273,14 @@ services:
       context: ./frontend
     ports:
       - ${FRONTEND_PORT}:80
-    environment:
-      - NODE_ENV=production
-      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
     env_file:
       - .env
+    depends_on:
+      gateway-service:
+        condition: service_started
+        restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${FRONTEND_PORT}/"]
+      test: ["CMD-SHELL", "curl -f http://localhost:$FRONTEND_PORT/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5

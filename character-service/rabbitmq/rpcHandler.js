@@ -1,4 +1,4 @@
-const Character = require('./models/Character');
+const Character = require('../models/Character');
 const { getFullCharacterById } = require('../services/characterService');
 
 const characterRPCHandler = async (message) => {

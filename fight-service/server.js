@@ -11,14 +11,20 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-await connectRabbitMQ();
-
 app.get('/health', (req, res) => res.send('OK'));
-
 app.use('/api/fights', fightRoutes);
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Fight Service is running on port ${PORT}`);
-  });
-});
+async function startServer() {
+  try {
+    await connectRabbitMQ();
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Fight Service is running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+}
+
+startServer();

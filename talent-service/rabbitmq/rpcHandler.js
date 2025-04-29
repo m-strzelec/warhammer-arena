@@ -1,4 +1,4 @@
-const Talent = require('./models/Talent');
+const Talent = require('../models/Talent');
 
 const talentRPCHandler = async (message) => {
     const { action, talentIds } = JSON.parse(message.content.toString());
