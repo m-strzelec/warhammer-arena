@@ -1,18 +1,30 @@
 {
     "name": "gateway-service",
     "version": "1.0.0",
-    "description": "A service for managing communication between different microservices in Warhammer Arena.",
+    "description": "API Gateway for managing communication between microservices in Warhammer Arena.",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "test": "jest"
     },
     "keywords": [],
     "author": "",
     "license": "MIT",
     "dependencies": {
+        "compression": "^1.8.0",
         "cors": "^2.8.5",
         "dotenv": "^16.4.1",
         "express": "^4.18.2",
-        "http-proxy-middleware": "^3.0.5"
+        "express-rate-limit": "^7.5.0",
+        "helmet": "^8.1.0",
+        "http-proxy-middleware": "^3.0.5",
+        "morgan": "^1.10.0",
+        "uuid": "^11.1.0",
+        "winston": "^3.17.0"
+    },
+    "devDependencies": {
+        "jest": "^29.6.2",
+        "nodemon": "^2.0.22"
     }
 }

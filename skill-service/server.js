@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
-app.use('/api/skills', skillRoutes);
+app.use('/skills', skillRoutes);
 
 async function startServer() {
   try {

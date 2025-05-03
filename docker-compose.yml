@@ -21,11 +21,43 @@ services:
       - ./mongo-init:/docker-entrypoint-initdb.d/
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - wharena-network
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq
+      - rabbitmq-log:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   trait-service:
     container_name: trait-service
     build:
       context: ./trait-service
+      dockerfile: Dockerfile
     ports:
       - ${TRAIT_SERVICE_PORT}:${TRAIT_SERVICE_PORT}
     environment:
@@ -50,11 +82,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   armor-service:
     container_name: armor-service
     build:
       context: ./armor-service
+      dockerfile: Dockerfile
     ports:
       - ${ARMOR_SERVICE_PORT}:${ARMOR_SERVICE_PORT}
     environment:
@@ -79,11 +116,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   weapon-service:
     container_name: weapon-service
     build:
       context: ./weapon-service
+      dockerfile: Dockerfile
     ports:
       - ${WEAPON_SERVICE_PORT}:${WEAPON_SERVICE_PORT}
     environment:
@@ -108,11 +150,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   talent-service:
     container_name: talent-service
     build:
       context: ./talent-service
+      dockerfile: Dockerfile
     ports:
       - ${TALENT_SERVICE_PORT}:${TALENT_SERVICE_PORT}
     environment:
@@ -137,11 +184,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   skill-service:
     container_name: skill-service
     build:
       context: ./skill-service
+      dockerfile: Dockerfile
     ports:
       - ${SKILL_SERVICE_PORT}:${SKILL_SERVICE_PORT}
     environment:
@@ -166,11 +218,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   character-service:
     container_name: character-service
     build:
       context: ./character-service
+      dockerfile: Dockerfile
     ports:
       - ${CHARACTER_SERVICE_PORT}:${CHARACTER_SERVICE_PORT}
     environment:
@@ -195,11 +252,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   fight-service:
     container_name: fight-service
     build:
       context: ./fight-service
+      dockerfile: Dockerfile
     ports:
       - ${FIGHT_SERVICE_PORT}:${FIGHT_SERVICE_PORT}
     environment:
@@ -224,11 +286,16 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   gateway-service:
     container_name: gateway-service
     build:
       context: ./gateway-service
+      dockerfile: Dockerfile
     ports:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
@@ -245,19 +312,19 @@ services:
       - .env
     depends_on:
       trait-service:
-        condition: service_started
+        condition: service_healthy
       armor-service:
-        condition: service_started
+        condition: service_healthy
       weapon-service:
-        condition: service_started
+        condition: service_healthy
       skill-service:
-        condition: service_started
+        condition: service_healthy
       talent-service:
-        condition: service_started
+        condition: service_healthy
       character-service:
-        condition: service_started
+        condition: service_healthy
       fight-service:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:$GATEWAY_PORT/health || exit 1"]
       interval: 30s
@@ -266,18 +333,23 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   frontend:
     container_name: frontend
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - ${FRONTEND_PORT}:80
     env_file:
       - .env
     depends_on:
       gateway-service:
-        condition: service_started
+        condition: service_healthy
         restart: true
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:$FRONTEND_PORT/ || exit 1"]
@@ -287,29 +359,10 @@ services:
     restart: unless-stopped
     networks:
       - wharena-network
-
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    env_file:
-      - .env
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - wharena-network
-    volumes:
-      - rabbitmq-lib:/var/lib/rabbitmq
-      - rabbitmq-log:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 networks:
   wharena-network:

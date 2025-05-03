@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/health', (req, res) => res.send('OK'));
-app.use('/api/characters', characterRoutes);
+app.use('/characters', characterRoutes);
 
 async function startServer() {
   try {
