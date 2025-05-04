@@ -28,8 +28,6 @@ const port = process.env.GATEWAY_PORT;
 app.use(helmet());
 app.use(cors());
 app.use(compression());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 const limiter = rateLimit({
@@ -75,8 +73,8 @@ const services = {
 const circuitBreaker = (() => {
     const states = {}
     const failureThreshold = 5;
-    const resetTimeout = 30000; // 30 seconds
-    const requestTimeout = 10000; // 5 seconds
+    const resetTimeout = 30000;
+    const requestTimeout = 10000;
 
     return (serviceName) => {
         if (!states[serviceName]) {
@@ -156,6 +154,11 @@ Object.entries(services).forEach(([serviceName, serviceInfo]) => {
             pathRewrite: path => path,
             onProxyReq: (proxyReq, req, res) => {
                 proxyReq.setHeader('X-Request-ID', req.requestId);
+                if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && req.body) {
+                    const bodyData = JSON.stringify(req.body);
+                    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+                    proxyReq.write(bodyData);
+                }
                 logger.debug({ 
                     message: 'Proxying request', 
                     service: serviceName, 
@@ -185,6 +188,9 @@ Object.entries(services).forEach(([serviceName, serviceInfo]) => {
         })
     );
 });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.get('/health', (req, res) => res.status(200).send('OK'));
 

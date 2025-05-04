@@ -14,9 +14,9 @@ const createFight = async (req, res) => {
         }
         const charactersResponse = await sendRPCMessage(
             'character_rpc_queue', 
-            { action: 'getCharacterById', characterIds: [character1Id, character2Id] }
+            { action: 'getCharactersById', characterIds: [character1Id, character2Id] }
         );
-        const { character1, character2 } = charactersResponse;
+        const [character1, character2] = charactersResponse;
         if (!character1 || !character2) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'One or both characters not found' });
         }
@@ -31,14 +31,14 @@ const createFight = async (req, res) => {
         if (fight) {
             fight.totalFights += 1;
             fight.lastWinner = winner._id
-            if (fight.character1.equals(character1._id) && fight.character2.equals(character2._id)) {
-                if (winner._id.equals(character1._id)) {
+            if (fight.character1 === character1._id && fight.character2 === character2._id) {
+                if (winner._id === character1._id) {
                     fight.character1Wins += 1;
                 } else {
                     fight.character2Wins += 1;
                 }
             } else {
-                if (winner._id.equals(character1._id)) {
+                if (winner._id === character1._id) {
                     fight.character2Wins += 1;
                 } else {
                     fight.character1Wins += 1;
@@ -48,8 +48,8 @@ const createFight = async (req, res) => {
             fight = new Fight({
                 character1: character1._id,
                 character2: character2._id,
-                character1Wins: winner._id.equals(character1._id) ? 1 : 0,
-                character2Wins: winner._id.equals(character2._id) ? 1 : 0,
+                character1Wins: winner._id === character1._id ? 1 : 0,
+                character2Wins: winner._id === character2._id ? 1 : 0,
                 totalFights: 1,
                 lastWinner: winner._id
             });
@@ -67,9 +67,9 @@ const getFights = async (req, res) => {
         const enrichedFights = await Promise.all(fights.map(async fight => {
             const charactersResponse = await sendRPCMessage(
                 'character_rpc_queue', 
-                { action: 'getCharacterById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+                { action: 'getCharactersShortById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
             );
-            const { character1, character2, winner } = charactersResponse;
+            const [character1, character2, winner] = charactersResponse;
             return {
                 ...fight.toObject(),
                 character1,
@@ -91,9 +91,9 @@ const getFightById = async (req, res) => {
         }
         const characterResponse = await sendRPCMessage(
             'character_rpc_queue', 
-            { action: 'getCharacterById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+            { action: 'getCharactersShortById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
         );
-        const { character1, character2, winner } = characterResponse;
+        const [character1, character2, winner] = characterResponse;
         const enrichedFight = {
             ...fight.toObject(),
             character1,

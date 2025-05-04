@@ -76,9 +76,9 @@ const simulateFight = async (character1, character2) => {
     const character2ProcessedSkills = preprocessSkills(character2);
 
     let attacker = (rollDice(20) + character1.primaryStats.Ag) >= (rollDice(20) + character2.primaryStats.Ag) ? character1 : character2;
-    let defender = attacker._id.equals(character1._id) ? character2 : character1;
-    let attackerSkills = attacker._id.equals(character1._id) ? character1ProcessedSkills : character2ProcessedSkills;
-    let defenderSkills = defender._id.equals(character1._id) ? character1ProcessedSkills : character2ProcessedSkills;
+    let defender = attacker._id === character1._id ? character2 : character1;
+    let attackerSkills = attacker._id === character1._id ? character1ProcessedSkills : character2ProcessedSkills;
+    let defenderSkills = defender._id === character1._id ? character1ProcessedSkills : character2ProcessedSkills;
 
     while (character1Health >= 0 && character2Health >= 0) {
         // Attacker's turn
@@ -103,13 +103,13 @@ const simulateFight = async (character1, character2) => {
                 if (damageResult.furyTriggered) {
                     log.push(`${attacker.name} is blessed by Ulric's Fury! Roll for additional damage!`);
                 }
-                if (defender._id.equals(character1._id)) {
+                if (defender._id === character1._id) {
                     character1Health -= damage;
                 } else {
                     character2Health -= damage;
                 }
-                log.push(`${defender.name} takes ${damage} damage, remaining hp: ${defender._id.equals(character1._id) ? character1Health : character2Health}.`);
-                if (defender._id.equals(character1._id) ? character1Health < 0 : character2Health < 0) {
+                log.push(`${defender.name} takes ${damage} damage, remaining hp: ${defender._id === character1._id ? character1Health : character2Health}.`);
+                if (defender._id === character1._id ? character1Health < 0 : character2Health < 0) {
                     log.push(`${defender.name} is defeated!`);
                     winner = attacker;
                     break;
