@@ -36,7 +36,7 @@ const getCharacters = async (req, res) => {
 
 const getCharacterById = async (req, res) => {
     try {
-        const fullCharacterData = getFullCharacterById(req.params.id);
+        const fullCharacterData = await getFullCharacterById(req.params.id);
         if (!fullCharacterData) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Character not found' });
         }

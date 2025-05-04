@@ -13,33 +13,27 @@ const getFullCharacterById = async (id) => {
         const skillIds = character.skills?.map(s => s.skill) || [];
         const talentIds = character.talents || [];
 
-        const [armorsResponse, weaponsResponse, skillsResponse, talentsResponse] = await Promise.all([
+        const [armors, weapons, skills, talents] = await Promise.all([
             armorIds.length > 0 
                 ? sendRPCMessage('armor_rpc_queue', { action: 'getArmorsByIds', armorIds: armorIds }) 
-                : Promise.resolve({ armors: [] }),
+                : Promise.resolve([]),
             weaponIds.length > 0 
                 ? sendRPCMessage('weapon_rpc_queue', { action: 'getWeaponsByIds', weaponIds: weaponIds }) 
-                : Promise.resolve({ weapons: [] }),
+                : Promise.resolve([]),
             skillIds.length > 0 
                 ? sendRPCMessage('skill_rpc_queue', { action: 'getSkillsByIds', skillIds: skillIds }) 
-                : Promise.resolve({ skills: [] }),
+                : Promise.resolve([]),
             talentIds.length > 0 
                 ? sendRPCMessage('talent_rpc_queue', { action: 'getTalentsByIds', talentIds: talentIds }) 
-                : Promise.resolve({ talents: [] })
+                : Promise.resolve([])
         ]);
-
-        const armors = armorsResponse?.armors || [];
-        const weapons = weaponsResponse?.weapons || [];
-        const skills = skillsResponse?.skills || [];
-        const talents = talentsResponse?.talents || [];
         // Map traits from armors and weapons
-        const armorTraitIds = armors.flatMap(armor => armor.traitIds || []);
-        const weaponTraitIds = weapons.flatMap(weapon => weapon.traitIds || []);
+        const armorTraitIds = armors.flatMap(armor => armor.traits || []);
+        const weaponTraitIds = weapons.flatMap(weapon => weapon.traits || []);
         const allTraitIds = [...new Set([...armorTraitIds, ...weaponTraitIds])];
-        const traitsResponse = allTraitIds.length > 0
+        const traits = allTraitIds.length > 0
                 ? await sendRPCMessage('trait_rpc_queue', { action: 'getTraitsByIds', traitIds: allTraitIds })
-                : { traits: [] };
-        const traits = traitsResponse?.traits || [];
+                : [];
         const enrichedArmors = enrichTraits(armors, traits);
         const enrichedWeapons = enrichTraits(weapons, traits);
         // Full character data
@@ -105,10 +99,10 @@ const enrichTraits = (items, traits) => {
     }, {});
 
     return items.map(item => {
-        if (!item.traitIds) return item;
+        if (!item.traits) return item;
         return {
             ...item,
-            traits: item.traitIds.map(id => traitById[id.toString()]).filter(Boolean)
+            traits: item.traits.map(id => traitById[id.toString()]).filter(Boolean)
         };
     });
 };
