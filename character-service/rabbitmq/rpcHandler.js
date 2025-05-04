@@ -1,27 +1,30 @@
 const Character = require('../models/Character');
 const { getFullCharacterById } = require('../services/characterService');
 
-const characterRPCHandler = async (message) => {
-    const { action, characterIds } = JSON.parse(message.content.toString());
+async function characterRPCHandler(message) {
+    const { action, characterIds } = message;
 
-    if (action === 'checkCharactersExist') {
-        if (!characterIds || !characterIds.length) return { valid: false };
-        const count = await Character.countDocuments({ _id: { $in: characterIds } });
-        return { valid: count === characterIds.length };
+    switch (action) {
+        case 'checkCharactersExist': {
+            if (!characterIds || !characterIds.length) return { valid: false };
+            const count = await Character.countDocuments({ _id: { $in: characterIds } });
+            return { valid: count === characterIds.length };
+        }
+        case 'getCharactersById': {
+            const characters = await Promise.all(
+                characterIds.map(id => getFullCharacterById(id))
+            );
+            return characters.filter(Boolean);
+        }
+        case 'getCharactersShortById': {
+            const characters = await Character.find({ _id: { $in: characterIds } })
+                .select('_id name race')
+                .lean();
+            return characters;
+        }
+        default:
+            throw new Error(`Unknown action type: ${action}`);
     }
-
-    if (action === 'getCharacterById') {
-        const character = await getFullCharacterById(id);
-        return character;
-    }
-
-    if (action === 'getCharacterShortById') {
-        const character = await Character.findById(id).select('_id name race');
-        const response = character ? character.toObject() : null;
-        return response;
-    }
-
-    throw new Error('Unknown action type');
 };
 
 module.exports = characterRPCHandler;

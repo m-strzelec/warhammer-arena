@@ -54,10 +54,10 @@ characterSchema.pre('save', async function(next) {
         const talentIds = this.talents || [];
 
         const [armorsExist, weaponsExist, skillsExist, talentsExist] = await Promise.all([
-            armorIds.length ? sendRPCMessage('armor_rpc_queue', { action: 'checkArmorsExist', ids: armorIds }) : { valid: true },
-            weaponIds.length ? sendRPCMessage('weapon_rpc_queue', { action: 'checkWeaponsExist', ids: weaponIds }) : { valid: true },
-            skillIds.length ? sendRPCMessage('skill_rpc_queue', { action: 'checkSkillsExist', ids: skillIds }) : { valid: true },
-            talentIds.length ? sendRPCMessage('talent_rpc_queue', { action: 'checkTalentsExist', ids: talentIds }) : { valid: true },
+            armorIds.length ? sendRPCMessage('armor_rpc_queue', { action: 'checkArmorsExist', armorIds: armorIds }) : { valid: true },
+            weaponIds.length ? sendRPCMessage('weapon_rpc_queue', { action: 'checkWeaponsExist', weaponIds: weaponIds }) : { valid: true },
+            skillIds.length ? sendRPCMessage('skill_rpc_queue', { action: 'checkSkillsExist', skillIds: skillIds }) : { valid: true },
+            talentIds.length ? sendRPCMessage('talent_rpc_queue', { action: 'checkTalentsExist', talentIds: talentIds }) : { valid: true },
         ]);
         if (!armorsExist.valid) {
             throw new Error('One or more armors do not exist');

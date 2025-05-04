@@ -3,12 +3,6 @@ const Fight = require('../models/Fight');
 const { simulateFight } = require('../services/fightService');
 const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
-const getCharacterShortInfo = async (id) => {
-    if (!id) return null;
-    const character = await sendRPCMessage('character_rpc_queue', { action: 'getCharacterShortById', id });
-    return character ? { _id: character._id, name: character.name, race: character.race } : null;
-};
-
 const createFight = async (req, res) => {
     try {
         const { character1Id, character2Id } = req.body;
@@ -18,10 +12,11 @@ const createFight = async (req, res) => {
         if (character1Id === character2Id) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Character cannot fight itself' });
         }
-        const [character1, character2] = await Promise.all([
-            sendRPCMessage('character_rpc_queue', { action: 'findCharacterById', id: character1Id }),
-            sendRPCMessage('character_rpc_queue', { action: 'findCharacterById', id: character2Id })
-        ]);
+        const charactersResponse = await sendRPCMessage(
+            'character_rpc_queue', 
+            { action: 'getCharacterById', characterIds: [character1Id, character2Id] }
+        );
+        const { character1, character2 } = charactersResponse;
         if (!character1 || !character2) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'One or both characters not found' });
         }
@@ -70,9 +65,11 @@ const getFights = async (req, res) => {
     try {
         const fights = await Fight.find();
         const enrichedFights = await Promise.all(fights.map(async fight => {
-            const character1 = await getCharacterShortInfo(fight.character1);
-            const character2 = await getCharacterShortInfo(fight.character2);
-            const winner = fight.lastWinner ? await getCharacterShortInfo(fight.lastWinner) : null;
+            const charactersResponse = await sendRPCMessage(
+                'character_rpc_queue', 
+                { action: 'getCharacterById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+            );
+            const { character1, character2, winner } = charactersResponse;
             return {
                 ...fight.toObject(),
                 character1,
@@ -92,9 +89,11 @@ const getFightById = async (req, res) => {
         if (!fight) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Fight not found' });
         }
-        const character1 = await getCharacterShortInfo(fight.character1);
-        const character2 = await getCharacterShortInfo(fight.character2);
-        const winner = fight.lastWinner ? await getCharacterShortInfo(fight.lastWinner) : null;
+        const characterResponse = await sendRPCMessage(
+            'character_rpc_queue', 
+            { action: 'getCharacterById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+        );
+        const { character1, character2, winner } = characterResponse;
         const enrichedFight = {
             ...fight.toObject(),
             character1,

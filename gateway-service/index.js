@@ -76,7 +76,7 @@ const circuitBreaker = (() => {
     const states = {}
     const failureThreshold = 5;
     const resetTimeout = 30000; // 30 seconds
-    const requestTimeout = 5000; // 5 seconds
+    const requestTimeout = 10000; // 5 seconds
 
     return (serviceName) => {
         if (!states[serviceName]) {
