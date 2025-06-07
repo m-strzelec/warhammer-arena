@@ -7,6 +7,9 @@ const helmet = require('helmet');
 const winston = require('winston');
 const compression = require('compression');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const accessControl = require('./auth/accessControl');
 require('dotenv').config();
 
 const logger = winston.createLogger({
@@ -24,14 +27,16 @@ const logger = winston.createLogger({
 
 const app = express();
 const port = process.env.GATEWAY_PORT;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(compression());
+app.use(cookieParser());
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 10 * 60 * 1000, // 10 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -40,6 +45,10 @@ const limiter = rateLimit({
 app.use(limiter);
 
 const services = {
+    'auth-service': {
+        url: `http://auth-service:${process.env.AUTH_SERVICE_PORT}/auth`,
+        path: '/api/auth',
+    },
     'trait-service': {
         url: `http://trait-service:${process.env.TRAIT_SERVICE_PORT}/traits`,
         path: '/api/traits',
@@ -127,6 +136,30 @@ const circuitBreaker = (() => {
     };    
 })();
 
+const authenticateJWT = (req, res, next) => {
+    const token = req.cookies?.accessToken;
+    if (!token) {
+        return next();
+    }
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (!err) req.user = decoded;
+        next();
+    });
+};
+
+const authorize = (req, res, next) => {
+    const { path, method } = req;
+    const rule = accessControl.find(rule =>
+        rule.method === method &&
+        new RegExp('^' + rule.path.replace(/:id/g, '[^/]+') + '$').test(path)
+    );
+    if (!rule) return res.status(403).json({ message: 'Access denied' });
+    if (rule.roles.includes('PUBLIC')) return next();
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized: token required' });
+    if (!rule.roles.includes(req.user.type)) return res.status(403).json({ message: 'Forbidden: insufficient role' });
+    next();
+};
+
 app.use((req, res, next) => {
     const requestId = uuidv4();
     req.requestId = requestId;
@@ -142,18 +175,21 @@ app.use((req, res, next) => {
 });
 
 Object.entries(services).forEach(([serviceName, serviceInfo]) => {
-    const middlewares = [
-        circuitBreaker(serviceName)
-    ];
     app.use(
         serviceInfo.path,
-        ...middlewares,
+        circuitBreaker(serviceName),
+        authenticateJWT,
+        authorize,
         createProxyMiddleware({ 
             target: serviceInfo.url, 
             changeOrigin: true,
             pathRewrite: path => path,
             onProxyReq: (proxyReq, req, res) => {
                 proxyReq.setHeader('X-Request-ID', req.requestId);
+                if (req.user) {
+                    proxyReq.setHeader('x-user-id', req.user.id);
+                    proxyReq.setHeader('x-user-role', req.user.type);
+                }
                 if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && req.body) {
                     const bodyData = JSON.stringify(req.body);
                     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));

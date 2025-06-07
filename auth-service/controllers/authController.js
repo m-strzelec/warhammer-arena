@@ -29,7 +29,7 @@ const login = async (req, res) => {
         const { username, password } = req.body;
         const user = await authService.getUserByUsername(username);
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' });
+            return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' });
         }
         const accessToken = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, { expiresIn: '10m' });
         const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '30m' });
@@ -46,7 +46,7 @@ const login = async (req, res) => {
             sameSite: 'Strict',
             maxAge: 30 * 60 * 1000
         });
-        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Login successful', userId: user.id, type: user.type });
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Login successful' });
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Login failed', error: error.message });
     }
@@ -85,10 +85,9 @@ const refresh = async (req, res) => {
 const logout = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        if (!refreshToken) {
-            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Refresh token required' });
+        if (refreshToken) {
+            await authService.blacklistToken(refreshToken);
         }
-        await authService.blacklistToken(refreshToken);
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
         res.status(HttpStatus.StatusCodes.OK).json({ message: 'Logged out successfully' });
@@ -109,6 +108,22 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const user = await authService.getUserById(req.params.id);
+        if (!user) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+        }
+        res.status(HttpStatus.StatusCodes.OK).json(user);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching user data', error: error.message });
+    }
+};
+
+const getSelf = async (req, res) => {
+    try {
+        const userId = req.header('x-user-id');
+        if (!userId) {
+            return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Missing user data' });
+        }
+        const user = await authService.getUserById(userId);
         if (!user) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'User not found' });
         }
@@ -142,5 +157,6 @@ module.exports = {
     logout,
     getAll,
     getById,
+    getSelf,
     update
 }
