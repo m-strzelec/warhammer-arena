@@ -7,7 +7,8 @@ const fightSchema = new mongoose.Schema({
     character1Wins: { type: Int32, default: 0, min: 0 },
     character2Wins: { type: Int32, default: 0, min: 0 },
     totalFights: { type: Int32, default: 0, min: 0 },
-    lastWinner: { type: mongoose.Schema.Types.ObjectId, ref: 'Character', required: true }
+    lastWinner: { type: mongoose.Schema.Types.ObjectId, ref: 'Character', required: true },
+    userId: { type: String, required: true, index: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Fight', fightSchema);

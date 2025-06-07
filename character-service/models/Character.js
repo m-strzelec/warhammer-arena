@@ -40,7 +40,8 @@ const characterSchema = new mongoose.Schema({
             factor: { type: Int32, required: true }
         }
     ],
-    talents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Talent' }]
+    talents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Talent' }],
+    userId: { type: String, required: true, index: true }
 }, {timestamps: true});
 
 characterSchema.pre('save', async function(next) {

@@ -7,7 +7,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - ${MONGO_PORT}:${MONGO_PORT}
     env_file:
       - .env
     healthcheck:
@@ -21,10 +21,29 @@ services:
       - ./mongo-init:/docker-entrypoint-initdb.d/
     networks:
       - wharena-network
-    deploy:
-      resources:
-        limits:
-          memory: 1G
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_init:/docker-entrypoint-initdb.d/
+    networks:
+      - wharena-network
 
   rabbitmq:
     image: rabbitmq:management
@@ -48,10 +67,38 @@ services:
     volumes:
       - rabbitmq-lib:/var/lib/rabbitmq
       - rabbitmq-log:/var/log/rabbitmq
+
+  auth-service:
+    container_name: auth-service
+    build: 
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
+    environment:
+      - NODE_ENV=production
+      - PORT=${AUTH_SERVICE_PORT}
+      - POSTGRES_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOSTNAME_PROD}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:$AUTH_SERVICE_PORT/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - wharena-network
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 256M
 
   trait-service:
     container_name: trait-service
@@ -63,7 +110,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${TRAIT_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -97,7 +144,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${ARMOR_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -131,7 +178,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${WEAPON_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -165,7 +212,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${TALENT_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -199,7 +246,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${SKILL_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -233,7 +280,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${CHARACTER_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -267,7 +314,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${FIGHT_SERVICE_PORT}
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${DB_HOSTNAME_PROD}:${DB_PORT}/${MONGO_DB}?authSource=admin
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTNAME_PROD}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
       - RABBITMQ_URI=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     env_file:
       - .env
@@ -370,6 +417,8 @@ networks:
 
 volumes:
   mongo_data:
+    driver: local
+  postgres_data:
     driver: local
   rabbitmq-lib:
     driver: local
