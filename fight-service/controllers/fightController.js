@@ -5,6 +5,7 @@ const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
 const createFight = async (req, res) => {
     try {
+        const { userId } = req.auth;
         const { character1Id, character2Id } = req.body;
         if (!character1Id || !character2Id) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Characters were not specified' });
@@ -20,7 +21,9 @@ const createFight = async (req, res) => {
         if (!character1 || !character2) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'One or both characters not found' });
         }
-        
+        if (character1.userId !== userId || character2.userId !== userId) {
+            return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'You can only use your own characters' });
+        }
         const { log, winner } = await simulateFight(character1, character2);
         let fight = await Fight.findOne({
             $or: [
@@ -51,7 +54,8 @@ const createFight = async (req, res) => {
                 character1Wins: winner._id === character1._id ? 1 : 0,
                 character2Wins: winner._id === character2._id ? 1 : 0,
                 totalFights: 1,
-                lastWinner: winner._id
+                lastWinner: winner._id,
+                userId: userId
             });
         }
         await fight.save();
@@ -63,7 +67,10 @@ const createFight = async (req, res) => {
 
 const getFights = async (req, res) => {
     try {
-        const fights = await Fight.find();
+        const { userId, role } = req.auth;
+        const fights = role === 'ADMIN'
+            ? await Fight.find()
+            : await Fight.find({ userId });
         const enrichedFights = await Promise.all(fights.map(async fight => {
             const charactersResponse = await sendRPCMessage(
                 'character_rpc_queue', 
@@ -85,9 +92,13 @@ const getFights = async (req, res) => {
 
 const getFightById = async (req, res) => {
     try {
+        const { userId, role } = req.auth;
         const fight = await Fight.findById(req.params.id);
         if (!fight) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Fight not found' });
+        }
+        if (role !== 'ADMIN' && fight.userId !== userId) {
+            return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Access denied' });
         }
         const characterResponse = await sendRPCMessage(
             'character_rpc_queue', 

@@ -4,6 +4,7 @@ const { getFullCharacterById } = require('../services/characterService');
 
 const createCharacter = async (req, res) => {
     try {
+        const { userId } = req.auth;
         const { name, race, primaryStats, secondaryStats, armor, weapons, skills, talents } = req.body;
         if (!name || !race || !primaryStats) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ 
@@ -13,11 +14,11 @@ const createCharacter = async (req, res) => {
                             'No secondary stats were given'
             });
         }
-        const existingCharacter = await Character.findOne({ name });
+        const existingCharacter = await Character.findOne({ name, userId });
         if (existingCharacter) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Character with given name already exists' });
         }
-        const newCharacter = new Character({ name, race, primaryStats, secondaryStats, armor, weapons, skills, talents });
+        const newCharacter = new Character({ name, race, primaryStats, secondaryStats, armor, weapons, skills, talents, userId });
         await newCharacter.save();
         res.status(HttpStatus.StatusCodes.CREATED).json(newCharacter);
     } catch (error) {
@@ -27,7 +28,10 @@ const createCharacter = async (req, res) => {
 
 const getCharacters = async (req, res) => {
     try {
-        const characters = await Character.find({}, '_id name');
+        const { userId, role } = req.auth;
+        const characters = role === 'ADMIN'
+            ? await Character.find({}, '_id name userId')
+            : await Character.find({ userId }, '_id name');
         res.status(HttpStatus.StatusCodes.OK).json(characters);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching characters', error: error.message });
@@ -36,10 +40,15 @@ const getCharacters = async (req, res) => {
 
 const getCharacterById = async (req, res) => {
     try {
-        const fullCharacterData = await getFullCharacterById(req.params.id);
-        if (!fullCharacterData) {
+        const { userId, role } = req.auth;
+        const character = await Character.findById(req.params.id);
+        if (!character) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Character not found' });
         }
+        if (role !== 'ADMIN' && character.userId !== userId) {
+            return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Access denied' });
+        }
+        const fullCharacterData = await getFullCharacterById(req.params.id);
         res.status(HttpStatus.StatusCodes.OK).json(fullCharacterData);
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching character data', error: error.message });
