@@ -15,3 +15,7 @@ export const getArmorById = (armorId) => {
 export const updateArmor = (armorId, armor) => {
     return api.put(`/armors/${armorId}`, armor);
 };
+
+export const deleteArmor = (armorId) => {
+    return api.delete(`/armors/${armorId}`);
+};

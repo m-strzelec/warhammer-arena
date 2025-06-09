@@ -5,54 +5,54 @@ module.exports = [
     { path: '/api/auth/logout', method: 'POST', roles: ['USER', 'ADMIN'] },
     { path: '/api/auth/refresh', method: 'POST', roles: ['USER', 'ADMIN'] },
     { path: '/api/auth/self', method: 'GET', roles: ['USER', 'ADMIN'] },
-    { path: '/api/auth/USERs', method: 'GET', roles: ['ADMIN'] },
-    { path: '/api/auth/USERs/:id', method: 'GET', roles: ['ADMIN'] },
-    { path: '/api/auth/USERs/:id', method: 'PUT', roles: ['ADMIN'] },
-    { path: '/api/auth/USERs/:id', method: 'DELETE', roles: ['ADMIN'] },
+    { path: '/api/auth/users', method: 'GET', roles: ['ADMIN'] },
+    { path: '/api/auth/users/:id', method: 'GET', roles: ['ADMIN'] },
+    { path: '/api/auth/users/:id', method: 'PUT', roles: ['ADMIN'] },
+    { path: '/api/auth/users/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- CHARACTERS SERVICE ---
+    // --- CHARACTER SERVICE ---
     { path: '/api/characters', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/characters/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/characters', method: 'POST', roles: ['USER', 'ADMIN'] },
     { path: '/api/characters/:id', method: 'PUT', roles: ['USER', 'ADMIN'] },
     { path: '/api/characters/:id', method: 'DELETE', roles: ['USER', 'ADMIN'] },
 
-    // --- TRAITS SERVICE ---
+    // --- TRAIT SERVICE ---
     { path: '/api/traits', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/traits/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/traits', method: 'POST', roles: ['ADMIN'] },
     { path: '/api/traits/:id', method: 'PUT', roles: ['ADMIN'] },
     { path: '/api/traits/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- ARMORS SERVICE ---
+    // --- ARMOR SERVICE ---
     { path: '/api/armors', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/armors/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/armors', method: 'POST', roles: ['ADMIN'] },
     { path: '/api/armors/:id', method: 'PUT', roles: ['ADMIN'] },
     { path: '/api/armors/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- WEAPONS SERVICE ---
+    // --- WEAPON SERVICE ---
     { path: '/api/weapons', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/weapons/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/weapons', method: 'POST', roles: ['ADMIN'] },
     { path: '/api/weapons/:id', method: 'PUT', roles: ['ADMIN'] },
     { path: '/api/weapons/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- SKILLS SERVICE ---
+    // --- SKILL SERVICE ---
     { path: '/api/skills', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/skills/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/skills', method: 'POST', roles: ['ADMIN'] },
     { path: '/api/skills/:id', method: 'PUT', roles: ['ADMIN'] },
     { path: '/api/skills/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- TALENTS SERVICE ---
+    // --- TALENT SERVICE ---
     { path: '/api/talents', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/talents/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/talents', method: 'POST', roles: ['ADMIN'] },
     { path: '/api/talents/:id', method: 'PUT', roles: ['ADMIN'] },
     { path: '/api/talents/:id', method: 'DELETE', roles: ['ADMIN'] },
 
-    // --- FIGHTS SERVICE ---
+    // --- FIGHT SERVICE ---
     { path: '/api/fights', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/fights/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/fights', method: 'POST', roles: ['USER', 'ADMIN'] },

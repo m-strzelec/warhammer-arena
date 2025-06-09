@@ -15,3 +15,7 @@ export const getTalentById = (talentId) => {
 export const updateTalent = (talentId, talent) => {
     return api.put(`/talents/${talentId}`, talent);
 };
+
+export const deleteTalent = (talentId) => {
+    return api.delete(`/talents/${talentId}`);
+};

@@ -11,3 +11,11 @@ export const getCharacters = () => {
 export const getCharacterById = (characterId) => {
     return api.get(`/characters/${characterId}`);
 };
+
+export const updateCharacter = (characterId, character) => {
+    return api.put(`/characters/${characterId}`, character);
+};
+
+export const deleteCharacter = (characterId) => {
+    return api.delete(`/characters/${characterId}`);
+};
