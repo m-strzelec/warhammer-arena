@@ -41,12 +41,17 @@ const updateUser = async (id, { username, password }) => {
 };
 
 const blacklistToken = async (token) => {
-    await db.query('INSERT INTO blacklisted_tokens (token) VALUES ($1) ON CONFLICT DO NOTHING', [token]);
+  await pool.query('INSERT INTO blacklisted_tokens (token) VALUES ($1) ON CONFLICT DO NOTHING', [token]);
 };
 
 const isTokenBlacklisted = async (token) => {
-    const result = await db.query('SELECT 1 FROM blacklisted_tokens WHERE token = $1', [token]);
-    return result.rowCount > 0;
+  const result = await pool.query('SELECT 1 FROM blacklisted_tokens WHERE token = $1', [token]);
+  return result.rowCount > 0;
+};
+
+const deleteUserById = async (id) => {
+  const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+  return result.rows[0];
 };
 
 module.exports = {
@@ -56,5 +61,6 @@ module.exports = {
   getAllUsers,
   updateUser,
   blacklistToken,
-  isTokenBlacklisted
+  isTokenBlacklisted,
+  deleteUserById
 };

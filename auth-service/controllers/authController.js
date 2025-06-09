@@ -119,10 +119,7 @@ const getById = async (req, res) => {
 
 const getSelf = async (req, res) => {
     try {
-        const userId = req.header('x-user-id');
-        if (!userId) {
-            return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Missing user data' });
-        }
+        const { userId } = req.auth;
         const user = await authService.getUserById(userId);
         if (!user) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'User not found' });
@@ -150,6 +147,19 @@ const update = async (req, res) => {
     }
 };
 
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const deleted = await authService.deleteUserById(userId);
+        if (!deleted) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+        }
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'User deleted' });
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting user', error: error.message });
+    }
+};
+
 module.exports = {
     register,
     login,
@@ -158,5 +168,6 @@ module.exports = {
     getAll,
     getById,
     getSelf,
-    update
+    update,
+    deleteUser
 }
