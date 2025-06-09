@@ -92,9 +92,28 @@ const updateWeapon = async (req, res) => {
     }
 };
 
+const deleteWeapon = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const weapon = await Weapon.findById(id);
+        if (!weapon) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Weapon not found' });
+        }
+        const response = await rpcClient.send('character_rpc_queue', { action: 'checkWeaponUsage', weaponId: id });
+        if (response.inUse) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Weapon is in use by characters', usedBy: response.usedBy });
+        }
+        await weapon.deleteOne();
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Weapon deleted successfully' });
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting weapon', error: error.message });
+    }
+};
+
 module.exports = {
     createWeapon,
     getWeapons,
     getWeaponById,
-    updateWeapon
+    updateWeapon,
+    deleteWeapon
 };

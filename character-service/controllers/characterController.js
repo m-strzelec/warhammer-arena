@@ -88,7 +88,7 @@ const deleteCharacter = async (req, res) => {
             return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Access denied' });
         }
         await character.deleteOne();
-        const deletedCount = await sendRPCMessage('fight-rpc-queue', { action: 'removeCharacterReferences', characterId: character._id });
+        const deletedCount = await sendRPCMessage('fight_rpc_queue', { action: 'removeCharacterReferences', characterId: character._id });
         res.status(HttpStatus.StatusCodes.OK).json({ message: `Character and related ${deletedCount} fight records removed` });
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting character', error: error.message });

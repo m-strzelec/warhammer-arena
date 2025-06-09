@@ -1,5 +1,6 @@
 const HttpStatus = require('http-status-codes');
 const Talent = require('../models/Talent');
+const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
 const createTalent = async (req, res) => {
     try {
@@ -67,9 +68,28 @@ const updateTalent = async (req, res) => {
     }
 };
 
+const deleteTalent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const talent = await Talent.findById(id);
+        if (!talent) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Talent not found' });
+        }
+        const response = await sendRPCMessage('character_rpc_queue', { action: 'checkTalentUsage', talentId: id });
+        if (response.inUse) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Talent is in use by characters', usedBy: response.usedBy });
+        }
+        await talent.deleteOne();
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Talent deleted successfully' });
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting talent', error: error.message });
+    }
+}
+
 module.exports = {
     createTalent,
     getTalents,
     getTalentById,
-    updateTalent
+    updateTalent,
+    deleteTalent
 };

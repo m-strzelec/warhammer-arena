@@ -90,9 +90,28 @@ const updateArmor = async (req, res) => {
     }
 };
 
+const deleteArmor = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const armor = await Armor.findById(id);
+        if (!armor) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Armor not found' });
+        }
+        const response = await sendRPCMessage('character_rpc_queue', { action: 'checkArmorUsage', armorId: id });
+        if (response.inUse) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Armor is in use by characters', usedBy: response.usedBy });
+        }
+        await armor.deleteOne();
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Armor deleted successfully' });
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting armor', error: error.message });
+    }
+};
+
 module.exports = {
     createArmor,
     getArmors,
     getArmorById,
-    updateArmor
+    updateArmor,
+    deleteArmor
 };

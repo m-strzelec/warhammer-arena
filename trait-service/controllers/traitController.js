@@ -1,5 +1,6 @@
 const HttpStatus = require('http-status-codes');
 const Trait = require('../models/Trait');
+const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 
 const createTrait = async (req, res) => {
     try {
@@ -65,9 +66,35 @@ const updateTrait = async (req, res) => {
     }
 };
 
+const deleteTrait = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const trait = await Trait.findById(id);
+        if (!trait) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Trait not found' });
+        }
+        const responseArmors = await sendRPCMessage('armor_rpc_queue', { action: 'checkTraitUsage', traitId: id });
+        const responseWeapons = await sendRPCMessage('weapon_rpc_queue', { action: 'checkTraitUsage', traitId: id });
+        if (responseArmors.inUse || responseWeapons.inUse) {
+            return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
+                message: 'Trait is in use by armors or weapons',
+                usedBy: {
+                    armors: responseArmors.usedBy,
+                    weapons: responseWeapons.usedBy
+                }
+            });
+        }
+        await trait.deleteOne();
+        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Trait deleted successfully' });
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting trait', error: error.message });
+    }
+}
+
 module.exports = {
     createTrait,
     getTraits,
     getTraitById,
-    updateTrait
+    updateTrait,
+    deleteTrait
 };
