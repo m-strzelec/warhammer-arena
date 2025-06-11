@@ -11,12 +11,14 @@ import { getTalents } from '../../services/talentService';
 import { getArmors } from '../../services/armorService';
 import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
 import { useToast } from '../../contexts/ToastContext';
+import LoadingPage from '../common/LoadingPage';
 
 const CharacterCreator = () => {
   const [armors, setArmors] = useState([]);
   const [weapons, setWeapons] = useState([]);
   const [skills, setSkills] = useState([]);
   const [talents, setTalents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [character, setCharacter] = useState({
     name: '',
     race: '',
@@ -59,21 +61,23 @@ const CharacterCreator = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchOptions = async () => {
       try {
-        const [armorsData, weaponsData, skillsData, talentsData] = await Promise.all([
+        const [armorsRes, weaponsRes, skillsRes, talentsRes] = await Promise.all([
           getArmors(), getWeapons(), getSkills(), getTalents()
         ]);
-        setArmors(armorsData.data);
-        setWeapons(weaponsData.data);
-        setSkills(skillsData.data);
-        setTalents(talentsData.data);
+        setArmors(armorsRes.data);
+        setWeapons(weaponsRes.data);
+        setSkills(skillsRes.data);
+        setTalents(talentsRes.data);
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
+    fetchOptions();
   }, [showToast]);
 
   const handleChange = (e) => {
@@ -85,7 +89,7 @@ const CharacterCreator = () => {
     const { name, value } = e.target;
     setCharacter((prev) => ({
       ...prev,
-      [statType]: { ...prev[statType], [name]: value}
+      [statType]: { ...prev[statType], [name]: value }
     }));
   };
 
@@ -96,14 +100,14 @@ const CharacterCreator = () => {
       selectedArmorIds: selectedIds,
       selectedArmors: selectedArmors,
     });
-  
+
     const newArmor = selectedArmors.reduce((acc, armor) => {
       armor.locations.forEach((location) => {
         acc[location] = armor._id;
       });
       return acc;
     }, { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null });
-  
+
     setCharacter((prev) => ({ ...prev, armor: newArmor }));
   };
 
@@ -113,7 +117,7 @@ const CharacterCreator = () => {
       const existingSkill = character.skills.find(s => s.skill === skillId);
       return existingSkill ? existingSkill : { skill: skillId, factor: 0 };
     });
-    setCharacter((prev) => ({ ...prev, skills: updatedSkills  }));
+    setCharacter((prev) => ({ ...prev, skills: updatedSkills }));
   };
 
   const handleFactorChange = (e, skillId) => {
@@ -129,7 +133,7 @@ const CharacterCreator = () => {
       return { ...prev, skills: updatedSkills };
     });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -147,32 +151,34 @@ const CharacterCreator = () => {
   };
 
   const coveredLocations = armorSelection.selectedArmors.flatMap(armor => armor.locations);
-  const availableArmors = armors.filter((armor) => 
+  const availableArmors = armors.filter((armor) =>
     armor.locations.every((location) => !coveredLocations.includes(location))
   );
-  
+
   const armorOptions = useMemo(() => {
     const displayedArmors = [...armorSelection.selectedArmors, ...availableArmors];
     return displayedArmors.map((armor) => ({
       label: armor.name,
       value: armor._id,
     }));
- }, [armorSelection.selectedArmors, availableArmors]);
-  
+  }, [armorSelection.selectedArmors, availableArmors]);
+
   const weaponOptions = useMemo(() => weapons.map((weapon) => ({
     label: weapon.name,
     value: weapon._id,
   })), [weapons]);
-  
+
   const skillOptions = useMemo(() => skills.map((skill) => ({
     label: skill.name,
     value: skill._id,
   })), [skills]);
-  
+
   const talentOptions = useMemo(() => talents.map((talent) => ({
     label: talent.name,
     value: talent._id,
   })), [talents]);
+
+  if (loading) return <LoadingPage message="Loading character options..." />;
 
   return (
     <Container>
@@ -189,13 +195,13 @@ const CharacterCreator = () => {
                 <div className="p-field">
                   <label htmlFor="name" className="me-2 mb-0">Name</label>
                   <InputText
-                    id="name" 
-                    name="name" 
+                    id="name"
+                    name="name"
                     placeholder="Name"
-                    value={character.name} 
+                    value={character.name}
                     onChange={handleChange}
                     className="w-100"
-                    required 
+                    required
                   />
                 </div>
               </Col>
@@ -205,7 +211,7 @@ const CharacterCreator = () => {
                   <Dropdown
                     id="race"
                     name="race"
-                    aria-label="Character race select" 
+                    aria-label="Character race select"
                     value={character.race}
                     options={raceOptions}
                     onChange={handleChange}
@@ -278,14 +284,14 @@ const CharacterCreator = () => {
                 <Col md={12} lg={6} key={location} className="my-3">
                   <div className="p-field d-flex align-items-center">
                     <label htmlFor={location} className="armor-label me-2 mb-0">{locationFullNames[location]}:</label>
-                      <InputText
-                        id={location}
-                        name={location}
-                        value={getArmorNameById(character.armor[location])}
-                        variant="filled"
-                        className="w-100"
-                        readOnly
-                      />
+                    <InputText
+                      id={location}
+                      name={location}
+                      value={getArmorNameById(character.armor[location])}
+                      variant="filled"
+                      className="w-100"
+                      readOnly
+                    />
                   </div>
                 </Col>
               ))}
@@ -329,7 +335,7 @@ const CharacterCreator = () => {
                     <label htmlFor={`factor-${skill.skill}`} className="me-2 mb-0 factor-label">
                       {skills.find(s => s._id === skill.skill)?.name} Factor
                     </label>
-                    <SelectButton 
+                    <SelectButton
                       id={`factor-${skill.skill}`}
                       name={`factor-${skill.skill}`}
                       value={skill.factor}

@@ -15,8 +15,8 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await handleLogin(username, password);
-            showToast('success', 'Success', res.data.message);
+            await handleLogin(username, password);
+            showToast('success', 'Success', 'Login successful!');
             navigate('/');
         } catch (err) {
             showToast('error', 'Error', err.response.data.message);

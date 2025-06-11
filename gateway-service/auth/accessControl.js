@@ -2,8 +2,8 @@ module.exports = [
     // --- AUTH SERVICE ---
     { path: '/api/auth/register', method: 'POST', roles: ['PUBLIC'] },
     { path: '/api/auth/login', method: 'POST', roles: ['PUBLIC'] },
-    { path: '/api/auth/logout', method: 'POST', roles: ['USER', 'ADMIN'] },
-    { path: '/api/auth/refresh', method: 'POST', roles: ['USER', 'ADMIN'] },
+    { path: '/api/auth/logout', method: 'POST', roles: ['PUBLIC'] }, // Manages the token independently
+    { path: '/api/auth/refresh', method: 'POST', roles: ['PUBLIC'] }, // Manages the token independently
     { path: '/api/auth/self', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/auth/users', method: 'GET', roles: ['ADMIN'] },
     { path: '/api/auth/users/:id', method: 'GET', roles: ['ADMIN'] },

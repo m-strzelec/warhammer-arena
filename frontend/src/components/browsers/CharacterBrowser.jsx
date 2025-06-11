@@ -4,11 +4,14 @@ import { Dropdown } from 'primereact/dropdown';
 import { getCharacters, getCharacterById } from '../../services/characterService';
 import '../../styles/pages/BrowseCharactersPage.css';
 import { useToast } from '../../contexts/ToastContext';
+import LoadingPage from '../common/LoadingPage';
 
 const CharacterBrowser = () => {
   const [characters, setCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [characterData, setCharacterData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [characterLoading, setCharacterLoading] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -19,6 +22,8 @@ const CharacterBrowser = () => {
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCharacters();
@@ -27,12 +32,16 @@ const CharacterBrowser = () => {
   const handleCharacterChange = async (e) => {
     const characterId = e.value;
     setSelectedCharacter(characterId);
+    setCharacterLoading(true);
     try {
       const response = await getCharacterById(characterId);
       setCharacterData(response.data);
     } catch (error) {
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
+      setCharacterData(null);
+    } finally {
+      setCharacterLoading(false);
     }
   };
 
@@ -41,9 +50,11 @@ const CharacterBrowser = () => {
     value: char._id,
   }));
 
-  return(
-    <Container>
-      <Row>
+  if (loading) return <LoadingPage message="Loading characters..." />;
+
+  return (
+    <Container className="my-5">
+      <Row className="mb-4">
         <Col>
           <Dropdown
             value={selectedCharacter}
@@ -57,7 +68,9 @@ const CharacterBrowser = () => {
       </Row>
       <Row className="mt-4">
         <Col>
-          {characterData && (
+          {characterLoading ? (
+            <LoadingPage message="Loading character details..." spinner />
+          ) : characterData ? (
             <Card className="character-card">
               <Card.Body>
                 <Card.Title>{characterData.name}</Card.Title>
@@ -155,11 +168,13 @@ const CharacterBrowser = () => {
                 </div>
               </Card.Body>
             </Card>
+          ) : (
+            <div className="text-muted">Select a character to view details</div>
           )}
         </Col>
       </Row>
     </Container>
   );
-}
+};
 
 export default CharacterBrowser;

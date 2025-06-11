@@ -13,6 +13,7 @@ import SkillBrowser from '../components/browsers/SkillBrowser';
 import TalentBrowser from '../components/browsers/TalentBrowser';
 import TraitBrowser from '../components/browsers/TraitBrowser';
 import WeaponBrowser from '../components/browsers/WeaponBrowser';
+import LoadingPage from '../components/common/LoadingPage';
 
 const BrowseItemsPage = () => {
   const [key, setKey] = useState('');
@@ -21,6 +22,7 @@ const BrowseItemsPage = () => {
   const [skills, setSkills] = useState([]);
   const [talents, setTalents] = useState([]);
   const [traits, setTraits] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -37,10 +39,14 @@ const BrowseItemsPage = () => {
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, [showToast]);
+
+  if (loading) return <LoadingPage message="Loading items..." />;
 
   return (
     <>

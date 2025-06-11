@@ -66,6 +66,11 @@ li {
   margin-bottom: 0.75rem;
 }
 
+.p-toast-icon-close-icon {
+  min-width: 14px !important;
+  min-height: 14px !important;
+}
+
 /* Additional Animations */
 @keyframes fadeInUp {
   from {

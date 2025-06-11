@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const proxy = require('express-http-proxy');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -29,8 +29,9 @@ const app = express();
 const port = process.env.GATEWAY_PORT;
 const JWT_SECRET = process.env.JWT_SECRET;
 
+app.set('trust proxy', 1);
 app.use(helmet());
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(compression());
 app.use(cookieParser());
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
@@ -137,18 +138,35 @@ const circuitBreaker = (() => {
 })();
 
 const authenticateJWT = (req, res, next) => {
-    const token = req.cookies?.accessToken;
-    if (!token) {
-        return next();
+    try {
+        const token = req.cookies?.accessToken;
+        if (!token) {
+            return next();
+        }
+        const path = req.originalUrl.split('?')[0];
+        if (path === '/api/auth/refresh' || path === '/api/auth/logout') {
+            return next();
+        }
+        jwt.verify(token, JWT_SECRET, (err, decoded) => {
+            if (err) {
+                if (err.name === 'TokenExpiredError') {
+                    return res.status(401).json({ message: 'Access token expired' });
+                }
+                return res.status(401).json({ message: 'Invalid access token' });
+            }
+            req.user = decoded;
+            next();
+        });
     }
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (!err) req.user = decoded;
-        next();
-    });
+    catch (error) {
+        res.status(500).json({ message: 'Error verifying token', error: error.message });
+    }
 };
 
 const authorize = (req, res, next) => {
-    const { path, method } = req;
+    const method = req.method;
+    const path = req.originalUrl.split('?')[0];
+    logger.info({ message: 'Authorization check', path, method, user: req.user });
     const rule = accessControl.find(rule =>
         rule.method === method &&
         new RegExp('^' + rule.path.replace(/:id/g, '[^/]+') + '$').test(path)
@@ -180,39 +198,37 @@ Object.entries(services).forEach(([serviceName, serviceInfo]) => {
         circuitBreaker(serviceName),
         authenticateJWT,
         authorize,
-        createProxyMiddleware({ 
-            target: serviceInfo.url, 
-            changeOrigin: true,
-            pathRewrite: path => path,
-            onProxyReq: (proxyReq, req, res) => {
-                proxyReq.setHeader('X-Request-ID', req.requestId);
-                if (req.user) {
-                    proxyReq.setHeader('x-user-id', req.user.id);
-                    proxyReq.setHeader('x-user-role', req.user.type);
-                }
-                if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && req.body) {
-                    const bodyData = JSON.stringify(req.body);
-                    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-                    proxyReq.write(bodyData);
-                }
-                logger.debug({ 
-                    message: 'Proxying request', 
-                    service: serviceName, 
-                    method: req.method, 
-                    path: req.path, 
-                    requestId: req.requestId 
+        proxy(serviceInfo.url, {
+            proxyReqPathResolver: req => {
+                const path = req.originalUrl.replace(/^\/api/, '');
+                logger.debug({
+                    message: 'Proxying request',
+                    service: serviceName,
+                    method: req.method,
+                    path,
+                    requestId: req.requestId
                 });
+                return path;
             },
-            onProxyRes: (proxyRes, req, res) => {
-                proxyRes.headers['X-Powered-By'] = 'Wharena-Gateway';
+            proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+                if (srcReq.user) {
+                    proxyReqOpts.headers['x-user-id'] = srcReq.user.id;
+                    proxyReqOpts.headers['x-user-role'] = srcReq.user.type;
+                }
+                proxyReqOpts.headers['x-request-id'] = srcReq.requestId;
+                return proxyReqOpts;
+            },
+            userResDecorator: (proxyRes, proxyResData, req, res) => {
                 logger.debug({
                     message: 'Received response from service',
                     service: serviceName,
                     statusCode: proxyRes.statusCode,
                     requestId: req.requestId
                 });
+                res.set('X-Powered-By', 'Wharena-Gateway');
+                return proxyResData;
             },
-            onError: (err, req, res) => {
+            proxyErrorHandler: (err, req, res) => {
                 logger.error({
                     message: 'Proxy error',
                     service: serviceName,
@@ -220,13 +236,11 @@ Object.entries(services).forEach(([serviceName, serviceInfo]) => {
                     requestId: req.requestId
                 });
                 res.status(500).json({ status: 'error', message: 'Internal server error', requestId: req.requestId });
-            }
+            },
+            parseReqBody: false
         })
     );
 });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.get('/health', (req, res) => res.status(200).send('OK'));
 

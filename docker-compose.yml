@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgres_init:/docker-entrypoint-initdb.d/
+      - ./postgres-init:/docker-entrypoint-initdb.d/
     networks:
       - wharena-network
 

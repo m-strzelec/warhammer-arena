@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
-router.post('/refresh', requireUser, refresh);
-router.post('/logout', requireUser, logout);
+router.post('/refresh', refresh);
+router.post('/logout', logout);
 router.get('/self', requireUser, getSelf);
 router.get('/users', requireAdmin, getAll);
 router.get('/users/:id', requireAdmin, getById);

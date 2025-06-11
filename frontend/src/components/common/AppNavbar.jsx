@@ -38,7 +38,7 @@ const AppNavbar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto gap-1 flex-wrap">
-            {true && (
+            {user && (
               <>
                 <Nav.Link to="/" as={NavLink} onClick={() => setExpanded(false)}>
                   <GiWarhammer className="me-2"/>
@@ -52,10 +52,12 @@ const AppNavbar = () => {
                   <GiDwarfFace className="me-2"/>
                   <span>Character Creator</span>
                 </Nav.Link>
-                <Nav.Link to="/create-items" as={NavLink} onClick={() => setExpanded(false)}>
-                  <SiCurseforge className="me-2"/>
-                  <span>Forge</span>
-                </Nav.Link>
+                { user.type === 'ADMIN' && (
+                  <Nav.Link to="/create-items" as={NavLink} onClick={() => setExpanded(false)}>
+                    <SiCurseforge className="me-2"/>
+                    <span>Forge</span>
+                  </Nav.Link>
+                )}
                 <Nav.Link to="/browse-items" as={NavLink} onClick={() => setExpanded(false)}>
                   <GiBattleGear className="me-2"/>
                   <span>Armory</span>
@@ -68,9 +70,9 @@ const AppNavbar = () => {
             )}
           </Nav>
           <Nav className="ms-auto align-items-center">
-            {true ? (
+            {user ? (
               <>
-                <NavDropdown title={<span>test</span>} id="user-dropdown" align="end">
+                <NavDropdown title={<span>{user.username}</span>} id="user-dropdown" align="end">
                   <NavDropdown.Item onClick={handleLogoutClick}>Logout</NavDropdown.Item>
                 </NavDropdown>            
               </>

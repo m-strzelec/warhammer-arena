@@ -6,6 +6,12 @@ const authService = require('../services/authService');
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
+function respondAndClearCookies(res, statusCode, payload) {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    return res.status(statusCode).json(payload);
+}
+
 const register = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -38,13 +44,11 @@ const login = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'Strict',
-            maxAge: 10 * 60 * 1000
         });
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'Strict',
-            maxAge: 30 * 60 * 1000
         });
         res.status(HttpStatus.StatusCodes.OK).json({ message: 'Login successful' });
     } catch (error) {
@@ -74,25 +78,30 @@ const refresh = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'Strict',
-            maxAge: 10 * 60 * 1000
         });
         res.status(HttpStatus.StatusCodes.OK).json({ message: 'Access token refreshed' });
     } catch (error) {
-        res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Token is not valid', error: error.message });
+        if (error.name === 'TokenExpiredError') {
+            return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Refresh token expired' });
+        }
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error refreshing token', error: error.message });
     }
 };
 
 const logout = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        if (refreshToken) {
-            await authService.blacklistToken(refreshToken);
+        if (!refreshToken) {
+            return respondAndClearCookies(res, HttpStatus.StatusCodes.BAD_REQUEST, { message: 'You are not logged in' });
         }
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
-        res.status(HttpStatus.StatusCodes.OK).json({ message: 'Logged out successfully' });
+        jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+        await authService.blacklistToken(refreshToken);
+        return respondAndClearCookies(res, HttpStatus.StatusCodes.OK, { message: 'Logged out successfully' });
     } catch (error) {
-        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Logout failed', error: error.message });
+        if (error.name === 'TokenExpiredError') {
+            return respondAndClearCookies(res, HttpStatus.StatusCodes.UNAUTHORIZED, { message: 'Refresh token expired' });
+        }
+        return respondAndClearCookies(res, HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR, { message: 'Logout failed', error: error.message });
     }
 };
 

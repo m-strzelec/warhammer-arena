@@ -1,8 +1,8 @@
 const HttpStatus = require('http-status-codes');
 
 const requireUser = (req, res, next) => {
-    const userId = req.header('x-user-id');
-    const role = req.header('x-user-role');
+    const userId = req.headers['x-user-id'];
+    const role = req.headers['x-user-role'];
     if (!userId || !role) {
         return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Not authenticated' });
     }

@@ -5,6 +5,8 @@ import { getCharacters } from '../../services/characterService';
 import { createFight } from '../../services/fightService';
 import { useToast } from '../../contexts/ToastContext';
 import FightLog from './FightLog';
+import LoadingPage from '../common/LoadingPage';
+import { useAuth } from '../../contexts/AuthContext';
 
 const FightSimulator = () => {
   const [characters, setCharacters] = useState([]);
@@ -12,8 +14,10 @@ const FightSimulator = () => {
   const [character2, setCharacter2] = useState('');
   const [fightLog, setFightLog] = useState([]);
   const [winner, setWinner] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fightLoading, setFightLoading] = useState(false);
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const characterOptions = characters.map(char => ({
     label: char.name,
@@ -24,21 +28,29 @@ const FightSimulator = () => {
     const fetchCharacters = async () => {
       try {
         const response = await getCharacters();
-        setCharacters(response.data);
+        const characterData = response.data;
+        if (user.type === 'ADMIN') {
+          const userCharacters = characterData.filter(char => char.userId === user.id);
+          setCharacters(userCharacters);
+        } else {
+          setCharacters(characterData);
+        }
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCharacters();
-  }, [showToast]);
+  }, [showToast, user.id]);
 
   const handleFight = async () => {
     if (!character1 || !character2) {
       showToast('info', 'Info', 'Please select both characters');
       return;
     }
-    setLoading(true);
+    setFightLoading(true);
     try {
       const response = await createFight(character1, character2);
       setFightLog(response.data.log);
@@ -47,7 +59,7 @@ const FightSimulator = () => {
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     } finally {
-      setLoading(false);
+      setFightLoading(false);
     }
   };
 
@@ -55,6 +67,8 @@ const FightSimulator = () => {
   const char2Name = characters.find((char) => char._id === character2)?.name.split(' ')[0];
   const winnerColor = winner === character1 ? 'rgba(0, 128, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)';
 
+  if (loading) return <LoadingPage message="Loading characters..." />;
+  
   return (
     <Container>
       <Row className="text-center mb-2">
@@ -65,7 +79,7 @@ const FightSimulator = () => {
       <Row className="justify-content-center">
         <Col md={4} className="mb-3">
           <Dropdown
-            aria-label="Select first character" 
+            aria-label="Select first character"
             value={character1}
             options={characterOptions}
             onChange={(e) => setCharacter1(e.value)}
@@ -76,7 +90,7 @@ const FightSimulator = () => {
         </Col>
         <Col md={4} className="mb-3">
           <Dropdown
-            aria-label="Select second character" 
+            aria-label="Select second character"
             value={character2}
             options={characterOptions}
             onChange={(e) => setCharacter2(e.value)}
@@ -89,7 +103,7 @@ const FightSimulator = () => {
       <Row className="text-center my-3">
         <Col>
           <Button variant="primary" size="lg" onClick={handleFight} disabled={loading}>
-            {loading ? <Spinner animation="border" size="sm" /> : 'Start Fight'}
+            {fightLoading ? <Spinner animation="border" size="sm" /> : 'Start Fight'}
           </Button>
         </Col>
       </Row>

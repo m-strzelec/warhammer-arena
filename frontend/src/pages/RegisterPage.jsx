@@ -20,8 +20,8 @@ const RegisterPage = () => {
             return;
         }
         try {
-            const res = await handleRegister(username, password);
-            showToast('success', 'Success', res.data.message);
+            await handleRegister(username, password);
+            showToast('success', 'Success', 'Registration successful! You can now log in.');
             navigate('/login');
         } catch (err) {
             showToast('error', 'Error', err.response.data.message);

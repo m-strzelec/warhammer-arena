@@ -135,6 +135,7 @@ db.characters.insertMany([
         talents: [
             db.talents.findOne({ name: 'Strike Mighty Blow' })._id
         ],
+        userId: 'ac8349eb-7982-4d71-b713-aee5939dd90f' // Test Id
     },
     {
         name: 'Aragorn',
@@ -181,6 +182,7 @@ db.characters.insertMany([
                 factor: 20
             }
         ],
-        talents: []
+        talents: [],
+        userId: 'ac8349eb-7982-4d71-b713-aee5939dd90f' // Test Id
     }
 ]);
