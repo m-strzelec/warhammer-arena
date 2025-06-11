@@ -66,9 +66,13 @@ li {
   margin-bottom: 0.75rem;
 }
 
-.p-toast-icon-close-icon {
+.p-toast-icon-close-icon, .p-multiselect-close-icon {
   min-width: 14px !important;
   min-height: 14px !important;
+}
+
+.p-dropdown-header, .p-multiselect-header, .p-paginator {
+    background-color: #262626;
 }
 
 /* Additional Animations */

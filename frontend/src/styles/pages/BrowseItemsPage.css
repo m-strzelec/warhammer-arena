@@ -211,6 +211,10 @@ p.lead {
     background-color: #4b4b4b;
 }
 
+.p-highlight {
+    background-color: #ff6f61;
+}
+
 /* Browse Items Specific Styles */
 .browse-items {
     min-height: 800px;

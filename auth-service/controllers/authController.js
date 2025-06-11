@@ -37,8 +37,8 @@ const login = async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' });
         }
-        const accessToken = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, { expiresIn: '10m' });
-        const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '30m' });
+        const accessToken = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, { expiresIn: '3h' });
+        const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '3d' });
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
@@ -73,7 +73,7 @@ const refresh = async (req, res) => {
         if (!user) {
             return res.status(HttpStatus.StatusCodes.UNAUTHORIZED).json({ message: 'Invalid refresh token' });
         }
-        const newAccessToken = jwt.sign({ id: payload.id, type: user.type }, JWT_SECRET, { expiresIn: '10m' });
+        const newAccessToken = jwt.sign({ id: payload.id, type: user.type }, JWT_SECRET, { expiresIn: '3h' });
         res.cookie('accessToken', newAccessToken, {
             httpOnly: true,
             secure: true,

@@ -70,7 +70,7 @@ const CharacterBrowser = () => {
         <Col>
           {characterLoading ? (
             <LoadingPage message="Loading character details..." spinner />
-          ) : characterData ? (
+          ) : characterData && (
             <Card className="character-card">
               <Card.Body>
                 <Card.Title>{characterData.name}</Card.Title>
@@ -168,8 +168,6 @@ const CharacterBrowser = () => {
                 </div>
               </Card.Body>
             </Card>
-          ) : (
-            <div className="text-muted">Select a character to view details</div>
           )}
         </Col>
       </Row>
