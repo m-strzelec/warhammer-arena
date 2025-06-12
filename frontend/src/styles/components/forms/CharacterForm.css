@@ -12,10 +12,15 @@ h1.display-4 {
     animation: slideInDown 1s ease-in-out; /* Slide-in from the top for headers */
 }
 
+h3 {
+    text-align: center;
+}
+
 p.lead {
     color: #cccccc; /* Slightly lighter text for subtitles */
     font-size: 1.25rem;
     animation: fadeIn 1.2s ease-in-out; /* Delayed fade-in for subtitles */
+    text-align: center;
 }
 
 /* Container Styling */

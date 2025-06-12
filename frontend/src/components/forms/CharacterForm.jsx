@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col, Button as BootstrapButton } from 'react-bootstrap'; // Renamed Bootstrap's Button to avoid conflict
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
 import { useToast } from '../../contexts/ToastContext';
 import LoadingPage from '../common/LoadingPage';
+import '../../styles/components/forms/CharacterForm.css';
 
 const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons, skills, talents, loadingOptions }) => {
   const [character, setCharacter] = useState({
@@ -27,14 +28,22 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
 
   useEffect(() => {
     if (initialCharacterData) {
-      setCharacter(initialCharacterData);
+      const charCopy = { ...initialCharacterData };
+      const uniqueArmorIdsInCharacter = Array.from(new Set(Object.values(charCopy.armor).filter(id => id)));
       const initialSelectedArmors = armors.filter(armor =>
-        Object.values(initialCharacterData.armor).includes(armor._id)
+        uniqueArmorIdsInCharacter.includes(armor._id)
       );
       setArmorSelection({
         selectedArmorIds: initialSelectedArmors.map(a => a._id),
         selectedArmors: initialSelectedArmors,
       });
+      charCopy.weapons = charCopy.weapons.map(w => w._id || w);
+      charCopy.skills = charCopy.skills.map(s => ({
+        skill: s.skill._id || s.skill,
+        factor: s.factor
+      }));
+      charCopy.talents = charCopy.talents.map(t => t._id || t);
+      setCharacter(charCopy);
     } else {
       setCharacter({
         name: '',
@@ -51,7 +60,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
         selectedArmors: [],
       });
     }
-  }, [initialCharacterData, armors]);
+  }, [initialCharacterData, armors, weapons, skills, talents]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,7 +96,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
   const handleSkillChange = (e) => {
     const selectedSkillIds = e.value;
     const updatedSkills = selectedSkillIds.map(skillId => {
-      const existingSkill = character.skills.find(s => s.skill && s.skill._id === skillId);
+      const existingSkill = character.skills.find(s => (s.skill && s.skill._id === skillId) || s.skill === skillId);
       return existingSkill ? existingSkill : { skill: skillId, factor: 0 };
     });
     setCharacter((prev) => ({ ...prev, skills: updatedSkills }));
@@ -98,7 +107,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
     const numericValue = parseInt(value, 10) || 0;
     setCharacter((prev) => {
       const updatedSkills = prev.skills.map(skill => {
-        if (skill.skill && skill.skill._id === skillId) {
+        if ((skill.skill && skill.skill._id === skillId) || skill.skill === skillId) {
           return { ...skill, factor: numericValue };
         }
         return skill;
@@ -160,11 +169,11 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
       <Row>
         <Col>
           <h2 className="text-center mb-4">{formTitle}</h2>
-          <p className="lead">Fill in the details to {initialCharacterData ? 'edit' : 'create'} your character.</p>
+          <p className="lead">Fill in the details to {initialCharacterData ? 'edit' : 'create'} your character</p>
         </Col>
       </Row>
       <Row className="justify-content-center">
-        <Col md={8}>
+        <Col md={12}>
           <form onSubmit={handleSubmit}>
             <Row className="mb-3">
               <Col md={6} className="mb-3">
@@ -278,7 +287,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 id="weapons"
                 name="weapons"
                 aria-label="Weapons select"
-                value={character.weapons.map(w => w._id || w)}
+                value={character.weapons}
                 options={weaponOptions}
                 onChange={handleChange}
                 placeholder="Select weapons"
@@ -294,7 +303,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 id="skills"
                 name="skills"
                 aria-label="Skills select"
-                value={character.skills.map(skill => skill.skill._id || skill.skill)}
+                value={character.skills.map(skill => skill.skill)}
                 options={skillOptions}
                 onChange={handleSkillChange}
                 placeholder="Select skills"
@@ -305,18 +314,18 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
               />
             </div>
             {character.skills.map((skill, index) => (
-              <Row key={skill.skill._id || skill.skill}>
+              <Row key={skill.skill}>
                 <Col md={10} className="mb-3">
                   <div className="p-field d-flex align-items-center">
-                    <label htmlFor={`factor-${skill.skill._id || skill.skill}`} className="me-2 mb-0 factor-label">
-                      {skills.find(s => s._id === (skill.skill._id || skill.skill))?.name} Factor
+                    <label htmlFor={`factor-${skill.skill}`} className="me-2 mb-0 factor-label">
+                      {skills.find(s => s._id === skill.skill)?.name} Factor
                     </label>
                     <SelectButton
-                      id={`factor-${skill.skill._id || skill.skill}`}
-                      name={`factor-${skill.skill._id || skill.skill}`}
+                      id={`factor-${skill.skill}`}
+                      name={`factor-${skill.skill}`}
                       value={skill.factor}
                       options={[{ label: '0', value: 0 }, { label: '10', value: 10 }, { label: '20', value: 20 }]}
-                      onChange={(e) => handleFactorChange(e, skill.skill._id || skill.skill)}
+                      onChange={(e) => handleFactorChange(e, skill.skill)}
                       className="w-100"
                     />
                   </div>
@@ -329,7 +338,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 id="talents"
                 name="talents"
                 aria-label="Talents select"
-                value={character.talents.map(t => t._id || t)}
+                value={character.talents}
                 options={talentOptions}
                 onChange={handleChange}
                 placeholder="Select talents"
@@ -340,12 +349,12 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
               />
             </div>
             <div className="d-flex justify-content-end gap-2">
-              <BootstrapButton variant="secondary" onClick={onCancel}>
+              <Button variant="secondary" onClick={onCancel}>
                 Cancel
-              </BootstrapButton>
-              <BootstrapButton variant="primary" type="submit">
+              </Button>
+              <Button variant="primary" type="submit">
                 {initialCharacterData ? 'Save Changes' : 'Create Character'}
-              </BootstrapButton>
+              </Button>
             </div>
           </form>
         </Col>

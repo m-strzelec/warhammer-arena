@@ -1,38 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Modal } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
-import { Button } from 'primereact/button'; // PrimeReact Button
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Button } from 'primereact/button';
+import { confirmDialog } from 'primereact/confirmdialog';
 import { getCharacters, getCharacterById, updateCharacter, deleteCharacter } from '../../services/characterService';
-import { getArmors } from '../../services/armorService'; // Needed for CharacterForm
-import { getWeapons } from '../../services/weaponService'; // Needed for CharacterForm
-import { getSkills } from '../../services/skillService'; // Needed for CharacterForm
-import { getTalents } from '../../services/talentService'; // Needed for CharacterForm
-import '../../styles/pages/BrowseCharactersPage.css';
 import { useToast } from '../../contexts/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 import LoadingPage from '../common/LoadingPage';
-import CharacterForm from '../forms/CharacterForm'; // Import the refactored CharacterForm
+import CharacterForm from '../forms/CharacterForm';
 
-const CharacterBrowser = () => {
+const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, refreshCharactersTrigger, onCharacterDataChange }) => {
   const [characters, setCharacters] = useState([]);
   const [selectedCharacterId, setSelectedCharacterId] = useState(null);
   const [characterData, setCharacterData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [characterLoading, setCharacterLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [optionsLoading, setOptionsLoading] = useState(true);
-  const [armors, setArmors] = useState([]);
-  const [weapons, setWeapons] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [talents, setTalents] = useState([]);
 
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = user?.type === 'ADMIN';
 
   useEffect(() => {
     const fetchCharacters = async () => {
+      setLoading(true);
       try {
         const response = await getCharacters();
         setCharacters(response.data);
+        if (selectedCharacterId && !response.data.some(char => char._id === selectedCharacterId)) {
+          setSelectedCharacterId(null);
+          setCharacterData(null);
+        }
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
@@ -41,27 +39,7 @@ const CharacterBrowser = () => {
       }
     };
     fetchCharacters();
-  }, [showToast]);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [armorsRes, weaponsRes, skillsRes, talentsRes] = await Promise.all([
-          getArmors(), getWeapons(), getSkills(), getTalents()
-        ]);
-        setArmors(armorsRes.data);
-        setWeapons(weaponsRes.data);
-        setSkills(skillsRes.data);
-        setTalents(talentsRes.data);
-      } catch (error) {
-        showToast('error', 'Error', error.response.data.message);
-        console.error(error.response.data?.error || error.response.data.message);
-      } finally {
-        setOptionsLoading(false);
-      }
-    };
-    fetchOptions();
-  }, [showToast]);
+  }, [showToast, refreshCharactersTrigger]);
 
   const handleCharacterChange = async (e) => {
     const characterId = e.value;
@@ -86,17 +64,15 @@ const CharacterBrowser = () => {
       icon: 'pi pi-exclamation-triangle',
       acceptClassName: 'p-button-danger',
       accept: () => handleDeleteCharacter(characterToDelete._id),
-      reject: () => {
-        showToast('info', 'Cancelled', 'Character deletion cancelled.');
-      }
+      reject: () => { }
     });
   };
 
   const handleDeleteCharacter = async (id) => {
     try {
       await deleteCharacter(id);
-      showToast('success', 'Deleted', 'Character deleted successfully!');
-      setCharacters(prev => prev.filter(char => char._id !== id));
+      showToast('success', 'Success', 'Character deleted successfully!');
+      onCharacterDataChange();
       setSelectedCharacterId(null);
       setCharacterData(null);
     } catch (error) {
@@ -123,6 +99,7 @@ const CharacterBrowser = () => {
       ));
       setCharacterData(response.data);
       closeEditModal();
+      onCharacterDataChange();
     } catch (error) {
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
@@ -138,7 +115,6 @@ const CharacterBrowser = () => {
 
   return (
     <Container className="my-5">
-      <ConfirmDialog />
       <Row className="mb-4">
         <Col>
           <Dropdown
@@ -159,114 +135,110 @@ const CharacterBrowser = () => {
             <Card className="character-card">
               <Card.Body>
                 <Card.Title className="d-flex justify-content-between align-items-center">
-                  <span>{characterData.name}</span>
-                  <div className="d-flex gap-2">
-                    <Button
-                      icon="edit-icon"
-                      text
-                      rounded
-                      onClick={openEditModal}
-                    />
-                    <Button
-                      icon="delete-icon"
-                      text
-                      rounded
-                      onClick={() => confirmDelete(characterData)}
-                    />
-                  </div>
+                  <h2>{characterData.name}</h2>
+                  {(isAdmin || (user && characterData.userId === user._id)) && (
+                    <div className="d-flex gap-2">
+                      <Button
+                        icon="edit-icon"
+                        text
+                        rounded
+                        onClick={openEditModal}
+                        className="action-button"
+                      />
+                      <Button
+                        icon="delete-icon"
+                        text
+                        rounded
+                        onClick={() => confirmDelete(characterData)}
+                        className="action-button"
+                      />
+                    </div>
+                  )}
                 </Card.Title>
-                <div>
-                  <strong>Primary Stats:</strong>
-                  <Row>
-                    {Object.keys(characterData.primaryStats).map((stat) => (
-                      <Col key={stat} sm={6} md={4}>
+                <div className="text-left">
+                  <span className="stat-name">Race: </span>
+                  <span className="stat-value">{characterData.race}</span>
+                </div>
+                <h3>Primary Stats</h3>
+                <Row>
+                  {Object.keys(characterData.primaryStats).map((stat) => (
+                    <Col key={stat} xs={6} sm={4} lg={3}>
+                      <div className="stat-item">
+                        <span className="stat-name">{stat}: </span>
+                        <span className="stat-value">{characterData.primaryStats[stat]}</span>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+                <h3>Secondary Stats</h3>
+                <Row>
+                  {Object.keys(characterData.secondaryStats).map((stat) => (
+                    <Col key={stat} xs={6} sm={4} lg={3}>
+                      <div className="stat-item">
+                        <span className="stat-name">{stat}: </span>
+                        <span className="stat-value">{characterData.secondaryStats[stat]}</span>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+                <h3 className="mt-3">Armor</h3>
+                <Row>
+                  {Object.entries(characterData.armor).map(([bodyPart, armorPart]) => (
+                    <Col key={bodyPart} sm={6} md={4}>
+                      <div className="stat-item">
+                        <span className="stat-name">{bodyPart}: </span>
+                        {armorPart ? (
+                          <span className="stat-value">{armorPart.name}</span>
+                        ) : (
+                          <span className="no-object">None</span>
+                        )}
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+                <h3>Weapons</h3>
+                <Row>
+                  {characterData.weapons && characterData.weapons.length > 0 ? (
+                    characterData.weapons.map((weapon) => (
+                      <Col key={weapon._id} sm={6} md={4}>
                         <div className="stat-item">
-                          <span className="stat-name">{stat}: </span>
-                          <span className="stat-value">{characterData.primaryStats[stat]}</span>
+                          <span className="stat-name">{weapon.name}</span>
                         </div>
                       </Col>
-                    ))}
-                  </Row>
-                </div>
-                <div>
-                  <strong>Secondary Stats:</strong>
-                  <Row>
-                    {Object.keys(characterData.secondaryStats).map((stat) => (
-                      <Col key={stat} sm={6} md={4}>
+                    ))
+                  ) : (
+                    <Col><span className="no-object">No Weapons</span></Col>
+                  )}
+                </Row>
+                <h3>Skills</h3>
+                <Row>
+                  {characterData.skills && characterData.skills.length > 0 ? (
+                    characterData.skills.map((skill) => (
+                      <Col key={skill._id} sm={6} md={4}>
                         <div className="stat-item">
-                          <span className="stat-name">{stat}: </span>
-                          <span className="stat-value">{characterData.secondaryStats[stat]}</span>
+                          <span className="stat-name">{skill.skill.name} </span>
+                          <span>+{skill.factor}</span>
                         </div>
                       </Col>
-                    ))}
-                  </Row>
-                </div>
-                <div>
-                  <strong>Armor:</strong>
-                  <Row>
-                    {Object.entries(characterData.armor).map(([bodyPart, armorPart]) => (
-                      <Col key={bodyPart} sm={6} md={4}>
+                    ))
+                  ) : (
+                    <Col><span className="no-object">No Skills</span></Col>
+                  )}
+                </Row>
+                <h3>Talents</h3>
+                <Row>
+                  {characterData.talents && characterData.talents.length > 0 ? (
+                    characterData.talents.map((talent) => (
+                      <Col key={talent._id} sm={6} md={4}>
                         <div className="stat-item">
-                          <span className="stat-name">{bodyPart}: </span>
-                          {armorPart ? (
-                            <span className="stat-value">{armorPart.name}</span>
-                          ) : (
-                            <span className="no-object">No Armor</span>
-                          )}
+                          <span className="stat-name">{talent.name}</span>
                         </div>
                       </Col>
-                    ))}
-                  </Row>
-                </div>
-                <div>
-                  <strong>Weapons:</strong>
-                  <Row>
-                    {characterData.weapons.length > 0 ? (
-                      characterData.weapons.map((weapon) => (
-                        <Col key={weapon._id} sm={6} md={4}>
-                          <div className="stat-item">
-                            <span className="stat-name">{weapon.name}</span>
-                          </div>
-                        </Col>
-                      ))
-                    ) : (
-                      <span className="no-object">No Weapons</span>
-                    )}
-                  </Row>
-                </div>
-                <div>
-                  <strong>Skills:</strong>
-                  <Row>
-                    {characterData.skills.length > 0 ? (
-                      characterData.skills.map((skill) => (
-                        <Col key={skill._id} sm={6} md={4}>
-                          <div className="stat-item">
-                            <span className="stat-name">{skill.skill.name} </span>
-                            <span>+{skill.factor}</span>
-                          </div>
-                        </Col>
-                      ))
-                    ) : (
-                      <span className="no-object">No Skills</span>
-                    )}
-                  </Row>
-                </div>
-                <div>
-                  <strong>Talents:</strong>
-                  <Row>
-                    {characterData.talents.length > 0 ? (
-                      characterData.talents.map((talent) => (
-                        <Col key={talent._id} sm={6} md={4}>
-                          <div className="stat-item">
-                            <span className="stat-name">{talent.name}</span>
-                          </div>
-                        </Col>
-                      ))
-                    ) : (
-                      <span className="no-object">No Talents</span>
-                    )}
-                  </Row>
-                </div>
+                    ))
+                  ) : (
+                    <Col><span className="no-object">No Talents</span></Col>
+                  )}
+                </Row>
               </Card.Body>
             </Card>
           )}

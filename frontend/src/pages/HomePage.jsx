@@ -33,13 +33,13 @@ const HomePage = () => {
               Simulate a fight
             </Button>
             <Button
-              variant="primary"
+              variant="secondary"
               size="lg"
-              onClick={() => handleNavigate('/create-character')}
+              onClick={() => handleNavigate('/characters')}
               className="mx-2"
-              aria-label="Create Character"
+              aria-label="Characters Browser"
             >
-              Create new character
+              Browse characters
             </Button>
             { user.type === 'ADMIN' && (
               <Button
@@ -60,15 +60,6 @@ const HomePage = () => {
               aria-label="Items Browser"
             >
               Browse available items
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => handleNavigate('/characters')}
-              className="mx-2"
-              aria-label="Characters Browser"
-            >
-              Browse your characters
             </Button>
           </Col>
         </Row>

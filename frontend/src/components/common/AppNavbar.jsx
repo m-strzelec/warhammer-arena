@@ -48,9 +48,9 @@ const AppNavbar = () => {
                   <GiAxeSword className="me-2"/>
                   <span>Fight Simulator</span>
                 </Nav.Link>
-                <Nav.Link to="/create-character" as={NavLink} onClick={() => setExpanded(false)}>
+                <Nav.Link to="/characters" as={NavLink} onClick={() => setExpanded(false)}>
                   <GiDwarfFace className="me-2"/>
-                  <span>Character Creator</span>
+                  <span>Characters</span>
                 </Nav.Link>
                 { user.type === 'ADMIN' && (
                   <Nav.Link to="/create-items" as={NavLink} onClick={() => setExpanded(false)}>
@@ -62,10 +62,12 @@ const AppNavbar = () => {
                   <GiBattleGear className="me-2"/>
                   <span>Armory</span>
                 </Nav.Link>
-                <Nav.Link to="/characters" as={NavLink} onClick={() => setExpanded(false)}>
-                  <GiCharacter className="me-2"/>
-                  <span>Characters</span>
-                </Nav.Link>
+                { user.type === 'ADMIN' && (
+                  <Nav.Link to="/users" as={NavLink} onClick={() => setExpanded(false)}>
+                    <GiCharacter className="me-2"/>
+                    <span>Users</span>
+                  </Nav.Link>
+                )}
               </>
             )}
           </Nav>

@@ -1,14 +1,13 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AppNavbar from './components/common/AppNavbar';
 import AppFooter from './components/common/AppFooter';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import CreateCharacterPage from './pages/CreateCharacterPage';
 import FightPage from './pages/FightPage';
 import CreateItemsPage from './pages/CreateItemsPage';
 import BrowseItemsPage from './pages/BrowseItemsPage';
-import BrowseCharactersPage from './pages/BrowseCharactersPage';
+import CharacterPage from './pages/CharacterPage';
 import { ToastProvider } from './contexts/ToastContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -36,8 +35,8 @@ function App() {
                 element={<ProtectedRoute onlyGuest><RegisterPage /></ProtectedRoute>}
               />
               <Route
-                path="/create-character"
-                element={<ProtectedRoute><CreateCharacterPage /></ProtectedRoute>}
+                path="/characters"
+                element={<ProtectedRoute><CharacterPage /></ProtectedRoute>}
               />
               <Route
                 path="/fight"
@@ -50,10 +49,6 @@ function App() {
               <Route
                 path="/browse-items"
                 element={<ProtectedRoute><BrowseItemsPage /></ProtectedRoute>}
-              />
-              <Route
-                path="/characters"
-                element={<ProtectedRoute><BrowseCharactersPage /></ProtectedRoute>}
               />
               <Route 
                 path="*" 
