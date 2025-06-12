@@ -73,7 +73,7 @@ p.lead {
     margin-right: 5px;
 }
 
-.character-card .stat-value {
+.character-card .stat-value, .character-card .no-value {
     color: #f8f9fa;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
@@ -102,6 +102,29 @@ p.lead {
     background-color: #262626;
     border: 1px solid #444;
     color: #f8f9fa;
+}
+
+/* Icons */
+
+.edit-icon::before {
+    content: "\f044"; /* FontAwesome pen icon (edit) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.delete-icon::before {
+    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.p-button:hover {
+    color: #ffffff;
+    transform: scale(1.15);
 }
 
 /* Animations */

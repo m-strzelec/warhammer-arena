@@ -1,55 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button as BootstrapButton } from 'react-bootstrap'; // Renamed Bootstrap's Button to avoid conflict
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { SelectButton } from 'primereact/selectbutton';
-import { createCharacter } from '../../services/characterService';
-import { getWeapons } from '../../services/weaponService';
-import { getSkills } from '../../services/skillService';
-import { getTalents } from '../../services/talentService';
-import { getArmors } from '../../services/armorService';
 import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
 import { useToast } from '../../contexts/ToastContext';
 import LoadingPage from '../common/LoadingPage';
 
-const CharacterCreator = () => {
-  const [armors, setArmors] = useState([]);
-  const [weapons, setWeapons] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [talents, setTalents] = useState([]);
-  const [loading, setLoading] = useState(true);
+const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons, skills, talents, loadingOptions }) => {
   const [character, setCharacter] = useState({
     name: '',
     race: '',
-    primaryStats: {
-      WS: 30,
-      BS: 30,
-      S: 30,
-      T: 30,
-      Ag: 30,
-      Int: 30,
-      WP: 30,
-      Fel: 30,
-    },
-    secondaryStats: {
-      A: 1,
-      W: 10,
-      SB: 3,
-      TB: 3,
-      M: 4,
-      Mag: 0,
-      IP: 0,
-      FP: 0,
-    },
-    armor: {
-      head: null,
-      body: null,
-      leftArm: null,
-      rightArm: null,
-      leftLeg: null,
-      rightLeg: null
-    },
+    primaryStats: { WS: 30, BS: 30, S: 30, T: 30, Ag: 30, Int: 30, WP: 30, Fel: 30 },
+    secondaryStats: { A: 1, W: 10, SB: 3, TB: 3, M: 4, Mag: 0, IP: 0, FP: 0 },
+    armor: { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null },
     weapons: [],
     skills: [],
     talents: [],
@@ -61,24 +26,32 @@ const CharacterCreator = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [armorsRes, weaponsRes, skillsRes, talentsRes] = await Promise.all([
-          getArmors(), getWeapons(), getSkills(), getTalents()
-        ]);
-        setArmors(armorsRes.data);
-        setWeapons(weaponsRes.data);
-        setSkills(skillsRes.data);
-        setTalents(talentsRes.data);
-      } catch (error) {
-        showToast('error', 'Error', error.response.data.message);
-        console.error(error.response.data?.error || error.response.data.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOptions();
-  }, [showToast]);
+    if (initialCharacterData) {
+      setCharacter(initialCharacterData);
+      const initialSelectedArmors = armors.filter(armor =>
+        Object.values(initialCharacterData.armor).includes(armor._id)
+      );
+      setArmorSelection({
+        selectedArmorIds: initialSelectedArmors.map(a => a._id),
+        selectedArmors: initialSelectedArmors,
+      });
+    } else {
+      setCharacter({
+        name: '',
+        race: '',
+        primaryStats: { WS: 30, BS: 30, S: 30, T: 30, Ag: 30, Int: 30, WP: 30, Fel: 30 },
+        secondaryStats: { A: 1, W: 10, SB: 3, TB: 3, M: 4, Mag: 0, IP: 0, FP: 0 },
+        armor: { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null },
+        weapons: [],
+        skills: [],
+        talents: [],
+      });
+      setArmorSelection({
+        selectedArmorIds: [],
+        selectedArmors: [],
+      });
+    }
+  }, [initialCharacterData, armors]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,12 +62,12 @@ const CharacterCreator = () => {
     const { name, value } = e.target;
     setCharacter((prev) => ({
       ...prev,
-      [statType]: { ...prev[statType], [name]: value }
+      [statType]: { ...prev[statType], [name]: parseInt(value, 10) || 0 }
     }));
   };
 
   const handleArmorChange = (e) => {
-    const selectedIds = e.value.filter((armor) => armor !== '');
+    const selectedIds = e.value.filter((armorId) => armorId !== '');
     const selectedArmors = armors.filter((armor) => selectedIds.includes(armor._id));
     setArmorSelection({
       selectedArmorIds: selectedIds,
@@ -112,9 +85,9 @@ const CharacterCreator = () => {
   };
 
   const handleSkillChange = (e) => {
-    const selectedSkills = e.value;
-    const updatedSkills = selectedSkills.map(skillId => {
-      const existingSkill = character.skills.find(s => s.skill === skillId);
+    const selectedSkillIds = e.value;
+    const updatedSkills = selectedSkillIds.map(skillId => {
+      const existingSkill = character.skills.find(s => s.skill && s.skill._id === skillId);
       return existingSkill ? existingSkill : { skill: skillId, factor: 0 };
     });
     setCharacter((prev) => ({ ...prev, skills: updatedSkills }));
@@ -125,7 +98,7 @@ const CharacterCreator = () => {
     const numericValue = parseInt(value, 10) || 0;
     setCharacter((prev) => {
       const updatedSkills = prev.skills.map(skill => {
-        if (skill.skill === skillId) {
+        if (skill.skill && skill.skill._id === skillId) {
           return { ...skill, factor: numericValue };
         }
         return skill;
@@ -137,8 +110,7 @@ const CharacterCreator = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createCharacter(character);
-      showToast('success', 'Success', 'Character created successfully');
+      await onSave(character);
     } catch (error) {
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
@@ -157,7 +129,8 @@ const CharacterCreator = () => {
 
   const armorOptions = useMemo(() => {
     const displayedArmors = [...armorSelection.selectedArmors, ...availableArmors];
-    return displayedArmors.map((armor) => ({
+    const uniqueArmors = Array.from(new Map(displayedArmors.map(item => [item._id, item])).values());
+    return uniqueArmors.map((armor) => ({
       label: armor.name,
       value: armor._id,
     }));
@@ -178,13 +151,16 @@ const CharacterCreator = () => {
     value: talent._id,
   })), [talents]);
 
-  if (loading) return <LoadingPage message="Loading character options..." />;
+  if (loadingOptions) return <LoadingPage message="Loading character options..." />;
+
+  const formTitle = initialCharacterData ? `Edit ${initialCharacterData.name}` : 'Create New Character';
 
   return (
     <Container>
       <Row>
         <Col>
-          <p className="lead">Fill in the details to create your character.</p>
+          <h2 className="text-center mb-4">{formTitle}</h2>
+          <p className="lead">Fill in the details to {initialCharacterData ? 'edit' : 'create'} your character.</p>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -302,7 +278,7 @@ const CharacterCreator = () => {
                 id="weapons"
                 name="weapons"
                 aria-label="Weapons select"
-                value={character.weapons}
+                value={character.weapons.map(w => w._id || w)}
                 options={weaponOptions}
                 onChange={handleChange}
                 placeholder="Select weapons"
@@ -318,7 +294,7 @@ const CharacterCreator = () => {
                 id="skills"
                 name="skills"
                 aria-label="Skills select"
-                value={character.skills.map(skill => skill.skill)}
+                value={character.skills.map(skill => skill.skill._id || skill.skill)}
                 options={skillOptions}
                 onChange={handleSkillChange}
                 placeholder="Select skills"
@@ -329,18 +305,18 @@ const CharacterCreator = () => {
               />
             </div>
             {character.skills.map((skill, index) => (
-              <Row key={skill.skill}>
+              <Row key={skill.skill._id || skill.skill}>
                 <Col md={10} className="mb-3">
                   <div className="p-field d-flex align-items-center">
-                    <label htmlFor={`factor-${skill.skill}`} className="me-2 mb-0 factor-label">
-                      {skills.find(s => s._id === skill.skill)?.name} Factor
+                    <label htmlFor={`factor-${skill.skill._id || skill.skill}`} className="me-2 mb-0 factor-label">
+                      {skills.find(s => s._id === (skill.skill._id || skill.skill))?.name} Factor
                     </label>
                     <SelectButton
-                      id={`factor-${skill.skill}`}
-                      name={`factor-${skill.skill}`}
+                      id={`factor-${skill.skill._id || skill.skill}`}
+                      name={`factor-${skill.skill._id || skill.skill}`}
                       value={skill.factor}
                       options={[{ label: '0', value: 0 }, { label: '10', value: 10 }, { label: '20', value: 20 }]}
-                      onChange={(e) => handleFactorChange(e, skill.skill)}
+                      onChange={(e) => handleFactorChange(e, skill.skill._id || skill.skill)}
                       className="w-100"
                     />
                   </div>
@@ -353,7 +329,7 @@ const CharacterCreator = () => {
                 id="talents"
                 name="talents"
                 aria-label="Talents select"
-                value={character.talents}
+                value={character.talents.map(t => t._id || t)}
                 options={talentOptions}
                 onChange={handleChange}
                 placeholder="Select talents"
@@ -363,7 +339,14 @@ const CharacterCreator = () => {
                 className="w-100 text-start"
               />
             </div>
-            <Button variant="primary" type="submit">Create Character</Button>
+            <div className="d-flex justify-content-end gap-2">
+              <BootstrapButton variant="secondary" onClick={onCancel}>
+                Cancel
+              </BootstrapButton>
+              <BootstrapButton variant="primary" type="submit">
+                {initialCharacterData ? 'Save Changes' : 'Create Character'}
+              </BootstrapButton>
+            </div>
           </form>
         </Col>
       </Row>
@@ -371,4 +354,4 @@ const CharacterCreator = () => {
   );
 };
 
-export default CharacterCreator;
+export default CharacterForm;

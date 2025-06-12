@@ -8,7 +8,7 @@ const createCharacter = async (req, res) => {
     try {
         const { userId } = req.auth;
         const { name, race, primaryStats, secondaryStats, armor, weapons, skills, talents } = req.body;
-        if (!name || !race || !primaryStats) {
+        if (!name || !race || !primaryStats || !secondaryStats) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({
                 message: !name ? 'No character name was given' :
                     !race ? 'No character race was given' :
@@ -60,16 +60,33 @@ const getCharacterById = async (req, res) => {
 const updateCharacter = async (req, res) => {
     try {
         const { userId, role } = req.auth;
-        const character = await Character.findById(req.params.id);
+        const characterId = req.params.id;
+        const updates = req.body;
+        const character = await Character.findById(characterId);
         if (!character) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Character not found' });
         }
         if (role !== 'ADMIN' && character.userId !== userId) {
             return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Access denied' });
         }
-        const allowedUpdates = { ...req.body };
-        delete allowedUpdates.userId;
-        Object.assign(character, allowedUpdates);
+        const allowedUpdates = {}
+        const allowedTopLevelFields = ['name', 'race', 'primaryStats', 'secondaryStats', 'armor', 'weapons', 'skills', 'talents'];
+        Object.keys(updates).forEach(key => {
+            if (allowedTopLevelFields.includes(key)) {
+                if (key === 'primaryStats' && typeof updates.primaryStats === 'object') {
+                    Object.assign(character.primaryStats, updates.primaryStats);
+                } else if (key === 'secondaryStats' && typeof updates.secondaryStats === 'object') {
+                    Object.assign(character.secondaryStats, updates.secondaryStats);
+                } else if (key === 'armor' && typeof updates.armor === 'object') {
+                    Object.assign(character.armor, updates.armor);
+                } else {
+                    character[key] = updates[key];
+                }
+            }
+        });
+        if (updates.userId) {
+            delete character.userId;
+        }
         await character.save();
         res.status(HttpStatus.StatusCodes.OK).json(character);
     } catch (error) {
