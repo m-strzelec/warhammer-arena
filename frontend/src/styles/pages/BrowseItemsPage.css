@@ -97,12 +97,6 @@ p.lead {
 .p-datatable-tbody tr:nth-child(even) {
     background-color: #323232;
 }
-
-.p-datatable-tbody tr:hover {
-    background-color: #4b4b4b;
-    transform: scale(1.02); /* Slight zoom effect on hover */
-}
-
 .p-datatable-tbody .p-column-title {
     color: #ff6f61;
     font-weight: bold;
@@ -133,11 +127,29 @@ p.lead {
     font-size: 1.2rem;
 }
 
+.pi-trash::before {
+    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.delete-button {
+    width: 48px;
+    height: 32px;
+}
+
 .p-row-editor-init:hover,
 .p-row-editor-save:hover,
-.p-row-editor-cancel:hover {
+.p-row-editor-cancel:hover,
+.delete-button:hover {
     color: #ffffff; /* White color on hover for better visibility */
     transform: scale(1.15); /* Slight enlargement on hover */
+}
+
+.delete-button:hover {
+    background-color: #ffffff;
 }
 
 /* DataTable Footer Styling */

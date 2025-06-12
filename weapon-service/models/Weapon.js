@@ -12,9 +12,11 @@ const weaponSchema = new mongoose.Schema({
 
 weaponSchema.pre('save', async function(next) {
     try {
-        const response = await sendRPCMessage('trait_rpc_queue', { action: 'checkTraitsExist', traitIds: this.traits });
-        if (!response.valid) {
-            throw new Error('One or more traits are invalid.');
+        if (this.traits && Array.isArray(this.traits) && this.traits.length > 0) {
+            const response = await sendRPCMessage('trait_rpc_queue', { action: 'checkTraitsExist', traitIds: this.traits });
+            if (!response.valid) {
+                throw new Error('One or more traits are invalid');
+            }
         }
         next();
     } catch (err) {
@@ -25,7 +27,7 @@ weaponSchema.pre('save', async function(next) {
 weaponSchema.pre('findOneAndUpdate', async function (next) {
     try {
         const update = this.getUpdate();
-        if (update.traits && Array.isArray(update.traits)) {
+        if (update.traits && Array.isArray(update.traits) && update.traits.length > 0) {
             const response = await sendRPCMessage('trait_rpc_queue', { action: 'checkTraitsExist', traitIds: update.traits });
             if (!response.valid) {
                 throw new Error('One or more traits do not exist');

@@ -2,9 +2,11 @@ import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/pages/HomePage.css';
 import home from '../assets/home.webp';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleNavigate = (path) => {
     navigate(path);
@@ -39,15 +41,17 @@ const HomePage = () => {
             >
               Create new character
             </Button>
-            <Button
-              variant="warning"
-              size="lg"
-              onClick={() => handleNavigate('/create-items')}
-              className="mx-2"
-              aria-label="Items Creator"
-            >
-              Add new items
-            </Button>
+            { user.type === 'ADMIN' && (
+              <Button
+                variant="warning"
+                size="lg"
+                onClick={() => handleNavigate('/create-items')}
+                className="mx-2"
+                aria-label="Items Creator"
+              >
+                Add new items
+              </Button>
+            )}
             <Button
               variant="info"
               size="lg"
@@ -64,7 +68,7 @@ const HomePage = () => {
               className="mx-2"
               aria-label="Characters Browser"
             >
-              Browse characters
+              Browse your characters
             </Button>
           </Col>
         </Row>

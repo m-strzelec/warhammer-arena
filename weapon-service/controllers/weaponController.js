@@ -99,7 +99,7 @@ const deleteWeapon = async (req, res) => {
         if (!weapon) {
             return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'Weapon not found' });
         }
-        const response = await rpcClient.send('character_rpc_queue', { action: 'checkWeaponUsage', weaponId: id });
+        const response = await sendRPCMessage('character_rpc_queue', { action: 'checkWeaponUsage', weaponId: id });
         if (response.inUse) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Weapon is in use by characters', usedBy: response.usedBy });
         }
