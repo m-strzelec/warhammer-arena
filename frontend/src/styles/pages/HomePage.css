@@ -22,7 +22,8 @@ button.btn-success,
 button.btn-primary,
 button.btn-warning,
 button.btn-info,
-button.btn-secondary {
+button.btn-secondary,
+button.btn-danger {
     font-weight: bold;
     padding: 12px 28px;
     border-radius: 8px;
@@ -57,6 +58,12 @@ button.btn-info:hover {
 
 button.btn-secondary:hover {
     background-color: #696969; /* Darker gray on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+button.btn-danger:hover {
+    background-color: #ff6f61;
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
 }

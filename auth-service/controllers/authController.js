@@ -142,7 +142,10 @@ const getSelf = async (req, res) => {
 const update = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+        let hashedPassword = null;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
         const updated = await authService.updateUser(req.params.id, {
             username: username,
             password: hashedPassword,

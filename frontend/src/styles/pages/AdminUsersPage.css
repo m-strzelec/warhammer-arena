@@ -1,11 +1,3 @@
-.fight-table-container {
-    margin-top: 20px;
-    padding: 20px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
 /* DataTable Styling */
 .p-datatable {
     border-radius: 10px;
@@ -57,6 +49,64 @@
     color: #f8f9fa;
     text-align: right;
     padding: 12px 24px;
+}
+
+.p-row-editor-init::before {
+    content: "\f044"; /* FontAwesome pen icon (edit) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.pi-trash::before {
+    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.action-button:hover {
+    background-color: #ffffff;
+    transform: scale(1.15);
+}
+
+/* Modal */
+.custom-modal .modal-content {
+    background: linear-gradient(135deg, #232323 60%, #181818 100%);
+    color: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #444;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+}
+
+.custom-modal .modal-header {
+    border-bottom: 1px solid #444;
+    background: #232323;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    text-shadow: 1px 1px 4px #000;
+}
+
+.custom-modal .modal-title {
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+}
+
+.custom-modal .modal-body {
+    background: transparent;
+    color: #f8f9fa;
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #444;
+    background: #232323;
+}
+
+.custom-modal .btn-close {
+    filter: invert(1);
 }
 
 @keyframes fadeIn {

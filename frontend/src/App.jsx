@@ -9,6 +9,7 @@ import FightHistoryPage from './pages/FightHistoryPage';
 import CreateItemsPage from './pages/CreateItemsPage';
 import BrowseItemsPage from './pages/BrowseItemsPage';
 import CharacterPage from './pages/CharacterPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import { ToastProvider } from './contexts/ToastContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -54,6 +55,10 @@ function App() {
               <Route
                 path="/browse-items"
                 element={<ProtectedRoute><BrowseItemsPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/users"
+                element={<ProtectedRoute adminOnly><AdminUsersPage /></ProtectedRoute>}
               />
               <Route 
                 path="*" 

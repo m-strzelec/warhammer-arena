@@ -6,6 +6,7 @@ import { Column } from 'primereact/column';
 import { getFights, getFightsByCharacterId } from '../services/fightService';
 import { useToast } from '../contexts/ToastContext';
 import LoadingPage from '../components/common/LoadingPage';
+import '../styles/pages/FightHistoryPage.css';
 
 const FightHistoryPage = () => {
   const [fights, setFights] = useState([]);
@@ -82,13 +83,18 @@ const FightHistoryPage = () => {
                 size="large"
                 removableSort
               >
-                <Column field="character1" header="Character 1" body={characterNameBodyTemplate} sortable filter filterField="character1.name" />
-                <Column field="character2" header="Character 2" body={characterNameBodyTemplate} sortable filter filterField="character2.name" />
+                <Column field="character1" header="Character 1" body={characterNameBodyTemplate} sortable />
+                <Column field="character2" header="Character 2" body={characterNameBodyTemplate} sortable />
                 <Column field="character1Wins" header="Wins (Char 1)" sortable />
                 <Column field="character2Wins" header="Wins (Char 2)" sortable />
                 <Column field="totalFights" header="Total Fights" sortable />
                 <Column field="lastWinner" header="Last Winner" body={lastWinnerBodyTemplate} sortable />
-                <Column field="createdAt" header="Date" sortable body={(rowData) => new Date(rowData.createdAt).toLocaleDateString()} />
+                <Column field="date" header="Date" sortable
+                  body={(rowData) => {
+                    const date = rowData.updatedAt || rowData.createdAt;
+                    return date ? new Date(date).toLocaleDateString() : 'N/A';
+                  }}
+                />
               </DataTable>
               </Col>
             </Row>
