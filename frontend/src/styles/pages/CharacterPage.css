@@ -110,7 +110,7 @@ p.lead {
 
 /* Icons */
 .add-icon::before {
-    content: "\f067"; /* FontAwesome plus icon (add) */
+    content: "\f067"; /* FontAwesome icon (add) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: #ff6f61;
@@ -118,7 +118,7 @@ p.lead {
 }
 
 .edit-icon::before {
-    content: "\f044"; /* FontAwesome pen icon (edit) */
+    content: "\f044"; /* FontAwesome icon (edit) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: #ff6f61;
@@ -126,7 +126,15 @@ p.lead {
 }
 
 .delete-icon::before {
-    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    content: "\f2ed"; /* FontAwesome icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.fight-icon::before {
+    content: "\f022"; /* FontAwesome icon (list) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: #ff6f61;

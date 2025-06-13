@@ -1,7 +1,7 @@
 import { Navbar, Nav, Container, Image, Button, NavDropdown } from 'react-bootstrap';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { GiAxeSword, GiBattleGear, GiCharacter, GiDwarfFace, GiWarhammer } from "react-icons/gi";
+import { GiAxeSword, GiBattleGear, GiCharacter, GiDwarfFace, GiWarhammer, GiScrollQuill } from "react-icons/gi";
 import { SiCurseforge } from "react-icons/si";
 import { useAuth } from "../../contexts/AuthContext"
 import wharena from '../../assets/wharena.webp';
@@ -47,6 +47,10 @@ const AppNavbar = () => {
                 <Nav.Link to="/fight" as={NavLink} onClick={() => setExpanded(false)}>
                   <GiAxeSword className="me-2"/>
                   <span>Fight Simulator</span>
+                </Nav.Link>
+                <Nav.Link to="/fight-history" as={NavLink} onClick={() => setExpanded(false)}>
+                  <GiScrollQuill className="me-2"/>
+                  <span>Fight History</span>
                 </Nav.Link>
                 <Nav.Link to="/characters" as={NavLink} onClick={() => setExpanded(false)}>
                   <GiDwarfFace className="me-2"/>

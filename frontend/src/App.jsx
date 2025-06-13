@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import FightPage from './pages/FightPage';
+import FightHistoryPage from './pages/FightHistoryPage';
 import CreateItemsPage from './pages/CreateItemsPage';
 import BrowseItemsPage from './pages/BrowseItemsPage';
 import CharacterPage from './pages/CharacterPage';
@@ -41,6 +42,10 @@ function App() {
               <Route
                 path="/fight"
                 element={<ProtectedRoute><FightPage /></ProtectedRoute>}
+              />
+              <Route 
+                path="/fight-history"
+                element={<ProtectedRoute><FightHistoryPage /></ProtectedRoute>}
               />
               <Route
                 path="/create-items"

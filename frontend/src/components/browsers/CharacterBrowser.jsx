@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Modal } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { Tooltip } from 'primereact/tooltip';
 import { getCharacters, getCharacterById, updateCharacter, deleteCharacter } from '../../services/characterService';
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,7 +19,10 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
   const [loading, setLoading] = useState(true);
   const [characterLoading, setCharacterLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const editButtonRef = useRef(null);
+  const tooltipRef = useRef(null);
 
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const { user } = useAuth();
   const isAdmin = user?.type === 'ADMIN';
@@ -60,7 +65,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
 
   const confirmDelete = (characterToDelete) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${characterToDelete.name}"? This action cannot be undone.`,
+      message: `Are you sure you want to delete "${characterToDelete.name}"?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       acceptClassName: 'p-button-danger',
@@ -83,6 +88,9 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
   };
 
   const openEditModal = () => {
+    if (tooltipRef.current) {
+      tooltipRef.current.hide()
+    }
     setShowEditModal(true);
   };
 
@@ -105,6 +113,10 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
     }
+  };
+
+  const handleViewCharacterFights = (characterId) => {
+    navigate(`/fight-history?characterId=${characterId}`);
   };
 
   const characterOptions = characters.map((char) => ({
@@ -140,17 +152,35 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
                   {(isAdmin || (user && characterData.userId === user.id)) && (
                     <div className="d-flex gap-2">
                       <Button
+                        ref={editButtonRef}
                         icon="edit-icon"
                         text
                         rounded
                         onClick={openEditModal}
                         className="action-button"
                       />
+                      <Tooltip 
+                        ref={tooltipRef}
+                        target={editButtonRef}
+                        content="Edit this character"
+                        position="bottom"
+                      />
                       <Button
                         icon="delete-icon"
                         text
                         rounded
                         onClick={() => confirmDelete(characterData)}
+                        tooltip="Delete this character"
+                        tooltipOptions={{ position: 'bottom' }}
+                        className="action-button"
+                      />
+                      <Button
+                        icon="fight-icon"
+                        text
+                        rounded
+                        onClick={() => handleViewCharacterFights(characterData._id)}
+                        tooltip="View fights involving this character"
+                        tooltipOptions={{ position: 'bottom' }}
                         className="action-button"
                       />
                     </div>

@@ -7,7 +7,7 @@ const FightPage = () => {
     <>
       <Container className="my-5">
         <Row className="text-center">
-          <Col>
+          <Col className="page-header">
             <h1 className="display-4">Fight Simulator</h1>
             <p className="lead">Test your characters in the ultimate fight simulation.</p>
           </Col>

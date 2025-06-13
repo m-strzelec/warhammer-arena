@@ -16,8 +16,8 @@ const HomePage = () => {
     <>
       <Container className="my-5">
         <Row>
-          <Col>
-            <h1>Welcome to the Warhammer Arena</h1>
+          <Col className="page-header">
+            <h1 className="display-4">Welcome to the Warhammer Arena</h1>
             <p className="lead">Create your characters and test them in this Warhammer Fantasy 2ed simulator.</p>
           </Col>
         </Row>

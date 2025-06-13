@@ -72,7 +72,7 @@ const CharacterPage = () => {
       <ConfirmDialog />
       <Container className="my-5 browse-characters">
         <Row className="text-center mb-4 align-items-center">
-          <Col>
+          <Col className="page-header">
             <h1 className="display-4">Characters</h1>
             <p className="lead">Browse, create, edit, and delete characters.</p>
           </Col>

@@ -11,3 +11,7 @@ export const getFights = () => {
 export const getFightById = (fightId) => {
     return api.get(`/fights/${fightId}`);
 };
+
+export const getFightsByCharacterId = (characterId) => {
+    return api.get(`/fights/characters/${characterId}`);
+};

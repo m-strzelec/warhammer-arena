@@ -56,4 +56,5 @@ module.exports = [
     { path: '/api/fights', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/fights/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
     { path: '/api/fights', method: 'POST', roles: ['USER', 'ADMIN'] },
+    { path: '/api/fights/characters/:id', method: 'GET', roles: ['USER', 'ADMIN'] },
 ];

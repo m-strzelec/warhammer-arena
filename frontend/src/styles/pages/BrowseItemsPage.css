@@ -49,17 +49,6 @@ p.lead {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Enhanced shadow on hover */
 }
 
-.items-header {
-    cursor: pointer;
-    transition: all 0.3s ease, transform 0.3s ease;
-}
-
-.items-header:hover {
-    background-color: #4b4b4b;
-    transform: translateY(-4px); /* Lift the header slightly on hover */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-}
-
 /* Tab Content Styles */
 .tab-content {
     padding: 25px;

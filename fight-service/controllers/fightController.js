@@ -72,11 +72,13 @@ const getFights = async (req, res) => {
             ? await Fight.find()
             : await Fight.find({ userId });
         const enrichedFights = await Promise.all(fights.map(async fight => {
+            idArr = [fight.character1, fight.character2, fight.lastWinner];
             const charactersResponse = await sendRPCMessage(
                 'character_rpc_queue', 
-                { action: 'getCharactersShortById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+                { action: 'getCharactersShortById', characterIds: idArr }
             );
-            const [character1, character2, winner] = charactersResponse;
+            const charMap = Object.fromEntries(charactersResponse.map(c => [c._id, c]));
+            const [character1, character2, winner] = idArr.map(id => charMap[id] || null);
             return {
                 ...fight.toObject(),
                 character1,
@@ -100,11 +102,13 @@ const getFightById = async (req, res) => {
         if (role !== 'ADMIN' && fight.userId !== userId) {
             return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'Access denied' });
         }
+        idArr = [fight.character1, fight.character2, fight.lastWinner];
         const characterResponse = await sendRPCMessage(
             'character_rpc_queue', 
-            { action: 'getCharactersShortById', characterIds: [fight.character1, fight.character2, fight.lastWinner] }
+            { action: 'getCharactersShortById', characterIds: idArr }
         );
-        const [character1, character2, winner] = characterResponse;
+        const charMap = Object.fromEntries(characterResponse.map(c => [c._id, c]));
+        const [character1, character2, winner] = idArr.map(id => charMap[id] || null);
         const enrichedFight = {
             ...fight.toObject(),
             character1,
@@ -117,8 +121,46 @@ const getFightById = async (req, res) => {
     }
 };
 
+const getFightsByCharacterId = async (req, res) => {
+    try {
+        const { userId, role } = req.auth;
+        const characterId = req.params.id;
+        const fights = await Fight.find({
+            $or: [
+                { character1: characterId },
+                { character2: characterId }
+            ]
+        });
+        if (!fights.length) {
+            return res.status(HttpStatus.StatusCodes.NOT_FOUND).json({ message: 'No fights found for this character' });
+        }
+        const filteredFights = role === 'ADMIN'
+            ? fights
+            : fights.filter(fight => fight.userId === userId);
+        const enrichedFights = await Promise.all(filteredFights.map(async fight => {
+            const idArr = [fight.character1, fight.character2, fight.lastWinner];
+            const charactersResponse = await sendRPCMessage(
+                'character_rpc_queue',
+                { action: 'getCharactersShortById', characterIds: idArr }
+            );
+            const charMap = Object.fromEntries(charactersResponse.map(c => [c._id, c]));
+            const [character1, character2, winner] = idArr.map(id => charMap[id] || null);
+            return {
+                ...fight.toObject(),
+                character1,
+                character2,
+                lastWinner: winner
+            };
+        }));
+        res.status(HttpStatus.StatusCodes.OK).json(enrichedFights);
+    } catch (error) {
+        res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching fights by character', error: error.message });
+    }
+};
+
 module.exports = {
     createFight,
     getFights,
-    getFightById
+    getFightById,
+    getFightsByCharacterId
 };
