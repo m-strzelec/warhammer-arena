@@ -7,8 +7,9 @@ async function characterRPCHandler(message) {
     switch (action) {
         case 'checkCharactersExist': {
             if (!characterIds || !characterIds.length) return { valid: false };
-            const count = await Character.countDocuments({ _id: { $in: characterIds } });
-            return { valid: count === characterIds.length };
+            const uniqueCharactersIds = Array.from(new Set(characterIds));
+            const count = await Character.countDocuments({ _id: { $in: uniqueCharactersIds } });
+            return { valid: count === uniqueCharactersIds.length };
         }
         case 'getCharactersById': {
             const characters = await Promise.all(

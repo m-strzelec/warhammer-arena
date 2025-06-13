@@ -6,8 +6,9 @@ async function traitRPCHandler(message) {
     switch (action) {
         case 'checkTraitsExist': {
             if (!traitIds || !traitIds.length) return { valid: false };
-            const count = await Trait.countDocuments({ _id: { $in: traitIds } });
-            return { valid: count === traitIds.length };
+            const uniqueTraitIds = Array.from(new Set(traitIds));
+            const count = await Trait.countDocuments({ _id: { $in: uniqueTraitIds } });
+            return { valid: count === uniqueTraitIds.length };
         }
         case 'getTraitsByIds': {
             const traits = await Trait.find({ _id: { $in: traitIds } });

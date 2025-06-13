@@ -6,6 +6,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { getCharacters, getCharacterById, updateCharacter, deleteCharacter } from '../../services/characterService';
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
 import LoadingPage from '../common/LoadingPage';
 import CharacterForm from '../forms/CharacterForm';
 
@@ -91,9 +92,9 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
 
   const handleSaveEdit = async (updatedCharData) => {
     try {
-      const response = await updateCharacter(selectedCharacterId, updatedCharData);
+      await updateCharacter(selectedCharacterId, updatedCharData);
       showToast('success', 'Updated', 'Character updated successfully!');
-
+      const response = await getCharacterById(selectedCharacterId);
       setCharacters(prev => prev.map(char =>
         char._id === selectedCharacterId ? response.data : char
       ));
@@ -136,7 +137,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
               <Card.Body>
                 <Card.Title className="d-flex justify-content-between align-items-center">
                   <h2>{characterData.name}</h2>
-                  {(isAdmin || (user && characterData.userId === user._id)) && (
+                  {(isAdmin || (user && characterData.userId === user.id)) && (
                     <div className="d-flex gap-2">
                       <Button
                         icon="edit-icon"
@@ -155,38 +156,38 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
                     </div>
                   )}
                 </Card.Title>
-                <div className="text-left">
+                <div className="text-start">
                   <span className="stat-name">Race: </span>
                   <span className="stat-value">{characterData.race}</span>
                 </div>
-                <h3>Primary Stats</h3>
+                <h3 className="mt-2">Primary Stats</h3>
                 <Row>
                   {Object.keys(characterData.primaryStats).map((stat) => (
                     <Col key={stat} xs={6} sm={4} lg={3}>
                       <div className="stat-item">
-                        <span className="stat-name">{stat}: </span>
+                        <span className="stat-name">{primaryStatFullNames[stat]}: </span>
                         <span className="stat-value">{characterData.primaryStats[stat]}</span>
                       </div>
                     </Col>
                   ))}
                 </Row>
-                <h3>Secondary Stats</h3>
+                <h3 className="mt-2">Secondary Stats</h3>
                 <Row>
                   {Object.keys(characterData.secondaryStats).map((stat) => (
                     <Col key={stat} xs={6} sm={4} lg={3}>
                       <div className="stat-item">
-                        <span className="stat-name">{stat}: </span>
+                        <span className="stat-name">{secondaryStatFullNames[stat]}: </span>
                         <span className="stat-value">{characterData.secondaryStats[stat]}</span>
                       </div>
                     </Col>
                   ))}
                 </Row>
-                <h3 className="mt-3">Armor</h3>
+                <h3 className="mt-2">Armor</h3>
                 <Row>
                   {Object.entries(characterData.armor).map(([bodyPart, armorPart]) => (
                     <Col key={bodyPart} sm={6} md={4}>
                       <div className="stat-item">
-                        <span className="stat-name">{bodyPart}: </span>
+                        <span className="stat-name">{locationFullNames[bodyPart]}: </span>
                         {armorPart ? (
                           <span className="stat-value">{armorPart.name}</span>
                         ) : (
@@ -196,7 +197,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
                     </Col>
                   ))}
                 </Row>
-                <h3>Weapons</h3>
+                <h3 className="mt-2">Weapons</h3>
                 <Row>
                   {characterData.weapons && characterData.weapons.length > 0 ? (
                     characterData.weapons.map((weapon) => (
@@ -210,7 +211,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
                     <Col><span className="no-object">No Weapons</span></Col>
                   )}
                 </Row>
-                <h3>Skills</h3>
+                <h3 className="mt-2">Skills</h3>
                 <Row>
                   {characterData.skills && characterData.skills.length > 0 ? (
                     characterData.skills.map((skill) => (
@@ -225,7 +226,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
                     <Col><span className="no-object">No Skills</span></Col>
                   )}
                 </Row>
-                <h3>Talents</h3>
+                <h3 className="mt-2">Talents</h3>
                 <Row>
                   {characterData.talents && characterData.talents.length > 0 ? (
                     characterData.talents.map((talent) => (
@@ -245,7 +246,7 @@ const CharacterBrowser = ({ armors, weapons, skills, talents, optionsLoading, re
         </Col>
       </Row>
 
-      <Modal show={showEditModal} onHide={closeEditModal} size="xl">
+      <Modal show={showEditModal} onHide={closeEditModal} enforceFocus={false} backdrop="static" size="xl" className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Edit Character</Modal.Title>
         </Modal.Header>

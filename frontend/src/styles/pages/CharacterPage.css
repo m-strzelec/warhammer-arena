@@ -138,6 +138,43 @@ p.lead {
     transform: scale(1.15);
 }
 
+/* Modal */
+.custom-modal .modal-content {
+    background: linear-gradient(135deg, #232323 60%, #181818 100%);
+    color: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #444;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+}
+
+.custom-modal .modal-header {
+    border-bottom: 1px solid #444;
+    background: #232323;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    text-shadow: 1px 1px 4px #000;
+}
+
+.custom-modal .modal-title {
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+}
+
+.custom-modal .modal-body {
+    background: transparent;
+    color: #f8f9fa;
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #444;
+    background: #232323;
+}
+
+.custom-modal .btn-close {
+    filter: invert(1);
+}
+
 /* Animations */
 @keyframes fadeIn {
     from {

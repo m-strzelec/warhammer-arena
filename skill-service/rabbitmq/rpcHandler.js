@@ -6,8 +6,9 @@ async function skillRPCHandler(message) {
     switch (action) {
         case 'checkSkillsExist': {
             if (!skillIds || !skillIds.length) return { valid: false };
-            const count = await Skill.countDocuments({ _id: { $in: skillIds } });
-            return { valid: count === skillIds.length };
+            const uniqueSkillIds = Array.from(new Set(skillIds));
+            const count = await Skill.countDocuments({ _id: { $in: uniqueSkillIds } });
+            return { valid: count === uniqueSkillIds.length };
         }
         case 'getSkillsByIds': {
             const skills = await Skill.find({ _id: { $in: skillIds } });

@@ -6,8 +6,9 @@ async function armorRPCHandler(message) {
     switch (action) {
         case 'checkArmorsExist': {
             if (!armorIds || !armorIds.length) return { valid: false };
-            const count = await Armor.countDocuments({ _id: { $in: armorIds } });
-            return { valid: count === armorIds.length };
+            const uniqueArmorIds = Array.from(new Set(armorIds));
+            const count = await Armor.countDocuments({ _id: { $in: uniqueArmorIds } });
+            return { valid: count === uniqueArmorIds.length };
         }
         case 'getArmorsByIds': {
             const armors = await Armor.find({ _id: { $in: armorIds } });

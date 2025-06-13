@@ -6,8 +6,9 @@ async function talentRPCHandler(message) {
     switch (action) {
         case 'checkTalentsExist': {
             if (!talentIds || !talentIds.length) return { valid: false };
-            const count = await Talent.countDocuments({ _id: { $in: talentIds } });
-            return { valid: count === talentIds.length };
+            const uniqueTalentIds = Array.from(new Set(talentIds));
+            const count = await Talent.countDocuments({ _id: { $in: uniqueTalentIds } });
+            return { valid: count === uniqueTalentIds.length };
         }
         case 'getTalentsByIds': {
             const talents = await Talent.find({ _id: { $in: talentIds } });

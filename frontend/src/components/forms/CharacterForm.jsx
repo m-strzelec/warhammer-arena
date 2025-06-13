@@ -29,9 +29,12 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
   useEffect(() => {
     if (initialCharacterData) {
       const charCopy = { ...initialCharacterData };
-      const uniqueArmorIdsInCharacter = Array.from(new Set(Object.values(charCopy.armor).filter(id => id)));
+      charCopy.armor = Object.fromEntries(
+        Object.entries(charCopy.armor).map(([loc, a]) => [loc, a ? (typeof a === 'object' ? a._id : a) : null])
+      );
+      const armorIds = Object.values(charCopy.armor).filter(Boolean);
       const initialSelectedArmors = armors.filter(armor =>
-        uniqueArmorIdsInCharacter.includes(armor._id)
+        armorIds.includes(armor._id)
       );
       setArmorSelection({
         selectedArmorIds: initialSelectedArmors.map(a => a._id),
@@ -119,7 +122,19 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onSave(character);
+      const dataToSend = {
+        ...character,
+        armor: Object.fromEntries(
+          Object.entries(character.armor).map(([loc, a]) => [loc, a ? (typeof a === 'object' ? a._id : a) : null])
+        ),
+        weapons: character.weapons.map(w => (typeof w === 'object' ? w._id : w)),
+        skills: character.skills.map(s => ({
+          skill: typeof s.skill === 'object' ? s.skill._id : s.skill,
+          factor: s.factor
+        })),
+        talents: character.talents.map(t => (typeof t === 'object' ? t._id : t)),
+      };
+      await onSave(dataToSend);
     } catch (error) {
       showToast('error', 'Error', error.response.data.message);
       console.error(error.response.data?.error || error.response.data.message);
@@ -203,6 +218,8 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                     placeholder="Select character race"
                     className="w-100 text-start"
                     required
+                    appendTo={document.body}
+                    panelClassName="p-overlay-higher-zindex"
                   />
                 </div>
               </Col>
@@ -249,6 +266,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
             <Row>
               <Col>
                 <MultiSelect
+                  key="multi-select-armor"
                   id="armor"
                   name="armor"
                   aria-label="Armor select"
@@ -261,6 +279,8 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                   filter
                   className="w-100 text-start"
                   showSelectAll={false}
+                  appendTo={document.body}
+                  panelClassName="p-overlay-higher-zindex"
                 />
               </Col>
             </Row>
@@ -284,6 +304,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
             <h3>Weapons</h3>
             <div className="p-field mb-3">
               <MultiSelect
+                key="multi-select-weapons"
                 id="weapons"
                 name="weapons"
                 aria-label="Weapons select"
@@ -295,11 +316,14 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 showClear
                 filter
                 className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
               />
             </div>
             <h3>Skills</h3>
             <div className="p-field mb-3">
               <MultiSelect
+                key="multi-select-skills"
                 id="skills"
                 name="skills"
                 aria-label="Skills select"
@@ -311,6 +335,8 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 showClear
                 filter
                 className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
               />
             </div>
             {character.skills.map((skill, index) => (
@@ -335,6 +361,7 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
             <h3>Talents</h3>
             <div className="p-field mb-3">
               <MultiSelect
+                key="multi-select-talents"
                 id="talents"
                 name="talents"
                 aria-label="Talents select"
@@ -346,6 +373,8 @@ const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons
                 showClear
                 filter
                 className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
               />
             </div>
             <div className="d-flex justify-content-end gap-2">

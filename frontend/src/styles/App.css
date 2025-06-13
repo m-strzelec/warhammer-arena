@@ -75,6 +75,10 @@ li {
     background-color: #262626;
 }
 
+.p-overlay-higher-zindex {
+    z-index: 1100 !important;
+}
+
 /* Additional Animations */
 @keyframes fadeInUp {
   from {

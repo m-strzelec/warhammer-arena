@@ -99,7 +99,7 @@ const CharacterPage = () => {
         </Row>
       </Container>
 
-      <Modal show={showCreateModal} onHide={handleCloseCreateModal} size="xl">
+      <Modal show={showCreateModal} onHide={handleCloseCreateModal} enforceFocus={false} backdrop="static" size="xl" className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Create New Character</Modal.Title>
         </Modal.Header>

@@ -6,8 +6,9 @@ async function weaponRPCHandler(message) {
     switch (action) {
         case 'checkWeaponsExist': {
             if (!weaponIds || !weaponIds.length) return { valid: false };
-            const count = await Weapon.countDocuments({ _id: { $in: weaponIds } });
-            return { valid: count === weaponIds.length };
+            const uniqueWeaponIds = Array.from(new Set(weaponIds));
+            const count = await Weapon.countDocuments({ _id: { $in: uniqueWeaponIds } });
+            return { valid: count === uniqueWeaponIds.length };
         }
         case 'getWeaponsByIds': {
             const weapons = await Weapon.find({ _id: { $in: weaponIds } });
