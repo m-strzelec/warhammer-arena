@@ -66,7 +66,7 @@ const applyDamageReduction = (damage, defender, hitLocation) => {
     return Math.max(damage - defender.secondaryStats.TB - protection, 0);
 }
 
-const simulateFight = async (character1, character2) => {
+const simulateFight = async (character1, character2, includeLog = true) => {
     const log = [];
     let character1Health = character1.secondaryStats.W;
     let character2Health = character2.secondaryStats.W;
@@ -80,6 +80,12 @@ const simulateFight = async (character1, character2) => {
     let attackerSkills = attacker._id === character1._id ? character1ProcessedSkills : character2ProcessedSkills;
     let defenderSkills = defender._id === character1._id ? character1ProcessedSkills : character2ProcessedSkills;
 
+    const pushLog = (message) => {
+        if (includeLog) {
+            log.push(message);
+        }
+    };
+
     while (character1Health >= 0 && character2Health >= 0) {
         // Attacker's turn
         const attackRoll = rollDice(100);
@@ -92,38 +98,45 @@ const simulateFight = async (character1, character2) => {
 
             const defenseRoll = rollDice(100);
             if ((dodgeChance >= parryChance) && (defenseRoll <= dodgeChance)) {
-                log.push(`${defender.name} dodges the attack from ${attacker.name}.`);
+                pushLog(`${defender.name} dodges the attack from ${attacker.name}.`);
             } else if (defenseRoll <= parryChance) {
-                log.push(`${defender.name} parries the attack from ${attacker.name}.`);
+                pushLog(`${defender.name} parries the attack from ${attacker.name}.`);
             } else {
-                log.push(`${attacker.name} hits ${defender.name} at ${hitLocation}.`);
+                pushLog(`${attacker.name} hits ${defender.name} at ${hitLocation}.`);
                 const damageResult = calculateDamage(attacker);
                 let damage = applyDamageReduction(damageResult.totalDamage, defender, hitLocation);
 
                 if (damageResult.furyTriggered) {
-                    log.push(`${attacker.name} is blessed by Ulric's Fury! Roll for additional damage!`);
+                    pushLog(`${attacker.name} is blessed by Ulric's Fury! Roll for additional damage!`);
                 }
                 if (defender._id === character1._id) {
                     character1Health -= damage;
                 } else {
                     character2Health -= damage;
                 }
-                log.push(`${defender.name} takes ${damage} damage, remaining hp: ${defender._id === character1._id ? character1Health : character2Health}.`);
+                pushLog(`${defender.name} takes ${damage} damage, remaining hp: ${defender._id === character1._id ? character1Health : character2Health}.`);
                 if (defender._id === character1._id ? character1Health < 0 : character2Health < 0) {
-                    log.push(`${defender.name} is defeated!`);
+                    pushLog(`${defender.name} is defeated!`);
                     winner = attacker;
                     break;
                 }
             }
         } else {
-            log.push(`${attacker.name} misses ${defender.name}.`);
+            pushLog(`${attacker.name} misses ${defender.name}.`);
         }
         // swap roles
         [attacker, defender] = [defender, attacker];
         [attackerSkills, defenderSkills] = [defenderSkills, attackerSkills];
     }
-    log.push(`${winner.name} wins the fight!`);
-    return { log, winner };
+    if (!winner) {
+        if (character1Health <= 0) {
+            winner = character2;
+        } else if (character2Health <= 0) {
+            winner = character1;
+        }
+    }
+    pushLog(`${winner.name} wins the fight!`);
+    return { log: includeLog ? log : null, winner };
 };
 
 module.exports = {

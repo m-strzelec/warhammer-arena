@@ -85,8 +85,22 @@ const FightHistoryPage = () => {
               >
                 <Column field="character1" header="Character 1" body={characterNameBodyTemplate} sortable />
                 <Column field="character2" header="Character 2" body={characterNameBodyTemplate} sortable />
-                <Column field="character1Wins" header="Wins (Char 1)" sortable />
-                <Column field="character2Wins" header="Wins (Char 2)" sortable />
+                <Column field="character1Wins" header="Wins (Char 1)" sortable
+                  body={(rowData) => {
+                    const total = rowData.totalFights || 0;
+                    const wins = rowData.character1Wins || 0;
+                    const percent = total > 0 ? ((wins / total) * 100).toFixed(2) : '0.00';
+                    return `${wins} (${percent}%)`;
+                  }}
+                />
+                <Column field="character2Wins" header="Wins (Char 2)" sortable
+                  body={(rowData) => {
+                    const total = rowData.totalFights || 0;
+                    const wins = rowData.character2Wins || 0;
+                    const percent = total > 0 ? ((wins / total) * 100).toFixed(2) : '0.00';
+                    return `${wins} (${percent}%)`;
+                  }}
+                />
                 <Column field="totalFights" header="Total Fights" sortable />
                 <Column field="lastWinner" header="Last Winner" body={lastWinnerBodyTemplate} sortable />
                 <Column field="date" header="Date" sortable

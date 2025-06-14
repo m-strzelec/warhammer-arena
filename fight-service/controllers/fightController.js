@@ -6,13 +6,14 @@ const { sendRPCMessage } = require('../rabbitmq/rpcClient');
 const createFight = async (req, res) => {
     try {
         const { userId } = req.auth;
-        const { character1Id, character2Id } = req.body;
+        const { character1Id, character2Id, count } = req.body;
         if (!character1Id || !character2Id) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Characters were not specified' });
         }
         if (character1Id === character2Id) {
             return res.status(HttpStatus.StatusCodes.BAD_REQUEST).json({ message: 'Character cannot fight itself' });
         }
+        const fightCount = Math.min(Number(count) || 1, 100000);
         const charactersResponse = await sendRPCMessage(
             'character_rpc_queue', 
             { action: 'getCharactersById', characterIds: [character1Id, character2Id] }
@@ -24,42 +25,76 @@ const createFight = async (req, res) => {
         if (character1.userId !== userId || character2.userId !== userId) {
             return res.status(HttpStatus.StatusCodes.FORBIDDEN).json({ message: 'You can only use your own characters' });
         }
-        const { log, winner } = await simulateFight(character1, character2);
         let fight = await Fight.findOne({
             $or: [
                 { character1: character1._id, character2: character2._id },
                 { character1: character2._id, character2: character1._id }
             ]
         });
-        if (fight) {
-            fight.totalFights += 1;
-            fight.lastWinner = winner._id
-            if (fight.character1 === character1._id && fight.character2 === character2._id) {
-                if (winner._id === character1._id) {
-                    fight.character1Wins += 1;
-                } else {
-                    fight.character2Wins += 1;
-                }
-            } else {
-                if (winner._id === character1._id) {
-                    fight.character2Wins += 1;
-                } else {
-                    fight.character1Wins += 1;
-                }
-            }
-        } else {
+        const isOriginalOrder = fight
+        ? (fight.character1.toString() === character1._id && fight.character2.toString() === character2._id) 
+        : true;
+        
+        if (!fight) {
             fight = new Fight({
                 character1: character1._id,
                 character2: character2._id,
-                character1Wins: winner._id === character1._id ? 1 : 0,
-                character2Wins: winner._id === character2._id ? 1 : 0,
-                totalFights: 1,
-                lastWinner: winner._id,
+                character1Wins: 0,
+                character2Wins: 0,
+                totalFights: 0,
+                lastWinner: null,
                 userId: userId
             });
         }
+        let totalChar1Wins = 0;
+        let totalChar2Wins = 0;
+        let lastWinnerId = null;
+        let singleFightLog = null;
+
+        if (fightCount === 1) {
+            const { log, winner } = await simulateFight(character1, character2, true);
+            lastWinnerId = winner._id;
+            singleFightLog = log;
+            if (winner._id === character1._id) {
+                totalChar1Wins = 1;
+            } else {
+                totalChar2Wins = 1;
+            }
+        } else {
+            for (let i = 0; i < fightCount; i++) {
+                const { winner } = await simulateFight(character1, character2, false);
+                lastWinnerId = winner._id;
+                if (winner._id === character1._id) {
+                    totalChar1Wins++;
+                } else {
+                    totalChar2Wins++;
+                }
+            }
+        }
+
+        fight.totalFights += fightCount;
+        fight.lastWinner = lastWinnerId;
+        if (isOriginalOrder) {
+            fight.character1Wins += totalChar1Wins;
+            fight.character2Wins += totalChar2Wins;
+        } else {
+            fight.character1Wins += totalChar2Wins;
+            fight.character2Wins += totalChar1Wins;
+        }
+
         await fight.save();
-        res.status(HttpStatus.StatusCodes.CREATED).json({ winnerId: winner._id, log: log });
+        if (fightCount === 1) {
+            res.status(HttpStatus.StatusCodes.CREATED).json({ winnerId: lastWinnerId, log: singleFightLog });
+        } else {
+            res.status(HttpStatus.StatusCodes.CREATED).json({
+                character1Id: character1._id,
+                character2Id: character2._id,
+                character1Wins: fight.character1.toString() === character1._id ? totalChar1Wins : totalChar2Wins,
+                character2Wins: fight.character1.toString() === character2._id ? totalChar1Wins : totalChar2Wins,
+                totalFights: fightCount,
+                lastWinner: lastWinnerId
+            });
+        }
     } catch (error) {
         res.status(HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error simulating fight', error: error.message });
     }
