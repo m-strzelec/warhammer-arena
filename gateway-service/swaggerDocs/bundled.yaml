@@ -1,0 +1,1376 @@
+openapi: 3.0.0
+info:
+  title: Warhammer Arena API
+  version: 1.0.0
+  description: Combined API documentation for all microservices
+servers:
+  - url: /api
+    description: API Gateway
+tags:
+  - name: Armors
+    description: Armor management endpoints
+  - name: Weapons
+    description: Weapon management endpoints
+  - name: Traits
+    description: Trait management endpoints
+  - name: Talents
+    description: Talent management endpoints
+  - name: Skills
+    description: Skill management endpoints
+  - name: Characters
+    description: Character management endpoints
+  - name: Fights
+    description: Fight management endpoints
+  - name: Auth
+    description: Auth & Users management endpoints
+
+
+paths:
+# ARMOR -------------------------------------------------------
+  /armors:
+    post:
+      summary: Create a new armor
+      tags: [Armors]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArmorInput'
+      responses:
+        201:
+          description: Armor created
+        400:
+          description: Invalid input or armor already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all armors
+      tags: [Armors]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all armors with traits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Armor'
+        500:
+          description: Internal server error
+  /armors/{id}:
+    get:
+      summary: Get armor by ID
+      tags: [Armors]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Armor ID
+      responses:
+        200:
+          description: Armor data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Armor'
+        404:
+          description: Armor not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update armor by ID
+      tags: [Armors]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Armor ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArmorInput'
+      responses:
+        200:
+          description: Updated armor
+        400:
+          description: Invalid input
+        404:
+          description: Armor not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete armor by ID
+      tags: [Armors]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Armor ID
+      responses:
+        200:
+          description: Armor deleted
+        400:
+          description: Armor is in use by characters
+        404:
+          description: Armor not found
+        500:
+          description: Internal server error'
+# AUTH -------------------------------------------------------
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        201:
+          description: User registered successfully
+        400:
+          description: Username exists
+        500:
+          description: Internal server error
+  /auth/login:
+    post:
+      summary: Log in a user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        200:
+          description: Login successful
+        401:
+          description: Invalid credentials
+        500:
+          description: Internal server error
+  /auth/refresh:
+    post:
+      summary: Refresh the access token using refresh token
+      tags:
+        - Auth
+      responses:
+        200:
+          description: New access token issued
+        401:
+          description: Invalid or expired refresh token
+        403:
+          description: Token is blacklisted
+        500:
+          description: Internal server error
+  /auth/logout:
+    post:
+      summary: Logout and blacklist the refresh token
+      tags:
+        - Auth
+      responses:
+        200:
+          description: Logout successful
+        400:
+          description: User is not logged in
+        401:
+          description: Expired refresh token
+        500:
+          description: Internal server error
+  /auth/self:
+    get:
+      summary: Get current logged-in user data
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        500:
+          description: Internal server error
+  /auth/users:
+    get:
+      summary: Get all registered users (admin only)
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of users
+        500:
+          description: Internal server error
+  /auth/users/{id}:
+    get:
+      summary: Get user by ID (admin only)
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User data
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update user by ID (admin only)
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the user
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        200:
+          description: User updated
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete user by ID (admin only)
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User deleted
+        404:
+          description: User not found
+        500:
+          description: Internal server error
+# CHARACTER -------------------------------------------------------
+  /characters:
+    post:
+      summary: Create a new character
+      tags: [Characters]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterInput'
+      responses:
+        201:
+          description: Character created
+        400:
+          description: Invalid input or character with given name already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all characters
+      tags: [Characters]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all characters with short informations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CharacterShort'
+        500:
+          description: Internal server error
+  /characters/{id}:
+    get:
+      summary: Get character by ID
+      tags: [Characters]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Character ID
+      responses:
+        200:
+          description: Character detailed data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterDetailed'
+        403:
+          description: Invalid userId
+        404:
+          description: Character not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update character by ID
+      tags: [Characters]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Character ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterInput'
+      responses:
+        200:
+          description: Updated character
+        403:
+          description: Invalid userId
+        404:
+          description: Character not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete character by ID
+      tags: [Characters]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Character ID
+      responses:
+        200:
+          description: Character deleted
+        403:
+          description: Invalid userId
+        404:
+          description: Character not found
+        500:
+          description: Internal server error
+# FIGHT -------------------------------------------------------
+  /fights:
+    post:
+      summary: Create a new fight
+      tags: [Fights]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FightInput'
+      responses:
+        201:
+          description: Fight created
+        400:
+          description: Invalid input
+        403:
+          description: Invalid userId
+        500:
+          description: Internal server error
+    get:
+      summary: Get all fights
+      tags: [Fights]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of fights
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fight'
+        500:
+          description: Internal server error
+  /fights/{id}:
+    get:
+      summary: Get fight by ID
+      tags: [Fights]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Fight ID
+      responses:
+        200:
+          description: Fight data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fight'
+        403:
+          description: Invalid userId
+        404:
+          description: Fight not found
+        500:
+          description: Internal server error
+  /fights/characters/{id}:
+    get:
+      summary: Get fights by character ID
+      tags: [Fights]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Character ID
+      responses:
+        200:
+          description: List of fights of given character
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fight'
+        404:
+          description: Fight not found
+        500:
+          description: Internal server error
+# SKILL -------------------------------------------------------
+  /skills:
+    post:
+      summary: Create a new skill
+      tags: [Skills]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillInput'
+      responses:
+        201:
+          description: Skill created
+        400:
+          description: Invalid input or skill already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all skills
+      tags: [Skills]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        500:
+          description: Internal server error
+  /skills/{id}:
+    get:
+      summary: Get skill by ID
+      tags: [Skills]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Skill ID
+      responses:
+        200:
+          description: Skill data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        404:
+          description: Skill not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update skill by ID
+      tags: [Skills]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Skill ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillInput'
+      responses:
+        200:
+          description: Updated skill
+        400:
+          description: Invalid input
+        404:
+          description: Skill not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete skill by ID
+      tags: [Skills]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Skill ID
+      responses:
+        200:
+          description: Skill deleted
+        400:
+          description: Skill is in use by armors or weapons
+        404:
+          description: Skill not found
+        500:
+          description: Internal server error
+# TALENT -------------------------------------------------------
+  /talents:
+    post:
+      summary: Create a new talent
+      tags: [Talents]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TalentInput'
+      responses:
+        201:
+          description: Talent created
+        400:
+          description: Invalid input or talent already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all talents
+      tags: [Talents]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all talents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Talent'
+        500:
+          description: Internal server error
+  /talents/{id}:
+    get:
+      summary: Get talent by ID
+      tags: [Talents]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Talent ID
+      responses:
+        200:
+          description: Talent data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Talent'
+        404:
+          description: Talent not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update talent by ID
+      tags: [Talents]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Talent ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TalentInput'
+      responses:
+        200:
+          description: Updated talent
+        400:
+          description: Invalid input
+        404:
+          description: Talent not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete talent by ID
+      tags: [Talents]
+# TRAIT -------------------------------------------------------
+  /traits:
+    post:
+      summary: Create a new trait
+      tags: [Traits]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TraitInput'
+      responses:
+        201:
+          description: Trait created
+        400:
+          description: Invalid input or trait already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all traits
+      tags: [Traits]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all traits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        500:
+          description: Internal server error
+  /traits/{id}:
+    get:
+      summary: Get trait by ID
+      tags: [Traits]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Trait ID
+      responses:
+        200:
+          description: Trait data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trait'
+        404:
+          description: Trait not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update trait by ID
+      tags: [Traits]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Trait ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TraitInput'
+      responses:
+        200:
+          description: Updated trait
+        400:
+          description: Invalid input
+        404:
+          description: Trait not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete trait by ID
+      tags: [Traits]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Trait ID
+      responses:
+        200:
+          description: Trait deleted
+        400:
+          description: Trait is in use by armors or weapons
+        404:
+          description: Trait not found
+        500:
+          description: Internal server error
+# WEAPON -------------------------------------------------------
+  /weapons:
+    post:
+      summary: Create a new weapon
+      tags: [Weapons]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeaponInput'
+      responses:
+        201:
+          description: Weapon created
+        400:
+          description: Invalid input or weapon already exists
+        500:
+          description: Internal server error
+    get:
+      summary: Get all weapons
+      tags: [Weapons]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: List of all weapons with traits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Weapon'
+        500:
+          description: Internal server error
+  /weapons/{id}:
+    get:
+      summary: Get weapon by ID
+      tags: [Weapons]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Weapon ID
+      responses:
+        200:
+          description: Weapon data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weapon'
+        404:
+          description: Weapon not found
+        500:
+          description: Internal server error
+    put:
+      summary: Update weapon by ID
+      tags: [Weapons]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Weapon ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeaponInput'
+      responses:
+        200:
+          description: Updated weapon
+        400:
+          description: Invalid input
+        404:
+          description: Weapon not found
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete weapon by ID
+      tags: [Weapons]
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Weapon ID
+      responses:
+        200:
+          description: Weapon deleted
+        400:
+          description: Weapon is in use by characters
+        404:
+          description: Weapon not found
+        500:
+          description: Internal server error
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+      description: JWT access token stored in a secure HTTP-only cookie
+  schemas:
+    Trait:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the trait
+        name:
+          type: string
+          description: Name of the trait
+          example: Fast
+        description:
+          type: string
+          description: Detailed explanation of the trait
+          example: Grants +10 WS to Weapon Skill tests
+    Talent:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the talent
+        name:
+          type: string
+          description: Name of the talent
+          example: Strong Back
+        description:
+          type: string
+          description: Description of the talent effect
+          example: Increases carrying capacity by 50%.
+    Skill:
+      type: object
+      required:
+        - name
+        - baseStat
+        - description
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the skill
+        name:
+          type: string
+          description: Name of the skill
+          example: Dodge Blow
+        baseStat:
+          type: string
+          description: The stat this skill is based on (e.g., Agility, Intelligence)
+          example: Ag
+        description:
+          type: string
+          description: A brief explanation of what the skill does
+          example: Allows the character to avoid attacks by dodging.
+    Armor:
+      type: object
+      required:
+        - name
+        - locations
+        - protectionFactor
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the armor
+        name:
+          type: string
+          description: Name of the armor
+          example: Chainmail Vest
+        locations:
+          type: array
+          items:
+            type: string
+          description: Body parts the armor protects
+          example: ["head", "body"]
+        protectionFactor:
+          type: integer
+          description: Damage reduction factor
+          example: 3
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+          description: Traits associated with the armor
+    Weapon:
+      type: object
+      required:
+        - name
+        - damageFactor
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the weapon
+        name:
+          type: string
+          description: Weapon name
+          example: Longsword
+        damageFactor:
+          type: integer
+          minimum: -10
+          maximum: 10
+          description: Damage modifier
+          example: 2
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+          description: Traits related to the weapon
+        type:
+          type: string
+          enum: [melee, range]
+          example: melee
+        handedness:
+          type: string
+          enum: [one-handed, two-handed]
+          example: one-handed
+    ArmorInput:
+      type: object
+      required:
+        - name
+        - locations
+        - protectionFactor
+      properties:
+        name:
+          type: string
+          example: Chainmail Vest
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["head", "body"]
+        protectionFactor:
+          type: integer
+          example: 3
+        traits:
+          type: array
+          items:
+            type: string
+          example: ["60f71b3f6f1c2c3c4d5e6f88"]
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier (UUID) for the user
+        username:
+          type: string
+          description: Unique username of the user
+        password:
+          type: string
+          format: password
+          description: Hashed password
+        type:
+          type: string
+          enum: [ADMIN, USER]
+          description: Role type assigned to the user
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp of account creation
+    UserInput:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: johndoe
+        password:
+          type: string
+          format: password
+          example: password
+    BlacklistedToken:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique sequential identifier
+        token:
+          type: string
+          description: The blacklisted JWT token string
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when token was blacklisted
+    CharacterShort:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the character
+        name:
+          type: string
+          description: Name of the character
+    CharacterDetailed:
+      type: object
+      required:
+        - name
+        - race
+        - primaryStats
+        - secondaryStats
+        - userId
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the character
+        name:
+          type: string
+          description: Name of the character
+        race:
+          type: string
+          enum: [dwarf, elf, halfling, human, other]
+          description: Race of the character
+        primaryStats:
+          type: object
+          properties:
+            WS: { type: integer, minimum: 0, maximum: 90 }
+            BS: { type: integer, minimum: 0, maximum: 90 }
+            S: { type: integer, minimum: 0, maximum: 90 }
+            T: { type: integer, minimum: 0, maximum: 90 }
+            Ag: { type: integer, minimum: 0, maximum: 90 }
+            Int: { type: integer, minimum: 0, maximum: 90 }
+            WP: { type: integer, minimum: 0, maximum: 90 }
+            Fel: { type: integer, minimum: 0, maximum: 90 }
+        secondaryStats:
+          type: object
+          properties:
+            A: { type: integer, minimum: 0, maximum: 10 }
+            W: { type: integer, minimum: 0, maximum: 1000 }
+            SB: { type: integer, minimum: 0, maximum: 9 }
+            TB: { type: integer, minimum: 0, maximum: 9 }
+            M: { type: integer, minimum: 0, maximum: 10 }
+            Mag: { type: integer, minimum: 0, maximum: 10 }
+            IP: { type: integer, minimum: 0, maximum: 100 }
+            FP: { type: integer, minimum: 0, maximum: 10 }
+        armor:
+          type: object
+          properties:
+            head: { $ref: '#/components/schemas/Armor', nullable: true }
+            body: { $ref: '#/components/schemas/Armor', nullable: true }
+            leftArm: { $ref: '#/components/schemas/Armor', nullable: true }
+            rightArm: { $ref: '#/components/schemas/Armor', nullable: true }
+            leftLeg: { $ref: '#/components/schemas/Armor', nullable: true }
+            rightLeg: { $ref: '#/components/schemas/Armor', nullable: true }
+          description: Armor piece IDs worn by the character
+        weapons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Weapon'
+          description: Array of weapons
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              skill:
+                $ref: '#/components/schemas/Skill'
+                description: Skill
+              factor:
+                type: integer
+                description: Skill modifier factor
+        talents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Talent'
+          description: Talent IDs
+        userId:
+          type: string
+          description: ID of the user who owns the character
+    CharacterInput:
+      type: object
+      required:
+        - name
+        - race
+        - primaryStats
+        - secondaryStats
+        - userId
+      properties:
+        name:
+          type: string
+          example: Thorek Ironbrow
+        race:
+          type: string
+          enum: [dwarf, elf, halfling, human, other]
+          example: dwarf
+        primaryStats:
+          type: object
+          properties:
+            WS: { type: integer, example: 45 }
+            BS: { type: integer, example: 30 }
+            S: { type: integer, example: 40 }
+            T: { type: integer, example: 50 }
+            Ag: { type: integer, example: 25 }
+            Int: { type: integer, example: 35 }
+            WP: { type: integer, example: 40 }
+            Fel: { type: integer, example: 20 }
+        secondaryStats:
+          type: object
+          properties:
+            A: { type: integer, example: 1 }
+            W: { type: integer, example: 14 }
+            SB: { type: integer, example: 4 }
+            TB: { type: integer, example: 5 }
+            M: { type: integer, example: 3 }
+            Mag: { type: integer, example: 0 }
+            IP: { type: integer, example: 0 }
+            FP: { type: integer, example: 2 }
+        armor:
+          type: object
+          properties:
+            head: { type: string, nullable: true }
+            body: { type: string, nullable: true }
+            leftArm: { type: string, nullable: true }
+            rightArm: { type: string, nullable: true }
+            leftLeg: { type: string, nullable: true }
+            rightLeg: { type: string, nullable: true }
+        weapons:
+          type: array
+          items:
+            type: string
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              skill: { type: string }
+              factor: { type: integer }
+        talents:
+          type: array
+          items:
+            type: string
+        userId:
+          type: string
+    Fight:
+      type: object
+      required:
+        - character1
+        - character2
+        - lastWinner
+        - userId
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the fight
+        character1:
+          type: string
+          description: ID of the first character in the fight
+        character2:
+          type: string
+          description: ID of the second character in the fight
+        character1Wins:
+          type: integer
+          description: Number of wins for character 1
+          example: 3
+        character2Wins:
+          type: integer
+          description: Number of wins for character 2
+          example: 2
+        totalFights:
+          type: integer
+          description: Total number of fights between the characters
+          example: 5
+        lastWinner:
+          type: string
+          description: ID of the character who won the last fight
+        userId:
+          type: string
+          description: ID of the user who owns the fight log
+    FightInput:
+      type: object
+      required:
+        - character1
+        - character2
+      properties:
+        character1:
+          type: string
+          description: ID of the first character in the fight
+        character2:
+          type: string
+          description: ID of the second character in the fight
+        count:
+          type: integer
+          description: Number of fights to simulate
+          example: 3
+    SkillInput:
+      type: object
+      required:
+        - name
+        - baseStat
+        - description
+      properties:
+        name:
+          type: string
+          example: Dodge Blow
+        baseStat:
+          type: string
+          example: Ag
+        description:
+          type: string
+          example: Allows the character to avoid attacks by dodging.
+    TalentInput:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: Strong Back
+        description:
+          type: string
+          example: Increases carrying capacity by 50%.
+    TraitInput:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: Fast
+        description:
+          type: string
+          example: Grants +10 WS to Weapon Skill tests.
+    WeaponInput:
+      type: object
+      required:
+        - name
+        - damageFactor
+      properties:
+        name:
+          type: string
+          example: Longsword
+        damageFactor:
+          type: integer
+          minimum: -10
+          maximum: 10
+          example: 2
+        traits:
+          type: array
+          items:
+            type: string
+          example: ["60f71b3f6f1c2c3c4d5e6f88"]
+        type:
+          type: string
+          enum: [melee, range]
+          example: melee
+        handedness:
+          type: string
+          enum: [one-handed, two-handed]
+          example: one-handed

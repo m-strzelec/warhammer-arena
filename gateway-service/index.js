@@ -10,18 +10,19 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const accessControl = require('./auth/accessControl');
+const setupSwagger = require('./swagger');
 require('dotenv').config();
 
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
+        winston.format.timestamp(),
+        winston.format.json()
     ),
     defaultMeta: { service: 'gateway-service' },
     transports: [
-      new winston.transports.Console(),
-      new winston.transports.File({ filename: 'gateway-service.log' })
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'gateway-service.log' })
     ]
 });
 
@@ -35,6 +36,8 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(compression());
 app.use(cookieParser());
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+// merge swaggerDocs: npx openapi bundle swaggerDocs/index.yaml -o swaggerDocs/bundled.yaml
+setupSwagger(app);
 
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
@@ -134,7 +137,7 @@ const circuitBreaker = (() => {
             };
             next();
         };
-    };    
+    };
 })();
 
 const authenticateJWT = (req, res, next) => {
@@ -184,11 +187,11 @@ app.use((req, res, next) => {
     logger.info({ message: 'Request received', method: req.method, url: req.originalUrl, requestId });
     const startTime = Date.now();
     const originalEnd = res.end;
-    res.end = function(...args) {
-      const responseTime = Date.now() - startTime;
-      logger.info({ message: 'Response sent', method: req.method, url: req.originalUrl, statusCode: res.statusCode, responseTime, requestId });
-      originalEnd.apply(res, args);
-    };   
+    res.end = function (...args) {
+        const responseTime = Date.now() - startTime;
+        logger.info({ message: 'Response sent', method: req.method, url: req.originalUrl, statusCode: res.statusCode, responseTime, requestId });
+        originalEnd.apply(res, args);
+    };
     next();
 });
 
@@ -247,10 +250,10 @@ app.get('/health', (req, res) => res.status(200).send('OK'));
 // 404 error handling
 app.use((req, res) => {
     logger.warn({
-      message: 'Route not found',
-      method: req.method,
-      url: req.originalUrl,
-      requestId: req.requestId
+        message: 'Route not found',
+        method: req.method,
+        url: req.originalUrl,
+        requestId: req.requestId
     });
     res.status(404).json({ status: 'error', message: 'API endpoint not found', requestId: req.requestId });
 });
@@ -258,10 +261,10 @@ app.use((req, res) => {
 // Global error handling
 app.use((err, req, res, next) => {
     logger.error({
-      message: 'Unhandled error',
-      error: err.message,
-      stack: err.stack,
-      requestId: req.requestId
+        message: 'Unhandled error',
+        error: err.message,
+        stack: err.stack,
+        requestId: req.requestId
     });
     res.status(500).json({ status: 'error', message: 'Internal server error', requestId: req.requestId });
 });
