@@ -1,0 +1,121 @@
+/* DataTable Styling */
+.p-datatable {
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+}
+
+.p-datatable-header {
+    background-color: #1b1b1b;
+    border-bottom: 2px solid #ff6f61;
+    color: #f8f9fa;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for the header */
+    animation: fadeIn 1.2s ease-in-out; /* Smooth fade-in */
+}
+
+.p-datatable-thead th {
+    background-color: #3a3a3a;
+    color: #ff6f61;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Subtle shadow */
+    border-bottom: 2px solid #555555; /* Dark border for separation */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.p-datatable-tbody tr {
+    background-color: #2b2b2b;
+    color: #f8f9fa;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.p-datatable-tbody tr:nth-child(even) {
+    background-color: #323232;
+}
+.p-datatable-tbody .p-column-title {
+    color: #ff6f61;
+    font-weight: bold;
+}
+
+.p-paginator-bottom {
+    background: #232323 !important;
+    border: 1px solid #444 !important;
+    border-radius: 0 0 10px 10px !important;
+    box-shadow: none !important;
+}
+
+.p-datatable-footer {
+    background-color: #1b1b1b;
+    border-top: 2px solid #ffd700;
+    color: #f8f9fa;
+    text-align: right;
+    padding: 12px 24px;
+}
+
+.p-row-editor-init::before {
+    content: "\f044"; /* FontAwesome pen icon (edit) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.pi-trash::before {
+    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.action-button:hover {
+    background-color: #ffffff;
+    transform: scale(1.15);
+}
+
+/* Modal */
+.custom-modal .modal-content {
+    background: linear-gradient(135deg, #232323 60%, #181818 100%);
+    color: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #444;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+}
+
+.custom-modal .modal-header {
+    border-bottom: 1px solid #444;
+    background: #232323;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    text-shadow: 1px 1px 4px #000;
+}
+
+.custom-modal .modal-title {
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+}
+
+.custom-modal .modal-body {
+    background: transparent;
+    color: #f8f9fa;
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #444;
+    background: #232323;
+}
+
+.custom-modal .btn-close {
+    filter: invert(1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

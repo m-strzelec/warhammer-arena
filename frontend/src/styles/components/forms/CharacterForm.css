@@ -1,0 +1,262 @@
+/* General Page Styles */
+body {
+    background-color: #1a1a1a; /* Dark background to match fantasy theme */
+    color: #e6e6e6; /* Light text for readability */
+    font-family: 'Roboto', sans-serif; /* Modern font for clean look */
+    animation: fadeIn 1s ease-in-out; /* Fade-in effect for the entire body */
+}
+
+h1.display-4 {
+    color: #ffcc00; /* Gold color for headers to add a touch of luxury */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Subtle shadow for depth */
+    animation: slideInDown 1s ease-in-out; /* Slide-in from the top for headers */
+}
+
+h3 {
+    text-align: center;
+}
+
+p.lead {
+    color: #cccccc; /* Slightly lighter text for subtitles */
+    font-size: 1.25rem;
+    animation: fadeIn 1.2s ease-in-out; /* Delayed fade-in for subtitles */
+    text-align: center;
+}
+
+/* Container Styling */
+.container {
+    padding: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #333333 30%, #222222 90%);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    animation: fadeInUp 1s ease-in-out; /* Fade-in from below */
+}
+
+/* Form Elements */
+.p-field label {
+    font-weight: 500;
+    color: #ffcc00; /* Gold color for label text */
+}
+
+.p-field input, .p-field .p-dropdown, .p-field .p-multiselect {
+    background-color: #262626; /* Darker background for input fields */
+    border: 1px solid #444; /* Border that blends well with the dark theme */
+    color: #e6e6e6; /* Light text for input content */
+    transition: all 0.3s ease; /* Smooth transition for input focus */
+}
+
+.p-field input:focus, .p-field .p-dropdown:focus, .p-field .p-multiselect:focus {
+    border-color: #ffcc00; /* Highlighted border on focus */
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); /* Glow effect on focus */
+}
+
+.p-field .p-dropdown .p-dropdown-trigger {
+    background-color: #333333; /* Dropdown trigger matches the theme */
+    border: none;
+    color: #ffcc00; /* Gold icon for the dropdown */
+    transition: transform 0.3s ease; /* Smooth scale effect */
+}
+
+.p-field .p-dropdown .p-dropdown-trigger:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.p-field .p-dropdown .p-dropdown-panel {
+    background-color: #262626; /* Dropdown panel matches the input fields */
+    border: 1px solid #444; /* Border for the dropdown panel */
+    animation: fadeIn 0.5s ease-in-out; /* Fade-in for dropdown */
+}
+
+.p-field .p-multiselect .p-multiselect-trigger {
+    background-color: #333333; /* Multiselect trigger matches the theme */
+    border: none;
+    color: #ffcc00; /* Gold icon for the multiselect */
+    transition: transform 0.3s ease; /* Smooth scale effect */
+}
+
+.p-field .p-multiselect .p-multiselect-trigger:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Armor and Factor Labels */
+.armor-label {
+    width: 150px;
+    color: #ffcc00; /* Gold color for armor labels */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for depth */
+    animation: fadeInRight 1s ease-in-out; /* Slide-in from right */
+}
+
+.factor-label {
+    width: 200px;
+    color: #ffcc00; /* Gold color for factor labels */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for depth */
+    animation: fadeInRight 1s ease-in-out; /* Slide-in from right */
+}
+
+/* Button Styles */
+button.btn-primary {
+    background-color: #ffcc00;
+    border: none;
+    color: #1a1a1a;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: fadeInUp 1.5s ease-in-out; /* Fade-in from below */
+}
+
+button.btn-primary:hover {
+    background-color: #e6b800; /* Slightly darker on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+button.btn-primary:active {
+    background-color: #cc9900; /* Darker color on click */
+    transform: translateY(0); /* Remove lift effect on click */
+}
+
+/* Fieldset Styles */
+fieldset {
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    margin-bottom: 20px;
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in */
+}
+
+legend {
+    color: #ffcc00; /* Gold color for legend text */
+    padding: 0 10px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow */
+    animation: fadeInLeft 1s ease-in-out; /* Slide-in from left */
+}
+
+/* Splitter Styles */
+.p-splitter-panel {
+    background-color: #262626;
+    border-radius: 8px;
+    padding: 15px;
+    animation: fadeIn 1s ease-in-out; /* Smooth fade-in */
+}
+
+.p-splitter-gutter {
+    background-color: #444;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.p-splitter-gutter-handle {
+    background-color: #ffcc00;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.p-splitter-gutter:hover {
+    background-color: #555; /* Darken on hover */
+}
+
+/* Character Card */
+.character-card {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    margin-bottom: 30px;
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in */
+}
+
+.character-card .card-title {
+    color: #ffcc00; /* Gold color for card title */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Shadow for card title */
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease-in-out; /* Slide-in from top */
+}
+
+/* Stat Item Styling */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    animation: fadeInLeft 1s ease-in-out; /* Slide-in from left */
+}
+
+.stat-item .stat-name {
+    font-weight: bold;
+    color: #ffcc00; /* Gold color for stat names */
+}
+
+.stat-item .stat-value {
+    flex: 1;
+    text-align: right;
+    color: #e6e6e6; /* Light text for values */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

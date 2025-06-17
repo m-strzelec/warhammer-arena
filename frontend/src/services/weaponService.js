@@ -14,4 +14,8 @@ export const getWeaponById = (weaponId) => {
 
 export const updateWeapon = (weaponId, weapon) => {
     return api.put(`/weapons/${weaponId}`, weapon);
-  };
+};
+
+export const deleteWeapon = (weaponId) => {
+    return api.delete(`/weapons/${weaponId}`);
+};

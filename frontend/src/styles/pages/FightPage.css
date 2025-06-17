@@ -169,6 +169,64 @@ button.btn-primary:active {
     color: #ff4500; /* Orange-red for special events like Ulric's Fury */
 }
 
+/* Style for the number of fights input row */
+.fight-count-row {
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.fight-count-label {
+    color: #d4af37;
+    font-family: 'Uncial Antiqua', serif;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.p-inputnumber {
+    width: 100%;
+    min-width: 0;
+    background: #232323;
+    border-radius: 6px;
+    border: 1px solid #555555;
+    color: #f0f0f0;
+    transition: border-color 0.2s;
+}
+
+.p-inputnumber input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: transparent;
+    color: #f0f0f0;
+}
+
+.p-inputnumber .p-inputnumber-button {
+    background: #444444;
+    color: #d4af37;
+    border: none;
+}
+
+.p-inputnumber .p-inputnumber-button:hover {
+    background: #b89529;
+    color: #232323;
+}
+
+/* Style for the simulation results alert */
+.simulation-results-alert {
+    background: linear-gradient(135deg, #232323 60%, #181818 100%);
+    border: 2px solid #d4af37;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+    border-radius: 12px;
+    padding: 24px 18px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    animation: fadeInBattle 1s;
+}
+
 /* Custom Animations */
 @keyframes battleCry {
     0% {

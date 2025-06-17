@@ -1,0 +1,395 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
+import { SelectButton } from 'primereact/selectbutton';
+import { raceOptions, primaryStatFullNames, secondaryStatFullNames, locationFullNames } from '../utils/constants';
+import { useToast } from '../../contexts/ToastContext';
+import LoadingPage from '../common/LoadingPage';
+import '../../styles/components/forms/CharacterForm.css';
+
+const CharacterForm = ({ initialCharacterData, onSave, onCancel, armors, weapons, skills, talents, loadingOptions }) => {
+  const [character, setCharacter] = useState({
+    name: '',
+    race: '',
+    primaryStats: { WS: 30, BS: 30, S: 30, T: 30, Ag: 30, Int: 30, WP: 30, Fel: 30 },
+    secondaryStats: { A: 1, W: 10, SB: 3, TB: 3, M: 4, Mag: 0, IP: 0, FP: 0 },
+    armor: { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null },
+    weapons: [],
+    skills: [],
+    talents: [],
+  });
+  const [armorSelection, setArmorSelection] = useState({
+    selectedArmorIds: [],
+    selectedArmors: [],
+  });
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (initialCharacterData) {
+      const charCopy = { ...initialCharacterData };
+      charCopy.armor = Object.fromEntries(
+        Object.entries(charCopy.armor).map(([loc, a]) => [loc, a ? (typeof a === 'object' ? a._id : a) : null])
+      );
+      const armorIds = Object.values(charCopy.armor).filter(Boolean);
+      const initialSelectedArmors = armors.filter(armor =>
+        armorIds.includes(armor._id)
+      );
+      setArmorSelection({
+        selectedArmorIds: initialSelectedArmors.map(a => a._id),
+        selectedArmors: initialSelectedArmors,
+      });
+      charCopy.weapons = charCopy.weapons.map(w => w._id || w);
+      charCopy.skills = charCopy.skills.map(s => ({
+        skill: s.skill._id || s.skill,
+        factor: s.factor
+      }));
+      charCopy.talents = charCopy.talents.map(t => t._id || t);
+      setCharacter(charCopy);
+    } else {
+      setCharacter({
+        name: '',
+        race: '',
+        primaryStats: { WS: 30, BS: 30, S: 30, T: 30, Ag: 30, Int: 30, WP: 30, Fel: 30 },
+        secondaryStats: { A: 1, W: 10, SB: 3, TB: 3, M: 4, Mag: 0, IP: 0, FP: 0 },
+        armor: { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null },
+        weapons: [],
+        skills: [],
+        talents: [],
+      });
+      setArmorSelection({
+        selectedArmorIds: [],
+        selectedArmors: [],
+      });
+    }
+  }, [initialCharacterData, armors, weapons, skills, talents]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCharacter((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatChange = (e, statType) => {
+    const { name, value } = e.target;
+    setCharacter((prev) => ({
+      ...prev,
+      [statType]: { ...prev[statType], [name]: parseInt(value, 10) || 0 }
+    }));
+  };
+
+  const handleArmorChange = (e) => {
+    const selectedIds = e.value.filter((armorId) => armorId !== '');
+    const selectedArmors = armors.filter((armor) => selectedIds.includes(armor._id));
+    setArmorSelection({
+      selectedArmorIds: selectedIds,
+      selectedArmors: selectedArmors,
+    });
+
+    const newArmor = selectedArmors.reduce((acc, armor) => {
+      armor.locations.forEach((location) => {
+        acc[location] = armor._id;
+      });
+      return acc;
+    }, { head: null, body: null, leftArm: null, rightArm: null, leftLeg: null, rightLeg: null });
+
+    setCharacter((prev) => ({ ...prev, armor: newArmor }));
+  };
+
+  const handleSkillChange = (e) => {
+    const selectedSkillIds = e.value;
+    const updatedSkills = selectedSkillIds.map(skillId => {
+      const existingSkill = character.skills.find(s => (s.skill && s.skill._id === skillId) || s.skill === skillId);
+      return existingSkill ? existingSkill : { skill: skillId, factor: 0 };
+    });
+    setCharacter((prev) => ({ ...prev, skills: updatedSkills }));
+  };
+
+  const handleFactorChange = (e, skillId) => {
+    const { value } = e.target;
+    const numericValue = parseInt(value, 10) || 0;
+    setCharacter((prev) => {
+      const updatedSkills = prev.skills.map(skill => {
+        if ((skill.skill && skill.skill._id === skillId) || skill.skill === skillId) {
+          return { ...skill, factor: numericValue };
+        }
+        return skill;
+      });
+      return { ...prev, skills: updatedSkills };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const dataToSend = {
+        ...character,
+        armor: Object.fromEntries(
+          Object.entries(character.armor).map(([loc, a]) => [loc, a ? (typeof a === 'object' ? a._id : a) : null])
+        ),
+        weapons: character.weapons.map(w => (typeof w === 'object' ? w._id : w)),
+        skills: character.skills.map(s => ({
+          skill: typeof s.skill === 'object' ? s.skill._id : s.skill,
+          factor: s.factor
+        })),
+        talents: character.talents.map(t => (typeof t === 'object' ? t._id : t)),
+      };
+      await onSave(dataToSend);
+    } catch (error) {
+      showToast('error', 'Error', error.response.data.message);
+      console.error(error.response.data?.error || error.response.data.message);
+    }
+  };
+
+  const getArmorNameById = (id) => {
+    const armor = armors.find(a => a._id === id);
+    return armor ? armor.name : 'No armor';
+  };
+
+  const coveredLocations = armorSelection.selectedArmors.flatMap(armor => armor.locations);
+  const availableArmors = armors.filter((armor) =>
+    armor.locations.every((location) => !coveredLocations.includes(location))
+  );
+
+  const armorOptions = useMemo(() => {
+    const displayedArmors = [...armorSelection.selectedArmors, ...availableArmors];
+    const uniqueArmors = Array.from(new Map(displayedArmors.map(item => [item._id, item])).values());
+    return uniqueArmors.map((armor) => ({
+      label: armor.name,
+      value: armor._id,
+    }));
+  }, [armorSelection.selectedArmors, availableArmors]);
+
+  const weaponOptions = useMemo(() => weapons.map((weapon) => ({
+    label: weapon.name,
+    value: weapon._id,
+  })), [weapons]);
+
+  const skillOptions = useMemo(() => skills.map((skill) => ({
+    label: skill.name,
+    value: skill._id,
+  })), [skills]);
+
+  const talentOptions = useMemo(() => talents.map((talent) => ({
+    label: talent.name,
+    value: talent._id,
+  })), [talents]);
+
+  if (loadingOptions) return <LoadingPage message="Loading character options..." />;
+
+  const formTitle = initialCharacterData ? `Edit ${initialCharacterData.name}` : 'Create New Character';
+
+  return (
+    <Container>
+      <Row>
+        <Col>
+          <h2 className="text-center mb-4">{formTitle}</h2>
+          <p className="lead">Fill in the details to {initialCharacterData ? 'edit' : 'create'} your character</p>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col md={12}>
+          <form onSubmit={handleSubmit}>
+            <Row className="mb-3">
+              <Col md={6} className="mb-3">
+                <div className="p-field">
+                  <label htmlFor="name" className="me-2 mb-0">Name</label>
+                  <InputText
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    value={character.name}
+                    onChange={handleChange}
+                    className="w-100"
+                    required
+                  />
+                </div>
+              </Col>
+              <Col md={6} className="mb-3">
+                <div className="p-field">
+                  <label htmlFor="race" className="me-2 mb-0">Race</label>
+                  <Dropdown
+                    id="race"
+                    name="race"
+                    aria-label="Character race select"
+                    value={character.race}
+                    options={raceOptions}
+                    onChange={handleChange}
+                    placeholder="Select character race"
+                    className="w-100 text-start"
+                    required
+                    appendTo={document.body}
+                    panelClassName="p-overlay-higher-zindex"
+                  />
+                </div>
+              </Col>
+            </Row>
+            <h3>Primary Stats</h3>
+            <Row>
+              {Object.entries(character.primaryStats).map(([stat, value]) => (
+                <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
+                  <div className="p-field">
+                    <label htmlFor={stat}>{primaryStatFullNames[stat]}</label>
+                    <InputText
+                      id={stat}
+                      name={stat}
+                      value={character.primaryStats[stat]}
+                      onChange={(e) => handleStatChange(e, 'primaryStats')}
+                      keyfilter="pint"
+                      className="w-100"
+                      required
+                    />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+            <h3>Secondary Stats</h3>
+            <Row>
+              {Object.entries(character.secondaryStats).map(([stat, value]) => (
+                <Col xs={6} sm={4} lg={3} key={stat} className="mb-3">
+                  <div className="p-field">
+                    <label htmlFor={stat}>{secondaryStatFullNames[stat]}</label>
+                    <InputText
+                      id={stat}
+                      name={stat}
+                      value={character.secondaryStats[stat]}
+                      onChange={(e) => handleStatChange(e, 'secondaryStats')}
+                      keyfilter="pint"
+                      className="w-100"
+                      required
+                    />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+            <h3>Armor</h3>
+            <Row>
+              <Col>
+                <MultiSelect
+                  key="multi-select-armor"
+                  id="armor"
+                  name="armor"
+                  aria-label="Armor select"
+                  value={armorSelection.selectedArmorIds}
+                  options={armorOptions}
+                  onChange={handleArmorChange}
+                  placeholder="Select armors"
+                  display="chip"
+                  showClear
+                  filter
+                  className="w-100 text-start"
+                  showSelectAll={false}
+                  appendTo={document.body}
+                  panelClassName="p-overlay-higher-zindex"
+                />
+              </Col>
+            </Row>
+            <Row>
+              {Object.keys(character.armor).map((location) => (
+                <Col md={12} lg={6} key={location} className="my-3">
+                  <div className="p-field d-flex align-items-center">
+                    <label htmlFor={location} className="armor-label me-2 mb-0">{locationFullNames[location]}:</label>
+                    <InputText
+                      id={location}
+                      name={location}
+                      value={getArmorNameById(character.armor[location])}
+                      variant="filled"
+                      className="w-100"
+                      readOnly
+                    />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+            <h3>Weapons</h3>
+            <div className="p-field mb-3">
+              <MultiSelect
+                key="multi-select-weapons"
+                id="weapons"
+                name="weapons"
+                aria-label="Weapons select"
+                value={character.weapons}
+                options={weaponOptions}
+                onChange={handleChange}
+                placeholder="Select weapons"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
+              />
+            </div>
+            <h3>Skills</h3>
+            <div className="p-field mb-3">
+              <MultiSelect
+                key="multi-select-skills"
+                id="skills"
+                name="skills"
+                aria-label="Skills select"
+                value={character.skills.map(skill => skill.skill)}
+                options={skillOptions}
+                onChange={handleSkillChange}
+                placeholder="Select skills"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
+              />
+            </div>
+            {character.skills.map((skill, index) => (
+              <Row key={skill.skill}>
+                <Col md={10} className="mb-3">
+                  <div className="p-field d-flex align-items-center">
+                    <label htmlFor={`factor-${skill.skill}`} className="me-2 mb-0 factor-label">
+                      {skills.find(s => s._id === skill.skill)?.name} Factor
+                    </label>
+                    <SelectButton
+                      id={`factor-${skill.skill}`}
+                      name={`factor-${skill.skill}`}
+                      value={skill.factor}
+                      options={[{ label: '0', value: 0 }, { label: '10', value: 10 }, { label: '20', value: 20 }]}
+                      onChange={(e) => handleFactorChange(e, skill.skill)}
+                      className="w-100"
+                    />
+                  </div>
+                </Col>
+              </Row>
+            ))}
+            <h3>Talents</h3>
+            <div className="p-field mb-3">
+              <MultiSelect
+                key="multi-select-talents"
+                id="talents"
+                name="talents"
+                aria-label="Talents select"
+                value={character.talents}
+                options={talentOptions}
+                onChange={handleChange}
+                placeholder="Select talents"
+                display="chip"
+                showClear
+                filter
+                className="w-100 text-start"
+                appendTo={document.body}
+                panelClassName="p-overlay-higher-zindex"
+              />
+            </div>
+            <div className="d-flex justify-content-end gap-2">
+              <Button variant="secondary" onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {initialCharacterData ? 'Save Changes' : 'Create Character'}
+              </Button>
+            </div>
+          </form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default CharacterForm;
