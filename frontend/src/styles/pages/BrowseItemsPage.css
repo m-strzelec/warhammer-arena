@@ -49,17 +49,6 @@ p.lead {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Enhanced shadow on hover */
 }
 
-.items-header {
-    cursor: pointer;
-    transition: all 0.3s ease, transform 0.3s ease;
-}
-
-.items-header:hover {
-    background-color: #4b4b4b;
-    transform: translateY(-4px); /* Lift the header slightly on hover */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-}
-
 /* Tab Content Styles */
 .tab-content {
     padding: 25px;
@@ -73,7 +62,7 @@ p.lead {
 /* DataTable Styling */
 .p-datatable-header {
     background-color: #1b1b1b;
-    border-bottom: 2px solid #ffd700; /* Golden border to highlight the header */
+    border-bottom: 2px solid #ff6f61;
     color: #f8f9fa;
     font-weight: bold;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for the header */
@@ -82,7 +71,7 @@ p.lead {
 
 .p-datatable-thead th {
     background-color: #3a3a3a;
-    color: #ffd700; /* Golden color for column headers */
+    color: #ff6f61;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Subtle shadow */
     border-bottom: 2px solid #555555; /* Dark border for separation */
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
@@ -97,15 +86,16 @@ p.lead {
 .p-datatable-tbody tr:nth-child(even) {
     background-color: #323232;
 }
-
-.p-datatable-tbody tr:hover {
-    background-color: #4b4b4b;
-    transform: scale(1.02); /* Slight zoom effect on hover */
+.p-datatable-tbody .p-column-title {
+    color: #ff6f61;
+    font-weight: bold;
 }
 
-.p-datatable-tbody .p-column-title {
-    color: #ffd700;
-    font-weight: bold;
+.p-paginator-bottom {
+    background: #232323 !important;
+    border: 1px solid #444 !important;
+    border-radius: 0 0 10px 10px !important;
+    box-shadow: none !important;
 }
 
 /* DataTable Icon Styling */
@@ -113,7 +103,7 @@ p.lead {
     content: "\f044"; /* FontAwesome pen icon (edit) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    color: #ffd700;
+    color: #ff6f61;
     font-size: 1.2rem;
 }
 
@@ -121,7 +111,7 @@ p.lead {
     content: "\f00c"; /* FontAwesome check icon (save) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    color: #ffd700;
+    color: #ff6f61;
     font-size: 1.2rem;
 }
 
@@ -129,15 +119,33 @@ p.lead {
     content: "\f00d"; /* FontAwesome times icon (cancel) */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    color: #ffd700;
+    color: #ff6f61;
     font-size: 1.2rem;
+}
+
+.pi-trash::before {
+    content: "\f2ed"; /* FontAwesome times icon (delete) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #ff6f61;
+    font-size: 1.2rem;
+}
+
+.delete-button {
+    width: 48px;
+    height: 32px;
 }
 
 .p-row-editor-init:hover,
 .p-row-editor-save:hover,
-.p-row-editor-cancel:hover {
+.p-row-editor-cancel:hover,
+.delete-button:hover {
     color: #ffffff; /* White color on hover for better visibility */
     transform: scale(1.15); /* Slight enlargement on hover */
+}
+
+.delete-button:hover {
+    background-color: #ffffff;
 }
 
 /* DataTable Footer Styling */
@@ -166,7 +174,7 @@ p.lead {
 }
 
 .p-chip:hover {
-    background-color: #ffd700;
+    background-color: #ff6f61;
     color: #1b1b1b;
     transform: translateY(-3px); /* Slight lift on hover */
 }
@@ -182,7 +190,7 @@ p.lead {
 }
 
 .p-inputtext:focus, .p-dropdown:focus, .p-multiselect:focus {
-    border-color: #ffd700;
+    border-color: #ff6f61;
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); /* Stronger glow effect */
     transform: scale(1.05); /* Slight enlargement on focus */
 }
@@ -190,7 +198,7 @@ p.lead {
 .p-dropdown-trigger {
     background-color: #4b4b4b;
     border: none;
-    color: #ffd700;
+    color: #ff6f61;
 }
 
 .p-dropdown-panel, .p-multiselect-panel {
@@ -211,6 +219,10 @@ p.lead {
     background-color: #4b4b4b;
 }
 
+.p-highlight {
+    background-color: #ff6f61;
+}
+
 /* Browse Items Specific Styles */
 .browse-items {
     min-height: 800px;
@@ -223,7 +235,7 @@ p.lead {
 
 .items-header {
     padding: 12px;
-    color: #ffd700;
+    color: #ff6f61;
     font-family: 'Cinzel', serif;
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }

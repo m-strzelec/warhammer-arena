@@ -14,4 +14,8 @@ export const getTraitById = (traitId) => {
 
 export const updateTrait = (traitId, trait) => {
     return api.put(`/traits/${traitId}`, trait);
-  };
+};
+
+export const deleteTrait = (traitId) => {
+    return api.delete(`/traits/${traitId}`);
+};

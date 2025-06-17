@@ -14,8 +14,8 @@ const HomePage = () => {
     <>
       <Container className="my-5">
         <Row>
-          <Col>
-            <h1>Welcome to the Warhammer Arena</h1>
+          <Col className="page-header">
+            <h1 className="display-4">Welcome to the Warhammer Arena</h1>
             <p className="lead">Create your characters and test them in this Warhammer Fantasy 2ed simulator.</p>
           </Col>
         </Row>
@@ -31,22 +31,13 @@ const HomePage = () => {
               Simulate a fight
             </Button>
             <Button
-              variant="primary"
+              variant="secondary"
               size="lg"
-              onClick={() => handleNavigate('/create-character')}
+              onClick={() => handleNavigate('/characters')}
               className="mx-2"
-              aria-label="Create Character"
+              aria-label="Characters Browser"
             >
-              Create new character
-            </Button>
-            <Button
-              variant="warning"
-              size="lg"
-              onClick={() => handleNavigate('/create-items')}
-              className="mx-2"
-              aria-label="Items Creator"
-            >
-              Add new items
+              Browse characters
             </Button>
             <Button
               variant="info"
@@ -56,15 +47,6 @@ const HomePage = () => {
               aria-label="Items Browser"
             >
               Browse available items
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => handleNavigate('/characters')}
-              className="mx-2"
-              aria-label="Characters Browser"
-            >
-              Browse characters
             </Button>
           </Col>
         </Row>

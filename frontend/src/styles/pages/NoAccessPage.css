@@ -1,0 +1,24 @@
+.noaccess-container {
+    background: linear-gradient(135deg, #232526 0%, #191919 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+    padding: 60px 30px;
+    color: #ffd700;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.noaccess-title {
+    font-size: 3.5rem;
+    font-family: 'Cinzel', serif;
+    color: #ff6f61;
+    text-shadow: 3px 3px 16px #000, 0 0 40px #ffd700;
+    margin-bottom: 24px;
+}
+
+.noaccess-lead {
+    font-size: 1.3rem;
+    color: #e6e6e6;
+    margin-bottom: 32px;
+    font-family: 'Merriweather', serif;
+    text-shadow: 1px 1px 8px #000;
+}

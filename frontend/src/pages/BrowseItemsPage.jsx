@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Tab, Nav, Image } from 'react-bootstrap';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import { getArmors } from '../services/armorService';
 import { getWeapons } from '../services/weaponService';
 import { getSkills } from '../services/skillService';
 import { getTalents } from '../services/talentService';
 import { getTraits } from '../services/traitService';
-import '../styles/pages/BrowseItemsPage.css';
 import browse_items from '../assets/browse_items.webp';
 import { useToast } from '../contexts/ToastContext';
 import ArmorBrowser from '../components/browsers/ArmorBrowser';
@@ -13,6 +13,9 @@ import SkillBrowser from '../components/browsers/SkillBrowser';
 import TalentBrowser from '../components/browsers/TalentBrowser';
 import TraitBrowser from '../components/browsers/TraitBrowser';
 import WeaponBrowser from '../components/browsers/WeaponBrowser';
+import LoadingPage from '../components/common/LoadingPage';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/pages/BrowseItemsPage.css';
 
 const BrowseItemsPage = () => {
   const [key, setKey] = useState('');
@@ -21,7 +24,9 @@ const BrowseItemsPage = () => {
   const [skills, setSkills] = useState([]);
   const [talents, setTalents] = useState([]);
   const [traits, setTraits] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,16 +42,22 @@ const BrowseItemsPage = () => {
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, [showToast]);
 
+  if (!user) return <LoadingPage message="Loading user..." />
+  if (loading) return <LoadingPage message="Loading items..." />;
+
   return (
     <>
+      <ConfirmDialog />
       <Container className="my-5 browse-items">
         <Row className="text-center mb-4">
-          <Col className='items-header'>
+          <Col className="page-header">
             <h1 className="display-4" onClick={() => setKey('')}>Armory</h1>
             <p className="lead">Browse all available armors, weapons, skills, talents, and traits.</p>
           </Col>
@@ -81,19 +92,19 @@ const BrowseItemsPage = () => {
                 />
               </Tab.Pane>
               <Tab.Pane eventKey="armor" active={key === 'armor'}>
-                <ArmorBrowser armorsData={armors} traitOptions={traits} />
+                <ArmorBrowser armorsData={armors} traitOptions={traits} userRole={user.type} />
               </Tab.Pane>
               <Tab.Pane eventKey="weapon" active={key === 'weapon'}>
-                <WeaponBrowser weaponsData={weapons} traitOptions={traits} />
+                <WeaponBrowser weaponsData={weapons} traitOptions={traits} userRole={user.type} />
               </Tab.Pane>
               <Tab.Pane eventKey="skill" active={key === 'skill'}>
-                <SkillBrowser skillsData={skills} />
+                <SkillBrowser skillsData={skills} userRole={user.type} />
               </Tab.Pane>
               <Tab.Pane eventKey="talent" active={key === 'talent'}>
-                <TalentBrowser talentsData={talents} />
+                <TalentBrowser talentsData={talents} userRole={user.type} />
               </Tab.Pane>
               <Tab.Pane eventKey="trait" active={key === 'trait'}>
-                <TraitBrowser traitsData={traits} />
+                <TraitBrowser traitsData={traits} userRole={user.type} />
               </Tab.Pane>
             </Tab.Content>
           </Col>

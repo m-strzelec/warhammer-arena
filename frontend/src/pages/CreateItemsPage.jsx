@@ -9,10 +9,12 @@ import { getTraits } from '../services/traitService';
 import '../styles/pages/CreateItemsPage.css';
 import create_items from '../assets/create_items.webp';
 import { useToast } from '../contexts/ToastContext';
+import LoadingPage from '../components/common/LoadingPage';
 
 const CreateItemsPage = () => {
   const [key, setKey] = useState('');
   const [traits, setTraits] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -23,6 +25,8 @@ const CreateItemsPage = () => {
       } catch (error) {
         showToast('error', 'Error', error.response.data.message);
         console.error(error.response.data?.error || error.response.data.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchTraits();
@@ -33,11 +37,13 @@ const CreateItemsPage = () => {
     value: trait._id,
   }));
 
+  if (loading) return <LoadingPage message="Loading trait options..." />;
+
   return (
     <>
       <Container className="my-5 create-items">
         <Row className="text-center mb-4">
-          <Col className='items-header'>
+          <Col className="page-header">
             <h1 className="display-4" onClick={() => setKey('')}>Forge</h1>
             <p className="lead">Design armors, weapons, skills, talents, and traits for your characters.</p>
           </Col>

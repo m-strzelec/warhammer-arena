@@ -1,7 +1,7 @@
 import api from '../api/api';
 
-export const createFight = (character1Id, character2Id) => {
-    return api.post('/fights', { character1Id, character2Id });
+export const createFight = (character1Id, character2Id, count) => {
+    return api.post('/fights', { character1Id, character2Id, count });
 };
 
 export const getFights = () => {
@@ -10,4 +10,8 @@ export const getFights = () => {
 
 export const getFightById = (fightId) => {
     return api.get(`/fights/${fightId}`);
+};
+
+export const getFightsByCharacterId = (characterId) => {
+    return api.get(`/fights/characters/${characterId}`);
 };
