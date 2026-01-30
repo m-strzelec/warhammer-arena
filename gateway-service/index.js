@@ -50,35 +50,35 @@ app.use(limiter);
 
 const services = {
     'auth-service': {
-        url: `http://auth-service:${process.env.AUTH_SERVICE_PORT}/auth`,
+        url: process.env.AUTH_SERVICE_URL || `http://auth-service:${process.env.AUTH_SERVICE_PORT}/auth`,
         path: '/api/auth',
     },
     'trait-service': {
-        url: `http://trait-service:${process.env.TRAIT_SERVICE_PORT}/traits`,
+        url: process.env.TRAIT_SERVICE_URL || `http://trait-service:${process.env.TRAIT_SERVICE_PORT}/traits`,
         path: '/api/traits',
     },
     'armor-service': {
-        url: `http://armor-service:${process.env.ARMOR_SERVICE_PORT}/armors`,
+        url: process.env.ARMOR_SERVICE_URL || `http://armor-service:${process.env.ARMOR_SERVICE_PORT}/armors`,
         path: '/api/armors',
     },
     'weapon-service': {
-        url: `http://weapon-service:${process.env.WEAPON_SERVICE_PORT}/weapons`,
+        url: process.env.WEAPON_SERVICE_URL || `http://weapon-service:${process.env.WEAPON_SERVICE_PORT}/weapons`,
         path: '/api/weapons',
     },
     'skill-service': {
-        url: `http://skill-service:${process.env.SKILL_SERVICE_PORT}/skills`,
+        url: process.env.SKILL_SERVICE_URL || `http://skill-service:${process.env.SKILL_SERVICE_PORT}/skills`,
         path: '/api/skills',
     },
     'talent-service': {
-        url: `http://talent-service:${process.env.TALENT_SERVICE_PORT}/talents`,
+        url: process.env.TALENT_SERVICE_URL || `http://talent-service:${process.env.TALENT_SERVICE_PORT}/talents`,
         path: '/api/talents',
     },
     'character-service': {
-        url: `http://character-service:${process.env.CHARACTER_SERVICE_PORT}/characters`,
+        url: process.env.CHARACTER_SERVICE_URL || `http://character-service:${process.env.CHARACTER_SERVICE_PORT}/characters`,
         path: '/api/characters',
     },
     'fight-service': {
-        url: `http://fight-service:${process.env.FIGHT_SERVICE_PORT}/fights`,
+        url: process.env.FIGHT_SERVICE_URL || `http://fight-service:${process.env.FIGHT_SERVICE_PORT}/fights`,
         path: '/api/fights',
     },
 };

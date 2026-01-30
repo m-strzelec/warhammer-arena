@@ -18,4 +18,4 @@ RUN apk add --no-cache curl
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "sed -i \"s|GATEWAY_URL_PLACEHOLDER|${GATEWAY_URL:-http://gateway-service:8080}|g\" /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
